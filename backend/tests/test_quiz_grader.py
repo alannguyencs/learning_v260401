@@ -8,7 +8,9 @@ from src.service.quiz_grader import GradingResult, QuizGrader
 def _mock_llm_response(is_correct: bool, feedback: str):
     """Build a mock anthropic message response."""
     mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text=f'{{"is_correct": {str(is_correct).lower()}, "feedback": "{feedback}"}}')]
+    mock_msg.content = [
+        MagicMock(text=f'{{"is_correct": {str(is_correct).lower()}, "feedback": "{feedback}"}}')
+    ]
     return mock_msg
 
 

@@ -61,7 +61,7 @@ describe("Login", () => {
       expect(mockLogin).toHaveBeenCalledWith("testuser", "testpass");
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/quiz");
+    expect(mockNavigate).toHaveBeenCalledWith("/slides");
   });
 
   it("shows error on failed login", async () => {

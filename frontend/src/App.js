@@ -8,6 +8,7 @@ import {
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
+import SlidePage from "./pages/SlidePage";
 
 function App() {
   return (
@@ -16,10 +17,18 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
+            path="/slides"
+            element={
+              <ProtectedRoute>
+                <SlidePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/"
             element={
               <ProtectedRoute>
-                <Navigate to="/login" replace />
+                <Navigate to="/slides" replace />
               </ProtectedRoute>
             }
           />

@@ -32,6 +32,30 @@ const apiService = {
       throw error;
     }
   },
+
+  listBooks: async () => {
+    const response = await api.get("/api/content/books");
+    return response.data;
+  },
+
+  getNextSlide: async (bookId) => {
+    const params = bookId ? { book_id: bookId } : {};
+    const response = await api.get("/api/slides/next", { params });
+    return response.data;
+  },
+
+  markChapterLearnt: async (chapterId) => {
+    const response = await api.post(`/api/slides/chapters/${chapterId}/learnt`);
+    return response.data;
+  },
+
+  respondToQuiz: async (quizId, body) => {
+    const response = await api.post(
+      `/api/slides/quizzes/${quizId}/respond`,
+      body,
+    );
+    return response.data;
+  },
 };
 
 export default apiService;

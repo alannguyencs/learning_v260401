@@ -11,6 +11,12 @@ from src.crud.crud_content import (
     create_chapter_quiz,
     create_lesson,
 )
+from src.crud.crud_revision import (
+    complete_round,
+    get_latest_round,
+    get_open_round,
+    get_quiz_recall,
+)
 from src.crud.crud_user import create_user
 from src.service.revision_service import RevisionService
 
@@ -83,7 +89,9 @@ def setup(db_session):  # pylint: disable=redefined-outer-name
 class TestOnChapterLearnt:
     """Tests for RevisionService.on_chapter_learnt."""
 
-    def test_r0_created_on_first_chapter_learnt(self, setup):  # pylint: disable=redefined-outer-name
+    def test_r0_created_on_first_chapter_learnt(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """R0 row created with due_at=lesson_count when no rounds exist."""
         db = setup["db"]
         lesson = setup["lesson"]
@@ -91,23 +99,21 @@ class TestOnChapterLearnt:
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, lesson_count=3)
 
-        from src.crud.crud_revision import get_open_round  # pylint: disable=import-outside-toplevel
-
         r0 = get_open_round(db, "testuser", lesson.id, 0)
         assert r0 is not None
         assert r0.due_at_lesson_count == 3
         assert r0.quizzes_in_round == 2
         assert r0.status == "open"
 
-    def test_r0_quiz_count_grows_as_chapters_added(self, setup):  # pylint: disable=redefined-outer-name
+    def test_r0_quiz_count_grows_as_chapters_added(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """Second chapter learnt increments R0's quizzes_in_round."""
         db = setup["db"]
         lesson = setup["lesson"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, setup["quiz_ids_ch1"], 1)
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, setup["quiz_ids_ch2"], 2)
-
-        from src.crud.crud_revision import get_open_round  # pylint: disable=import-outside-toplevel
 
         r0 = get_open_round(db, "testuser", lesson.id, 0)
         assert r0.quizzes_in_round == 3
@@ -119,14 +125,10 @@ class TestOnChapterLearnt:
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, setup["quiz_ids_ch1"], 1)
 
-        from src.crud.crud_revision import complete_round, get_open_round  # pylint: disable=import-outside-toplevel
-
         r0 = get_open_round(db, "testuser", lesson.id, 0)
         complete_round(db, r0.id, completed_at_lesson_count=2)
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, setup["quiz_ids_ch2"], 3)
-
-        from src.crud.crud_revision import get_latest_round  # pylint: disable=import-outside-toplevel
 
         latest = get_latest_round(db, "testuser", lesson.id)
         assert latest.round_num == 1
@@ -136,18 +138,16 @@ class TestOnChapterLearnt:
 class TestRecordQuizResponse:
     """Tests for RevisionService.record_quiz_response."""
 
-    def test_quiz_answer_increments_answered_count(self, setup):  # pylint: disable=redefined-outer-name
+    def test_quiz_answer_increments_answered_count(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """Answering a quiz increments quizzes_answered."""
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, True, 1
-        )
-
-        from src.crud.crud_revision import get_open_round  # pylint: disable=import-outside-toplevel
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 1)
 
         r0 = get_open_round(db, "testuser", lesson.id, 0)
         assert r0.quizzes_answered == 1
@@ -159,11 +159,7 @@ class TestRecordQuizResponse:
         quiz_ids = setup["quiz_ids_ch1"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, None, 1
-        )
-
-        from src.crud.crud_revision import get_open_round  # pylint: disable=import-outside-toplevel
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, None, 1)
 
         r0 = get_open_round(db, "testuser", lesson.id, 0)
         assert r0.quizzes_answered == 0
@@ -176,25 +172,23 @@ class TestRecordQuizResponse:
 
         # 2 quizzes in round — answer 2 → 100% > 50%
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, True, 1
-        )
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 1)
         result = RevisionService.record_quiz_response(
             db, "testuser", quiz_ids[1], lesson.id, 0, True, 1
         )
 
         assert result.round_done is True
 
-    def test_next_round_created_after_completion(self, setup):  # pylint: disable=redefined-outer-name
+    def test_next_round_created_after_completion(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """R1 created with due_at = lesson_count + 2^(0+1) = lesson_count + 2."""
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, True, 5
-        )
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 5)
         result = RevisionService.record_quiz_response(
             db, "testuser", quiz_ids[1], lesson.id, 0, True, 5
         )
@@ -207,34 +201,30 @@ class TestRecordQuizResponse:
 class TestMemorize:
     """Tests for MEMORIZE forgetting rate updates."""
 
-    def test_memorize_correct_reduces_forgetting_rate(self, setup):  # pylint: disable=redefined-outer-name
+    def test_memorize_correct_reduces_forgetting_rate(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """Correct answer multiplies forgetting_rate by 0.7."""
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, True, 1
-        )
-
-        from src.crud.crud_revision import get_quiz_recall  # pylint: disable=import-outside-toplevel
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 1)
 
         recall = get_quiz_recall(db, "testuser", quiz_ids[0])
         assert abs(recall.forgetting_rate - 0.7) < 1e-9
 
-    def test_memorize_incorrect_increases_forgetting_rate(self, setup):  # pylint: disable=redefined-outer-name
+    def test_memorize_incorrect_increases_forgetting_rate(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """Incorrect answer multiplies forgetting_rate by 1.2."""
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
-        RevisionService.record_quiz_response(
-            db, "testuser", quiz_ids[0], lesson.id, 0, False, 1
-        )
-
-        from src.crud.crud_revision import get_quiz_recall  # pylint: disable=import-outside-toplevel
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, False, 1)
 
         recall = get_quiz_recall(db, "testuser", quiz_ids[0])
         assert abs(recall.forgetting_rate - 1.2) < 1e-9
@@ -252,12 +242,10 @@ class TestMemorize:
                 db, "testuser", quiz_ids[0], lesson.id, 0, False, 1
             )
 
-        from src.crud.crud_revision import get_quiz_recall  # pylint: disable=import-outside-toplevel
-
         recall = get_quiz_recall(db, "testuser", quiz_ids[0])
         assert recall.forgetting_rate <= 1.5
 
-    def test_recall_score_formula(self, setup):  # pylint: disable=redefined-outer-name
+    def test_recall_score_formula(self):
         """compute_recall returns exp(-rate * elapsed / 10)."""
         rate = 0.7
         elapsed = 5

@@ -101,7 +101,7 @@ class TestMarkChapterLearnt:
 class TestRespondToQuiz:
     """Tests for POST /api/slides/quizzes/{id}/respond."""
 
-    def _get_quiz_id(self, auth_client):
+    def _get_quiz_id(self, auth_client):  # pylint: disable=redefined-outer-name
         """Seed content, mark chapter learnt, return quiz_id and lesson_id."""
         ids = _seed_content(auth_client)
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
@@ -170,7 +170,9 @@ class TestGetNextSlide:
         assert data["slide_type"] == "chapter"
         assert data["chapter"] is not None
 
-    def test_get_next_slide_quiz_after_chapter(self, auth_client):  # pylint: disable=redefined-outer-name
+    def test_get_next_slide_quiz_after_chapter(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
         """After marking chapter learnt, next slide is a quiz (R0 due immediately)."""
         ids = _seed_content(auth_client)
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
@@ -186,13 +188,17 @@ class TestGetNextSlide:
         response = client.get("/api/slides/next")
         assert response.status_code == 401
 
-    def test_get_next_slide_none_when_empty(self, auth_client):  # pylint: disable=redefined-outer-name
+    def test_get_next_slide_none_when_empty(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
         """No content → slide_type=none."""
         response = auth_client.get("/api/slides/next")
         assert response.status_code == 200
         assert response.json()["slide_type"] == "none"
 
-    def test_get_next_slide_with_llm_mock(self, auth_client):  # pylint: disable=redefined-outer-name
+    def test_get_next_slide_with_llm_mock(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
         """Respond to a free_recall quiz with mocked LLM grading."""
         ids = _seed_content(auth_client)
 

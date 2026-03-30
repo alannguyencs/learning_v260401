@@ -24,9 +24,7 @@ def get_open_round(
     )
 
 
-def get_latest_round(
-    db: Session, username: str, lesson_id: int
-) -> Optional[LessonRevisionRound]:
+def get_latest_round(db: Session, username: str, lesson_id: int) -> Optional[LessonRevisionRound]:
     """Return the round with the highest round_num for (username, lesson_id)."""
     return (
         db.query(LessonRevisionRound)
@@ -102,9 +100,7 @@ def complete_round(db: Session, round_id: int, completed_at_lesson_count: int) -
     db.commit()
 
 
-def get_due_rounds(
-    db: Session, username: str, lesson_count: int
-) -> list:
+def get_due_rounds(db: Session, username: str, lesson_count: int) -> list:
     """Return all open rounds where due_at_lesson_count <= lesson_count."""
     return (
         db.query(LessonRevisionRound)
@@ -174,9 +170,7 @@ def upsert_quiz_recall(
     return get_quiz_recall(db, username, quiz_id)
 
 
-def get_quiz_recall(
-    db: Session, username: str, quiz_id: int
-) -> Optional[UserQuizRecall]:
+def get_quiz_recall(db: Session, username: str, quiz_id: int) -> Optional[UserQuizRecall]:
     """Return the recall row for (username, quiz_id), or None."""
     return (
         db.query(UserQuizRecall)
@@ -188,9 +182,7 @@ def get_quiz_recall(
     )
 
 
-def get_quiz_recalls_for_lesson(
-    db: Session, username: str, lesson_id: int
-) -> list:
+def get_quiz_recalls_for_lesson(db: Session, username: str, lesson_id: int) -> list:
     """Return all recall rows for quizzes in a lesson (for weakest-first ordering)."""
     from src.models.content import ChapterQuiz, Chapter  # pylint: disable=import-outside-toplevel
 

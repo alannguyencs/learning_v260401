@@ -31,12 +31,10 @@ def setup(db_session):  # pylint: disable=redefined-outer-name
     chapter1 = create_chapter(db_session, lesson1.id, 1, "What is ML", "content1")
     chapter2 = create_chapter(db_session, lesson1.id, 2, "Types of ML", "content2")
     q1 = create_chapter_quiz(
-        db_session, chapter1.id, "multiple_choice", "Q1?",
-        None, "A", "B", "C", "D", ["A"]
+        db_session, chapter1.id, "multiple_choice", "Q1?", None, "A", "B", "C", "D", ["A"]
     )
     q2 = create_chapter_quiz(
-        db_session, chapter2.id, "multiple_choice", "Q2?",
-        None, "A", "B", "C", "D", ["B"]
+        db_session, chapter2.id, "multiple_choice", "Q2?", None, "A", "B", "C", "D", ["B"]
     )
 
     book2 = create_book(db_session, "dl", "Deep Learning")
@@ -60,7 +58,9 @@ def setup(db_session):  # pylint: disable=redefined-outer-name
 class TestTier1DueRevisions:
     """Tests for Tier 1: due revision quizzes."""
 
-    def test_tier1_due_revision_returned_first(self, setup):  # pylint: disable=redefined-outer-name
+    def test_tier1_due_revision_returned_first(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """When a revision is due, quiz slide is returned before chapter slide."""
         db = setup["db"]
         chapter1 = setup["chapter1"]
@@ -116,7 +116,9 @@ class TestTier1DueRevisions:
 class TestTier2NewChapter:
     """Tests for Tier 2: next unlearnt chapter."""
 
-    def test_tier2_new_chapter_after_no_revisions(self, setup):  # pylint: disable=redefined-outer-name
+    def test_tier2_new_chapter_after_no_revisions(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
         """Chapter slide returned for a fresh user with no due revisions."""
         db = setup["db"]
 

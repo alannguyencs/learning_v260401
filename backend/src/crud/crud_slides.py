@@ -10,9 +10,7 @@ from src.models.content import Book, Chapter, ChapterQuiz, Lesson
 from src.models.slide_management import QuizSkipLog
 
 
-def get_next_chapter_in_book(
-    db: Session, username: str, book_id: str
-) -> Optional[Chapter]:
+def get_next_chapter_in_book(db: Session, username: str, book_id: str) -> Optional[Chapter]:
     """Find the first chapter in book order that the user has not yet learnt."""
     learnt_ids = get_learnt_chapter_ids_for_user(db, username)
     return (
@@ -52,11 +50,7 @@ def get_eligible_quiz_ids_for_round(
 
     answered_ids = get_answered_quiz_ids_in_round(db, username, lesson_id, round_num)
 
-    skipped_rows = (
-        db.query(QuizSkipLog.quiz_id)
-        .filter(QuizSkipLog.username == username)
-        .all()
-    )
+    skipped_rows = db.query(QuizSkipLog.quiz_id).filter(QuizSkipLog.username == username).all()
     skipped_ids = {row.quiz_id for row in skipped_rows}
 
     return list(all_ids - answered_ids - skipped_ids)

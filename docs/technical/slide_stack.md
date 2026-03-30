@@ -1,4 +1,4 @@
-# Slide Stack — Technical Design (Backend)
+# Slide Stack — Technical Design
 
 [< Prev: Revision Scheduling](./revision_scheduling.md) | [Parent](./index.md)
 
@@ -158,6 +158,43 @@ Student answer: {user_answer}
 | `remove_quiz_skip(username, quiz_id)` | Delete skip log row on answer |
 | `get_skipped_quizzes(username)` | Skipped quizzes ordered by skipped_at ASC |
 
+## Frontend — Pages & Routes
+
+| Path | Component | Auth | Description |
+|------|-----------|------|-------------|
+| `/slides` | `SlidePage` | Required | Main slide view; renders chapter or quiz slide |
+
+## Frontend — Components
+
+| Component | File | Responsibility |
+|-----------|------|----------------|
+| `SlidePage` | `frontend/src/pages/SlidePage.jsx` | Orchestrates `useSlide`, renders correct sub-component |
+| `BookSelector` | `frontend/src/components/BookSelector.jsx` | Fetches book list, dropdown to filter slides by book |
+| `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt / Skip buttons |
+| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders MC/open-ended quiz, feedback panel, Next Slide |
+| `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
+
+## Frontend — Services & Hooks
+
+**`useSlide`** (`frontend/src/hooks/useSlide.js`):
+
+| Method | Description |
+|--------|-------------|
+| `fetchNextSlide(bookId)` | GET `/api/slides/next`; updates `slide` state |
+| `markLearnt(chapterId)` | POST mark-learnt; calls `fetchNextSlide` after |
+| `submitAnswer(quizId, body)` | POST respond; stores `feedback` state (no advance) |
+| `skipItem(quizId, body)` | POST respond with `is_skip=true`; calls `fetchNextSlide` after |
+| `selectBook(bookId)` | Sets `bookId`; calls `fetchNextSlide` |
+
+**`api.js`** additions (`frontend/src/services/api.js`):
+
+| Method | Endpoint |
+|--------|----------|
+| `listBooks()` | GET `/api/content/books` |
+| `getNextSlide(bookId)` | GET `/api/slides/next?book_id=bookId` |
+| `markChapterLearnt(chapterId)` | POST `/api/slides/chapters/{id}/learnt` |
+| `respondToQuiz(quizId, body)` | POST `/api/slides/quizzes/{id}/respond` |
+
 ## Component Checklist
 
 - [x] Migration — `scripts/sql/004_slide_skips.sql`
@@ -172,6 +209,17 @@ Student answer: {user_answer}
 - [x] Tests — `backend/tests/test_slide_selector.py`
 - [x] Tests — `backend/tests/test_slides_api.py`
 - [x] Tests — `backend/tests/test_quiz_grader.py`
+- [x] Hook — `frontend/src/hooks/useSlide.js`
+- [x] Page — `frontend/src/pages/SlidePage.jsx`
+- [x] Component — `frontend/src/components/BookSelector.jsx`
+- [x] Component — `frontend/src/components/ChapterSlide.jsx`
+- [x] Component — `frontend/src/components/QuizSlide.jsx`
+- [x] Component — `frontend/src/components/AllCaughtUp.jsx`
+- [x] Route — `frontend/src/App.js` (`/slides` → `SlidePage`)
+- [x] API methods — `frontend/src/services/api.js`
+- [x] Tests — `frontend/src/__tests__/components/ChapterSlide.test.js`
+- [x] Tests — `frontend/src/__tests__/components/QuizSlide.test.js`
+- [x] Tests — `frontend/src/__tests__/hooks/useSlide.test.js`
 
 ---
 

@@ -71,9 +71,7 @@ class SlideSelector:
     """Implements the 3-tier slide priority algorithm from spec §7.4."""
 
     @staticmethod
-    def get_next_slide(
-        db: Session, username: str, book_id: Optional[str] = None
-    ) -> SlideResult:
+    def get_next_slide(db: Session, username: str, book_id: Optional[str] = None) -> SlideResult:
         """
         Return the next slide for the user.
 
@@ -123,7 +121,9 @@ class SlideSelector:
         skipped = get_skipped_quizzes(db, username)
         if skipped:
             first = skipped[0]
-            quiz_dict = _build_quiz_dict(db, first["quiz_id"], first["round_num"], first["lesson_id"])
+            quiz_dict = _build_quiz_dict(
+                db, first["quiz_id"], first["round_num"], first["lesson_id"]
+            )
             return SlideResult(slide_type="quiz", chapter=None, quiz=quiz_dict)
 
         return SlideResult(slide_type="none", chapter=None, quiz=None)

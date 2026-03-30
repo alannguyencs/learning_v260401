@@ -113,14 +113,18 @@ class RevisionService:
                 round_row = crud_revision.increment_round_answered(db, round_row.id)
 
         if round_row is None:
-            return QuizResponseResult(round_done=False, next_round_num=None, next_round_due_at=None)
+            return QuizResponseResult(
+                round_done=False, next_round_num=None, next_round_due_at=None
+            )
 
         quizzes_in = round_row.quizzes_in_round
         quizzes_ans = round_row.quizzes_answered
         threshold_met = quizzes_in > 0 and (quizzes_ans / quizzes_in) > 0.50
 
         if not threshold_met:
-            return QuizResponseResult(round_done=False, next_round_num=None, next_round_due_at=None)
+            return QuizResponseResult(
+                round_done=False, next_round_num=None, next_round_due_at=None
+            )
 
         # Complete this round and schedule the next
         crud_revision.complete_round(db, round_row.id, lesson_count)
