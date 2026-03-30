@@ -211,7 +211,7 @@ class TestUploadQuizzes:
 class TestListBooks:
     """Tests for GET /api/content/books."""
 
-    def test_list_books(self, client, auth_client):
+    def test_list_books(self, client, auth_client):  # pylint: disable=redefined-outer-name
         """GET /api/content/books (session auth) returns list."""
         client.post(
             "/api/content/books",
@@ -232,7 +232,7 @@ class TestListBooks:
 class TestBookStructure:
     """Tests for GET /api/content/books/{book_id}/structure."""
 
-    def test_book_structure(self, client, auth_client):
+    def test_book_structure(self, client, auth_client):  # pylint: disable=redefined-outer-name
         """GET /api/content/books/{id}/structure returns full tree."""
         client.post(
             "/api/content/books",
@@ -264,7 +264,7 @@ class TestBookStructure:
         assert len(data["lessons"][0]["chapters"]) == 1
         assert data["lessons"][0]["chapters"][0]["quiz_count"] == 0
 
-    def test_book_structure_not_found(self, auth_client):
+    def test_book_structure_not_found(self, auth_client):  # pylint: disable=redefined-outer-name
         """GET /api/content/books/{id}/structure for unknown book returns 404."""
         response = auth_client.get("/api/content/books/nonexistent/structure")
         assert response.status_code == 404

@@ -42,12 +42,7 @@ def create_lesson(db: Session, book_id: str, lesson_index: int, title: str) -> L
 
 def list_lessons_in_book(db: Session, book_id: str) -> List[Lesson]:
     """List all lessons in a book ordered by lesson_index."""
-    return (
-        db.query(Lesson)
-        .filter(Lesson.book_id == book_id)
-        .order_by(Lesson.lesson_index)
-        .all()
-    )
+    return db.query(Lesson).filter(Lesson.book_id == book_id).order_by(Lesson.lesson_index).all()
 
 
 def get_lesson_chapter_count(db: Session, lesson_id: int) -> int:

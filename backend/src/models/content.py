@@ -1,5 +1,7 @@
 """Content models: Book, Lesson, Chapter, ChapterQuiz."""
 
+# pylint: disable=not-callable
+
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.sql import func
 
