@@ -1,6 +1,6 @@
 # Authentication — Technical Design
 
-[< Prev: System Pipelines](./system_pipelines.md) | [Parent](./index.md) | [Next: Quiz >](./quiz.md)
+[< Prev: System Pipelines](./system_pipelines.md) | [Parent](./index.md)
 
 ## Related Docs
 - Abstract: [abstract/authentication.md](../abstract/authentication.md)
@@ -166,4 +166,4 @@ Clear frontend auth state
 
 ---
 
-[< Prev: System Pipelines](./system_pipelines.md) | [Parent](./index.md) | [Next: Quiz >](./quiz.md)
+[< Prev: System Pipelines](./system_pipelines.md) | [Parent](./index.md)

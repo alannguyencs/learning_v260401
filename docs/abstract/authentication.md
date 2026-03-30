@@ -1,6 +1,6 @@
 # Authentication
 
-[Parent](./index.md) | [Next: Quiz >](./quiz.md)
+[Parent](./index.md)
 
 **Status:** Plan
 
@@ -47,4 +47,4 @@ Session created, user redirected to quiz page
 
 ---
 
-[Parent](./index.md) | [Next: Quiz >](./quiz.md)
+[Parent](./index.md)

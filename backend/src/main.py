@@ -1,7 +1,6 @@
 """Main FastAPI application entry point."""
 
 import logging
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,9 +8,8 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from src.configs import settings
 from src.api.api_router import api_router
-from src.database import Base, engine, SessionLocal  # noqa: F401
-from src import models  # noqa: F401
-from src.service.topic_lookup import sync_from_db
+from src.database import Base, engine, SessionLocal  # noqa: F401  # pylint: disable=unused-import
+from src import models  # noqa: F401  # pylint: disable=unused-import
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -19,22 +17,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Sync topic cache from DB on startup."""
-    db = SessionLocal()
-    try:
-        sync_from_db(db)
-    finally:
-        db.close()
-    yield
-
-
 app = FastAPI(
     title="Learning App API",
     description="Backend API for the Learning App",
     version="1.0.0",
-    lifespan=lifespan,
 )
 
 # Session middleware must be added before CORS

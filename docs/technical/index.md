@@ -4,5 +4,3 @@
 |---|------|-------------|
 | 1 | [System Pipelines](./system_pipelines.md) | Cross-cutting pipeline diagrams for all user entry points |
 | 2 | [Authentication](./authentication.md) | Session cookie + JWT login, user model, protected routes |
-| 3 | [Quiz](./quiz.md) | Quiz generation, MEMORIZE selection, grading, and memory updates |
-| 4 | [Recall Dashboard](./recall_dashboard.md) | Recall heatmap, topic matrix, and progress stats |

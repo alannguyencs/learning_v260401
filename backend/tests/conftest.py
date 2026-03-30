@@ -1,5 +1,7 @@
 """Pytest configuration and fixtures."""
 
+# pylint: disable=wrong-import-position
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-pytest")
@@ -37,7 +39,7 @@ def db_session():
 
 
 @pytest.fixture(scope="function")
-def client(db_session):
+def client(db_session):  # pylint: disable=redefined-outer-name
     """Create a test client with overridden DB dependency."""
 
     def override_get_db():
