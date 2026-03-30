@@ -36,7 +36,7 @@ class TestMarkChapterLearnt:
     """Tests for LearningProgressService.mark_chapter_learnt."""
 
     def test_mark_chapter_learnt_first_time(self, db_session):
-        """Marking a chapter creates a progress row and returns lesson_fully_learnt=False (2 chapters)."""
+        """Marking a chapter creates a progress row, lesson_fully_learnt=False (2 chapters)."""
         _seed_user(db_session)
         lesson_id, chapter_ids = _seed_lesson_with_chapters(db_session, num_chapters=2)
 

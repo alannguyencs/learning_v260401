@@ -108,6 +108,11 @@ def create_chapter_quiz(
     return db_quiz
 
 
+def get_chapter_quiz(db: Session, quiz_id: int) -> Optional[ChapterQuiz]:
+    """Get a single quiz by ID."""
+    return db.query(ChapterQuiz).filter(ChapterQuiz.id == quiz_id).first()
+
+
 def list_quizzes_for_chapter(db: Session, chapter_id: int) -> List[ChapterQuiz]:
     """List all quizzes for a chapter."""
     return db.query(ChapterQuiz).filter(ChapterQuiz.chapter_id == chapter_id).all()
@@ -120,4 +125,14 @@ def list_quizzes_for_lesson(db: Session, lesson_id: int) -> List[ChapterQuiz]:
         .join(Chapter, ChapterQuiz.chapter_id == Chapter.id)
         .filter(Chapter.lesson_id == lesson_id)
         .all()
+    )
+
+
+def get_lesson_quiz_count(db: Session, lesson_id: int) -> int:
+    """Count total quizzes across all chapters in a lesson."""
+    return (
+        db.query(ChapterQuiz)
+        .join(Chapter, ChapterQuiz.chapter_id == Chapter.id)
+        .filter(Chapter.lesson_id == lesson_id)
+        .count()
     )

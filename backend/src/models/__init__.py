@@ -1,6 +1,8 @@
 from .user import Users
 from .content import Book, Lesson, Chapter, ChapterQuiz
 from .learning_progress import UserChapterProgress, UserLessonCount
+from .revision_scheduling import LessonRevisionRound, UserQuizRecall
+from .slide_management import QuizSkipLog
 
 __all__ = [
     "Users",
@@ -10,4 +12,7 @@ __all__ = [
     "ChapterQuiz",
     "UserChapterProgress",
     "UserLessonCount",
+    "LessonRevisionRound",
+    "UserQuizRecall",
+    "QuizSkipLog",
 ]
