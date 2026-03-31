@@ -117,9 +117,9 @@ class RevisionService:
                 round_done=False, next_round_num=None, next_round_due_at=None
             )
 
-        quizzes_in = round_row.quizzes_in_round
+        total_quizzes = get_lesson_quiz_count(db, lesson_id)
         quizzes_ans = round_row.quizzes_answered
-        threshold_met = quizzes_in > 0 and (quizzes_ans / quizzes_in) > 0.50
+        threshold_met = total_quizzes > 0 and (quizzes_ans / total_quizzes) > 0.50
 
         if not threshold_met:
             return QuizResponseResult(

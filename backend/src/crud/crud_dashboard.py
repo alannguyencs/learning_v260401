@@ -51,8 +51,8 @@ def get_activity_log(db: Session, username: str) -> list[dict]:
                    l.lesson_index,
                    l.title AS lesson_title,
                    CAST(c.id AS INTEGER) AS chapter_id,
-                   NULL AS answer_result,
-                   NULL AS recall_rate
+                   CAST(NULL AS VARCHAR) AS answer_result,
+                   CAST(NULL AS DOUBLE PRECISION) AS recall_rate
             FROM user_chapter_progress ucp
             JOIN chapters c ON c.id = ucp.chapter_id
             JOIN lessons l ON l.id = c.lesson_id
@@ -66,8 +66,8 @@ def get_activity_log(db: Session, username: str) -> list[dict]:
                    l.lesson_index,
                    l.title,
                    CAST(cq.chapter_id AS INTEGER),
-                   NULL,
-                   NULL
+                   CAST(NULL AS VARCHAR),
+                   CAST(NULL AS DOUBLE PRECISION)
             FROM quiz_skip_log qsl
             JOIN chapter_quizzes cq ON cq.id = qsl.quiz_id
             JOIN lessons l ON l.id = qsl.lesson_id
@@ -93,14 +93,13 @@ def get_activity_log(db: Session, username: str) -> list[dict]:
             UNION ALL
 
             SELECT lrr.created_at,
-                   'ROUND CREATED (R' || CAST(lrr.round_num AS VARCHAR)
-                       || ' ' || lrr.status || ')',
+                   'ROUND CREATED (R' || CAST(lrr.round_num AS VARCHAR) || ')',
                    l.book_id,
                    l.lesson_index,
                    l.title,
-                   NULL,
-                   NULL,
-                   NULL
+                   CAST(NULL AS INTEGER),
+                   CAST(NULL AS VARCHAR),
+                   CAST(NULL AS DOUBLE PRECISION)
             FROM lesson_revision_rounds lrr
             JOIN lessons l ON l.id = lrr.lesson_id
             WHERE lrr.username = :username
