@@ -92,7 +92,7 @@ Sign in as `alan` (password: `sunny`) before running any test. Navigate to http:
 - [ ] Verify rows with Action = `SKIP` exist with `answer_result = —` and `recall_rate = —`
 - [ ] Verify a row with Action = `ANSWER` and `answer_result = wrong` and `recall_rate = 1.2`
 - [ ] Verify a row with Action = `ANSWER` and `answer_result = correct` and `recall_rate` < 1.0
-- [ ] Verify a row with Action = `ROUND CREATED (R0 done)` exists
+- [ ] Verify a row with Action = `ROUND CREATED (R0)` exists
 
 **Expected UI state**: Each action type has its own row with correct column values; `—` shown for non-applicable cells.
 

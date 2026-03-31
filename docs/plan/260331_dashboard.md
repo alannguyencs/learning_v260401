@@ -402,3 +402,23 @@ After implementation is complete, execute `docs/chrome_test/dashboard.md`.
 ## Open Questions
 
 None.
+
+---
+
+## Change Request — 2026-03-31
+
+**Request**: R0 completes (and R1 is created) only when BOTH conditions are met:
+1. More than 50% of total lesson quizzes have been answered by the user.
+2. All chapters in the lesson have been marked as learnt.
+
+**Why**: Without the second condition, R0 could complete while the user is still reading chapters, causing quizzes from unlearnt chapters to be routed to R1 (not due) instead of R0 (immediately available). This left chapters 2–4 quizzes inaccessible.
+
+**What Changes:**
+
+| Layer | Change |
+|---|---|
+| `crud_learning_progress.py` | Add `all_lesson_chapters_learnt(db, username, lesson_id)` |
+| `revision_service.py` | `threshold_met` now requires both 50% answered AND all chapters learnt |
+| `test_revision_service.py` | Update completion tests; add negative test for partial-chapters case |
+| `docs/technical/revision_scheduling.md` | Update Round Completion Threshold algorithm and pipeline |
+| `docs/chrome_test/dashboard.md` | Update ROUND CREATED label from "R0 done" to "R0" |

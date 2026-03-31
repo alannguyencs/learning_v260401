@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from src.crud import crud_revision
+from src.crud import crud_learning_progress, crud_revision
 from src.crud.crud_content import get_lesson_quiz_count
 
 MEMORIZE_DIVISOR = 10
@@ -119,7 +119,12 @@ class RevisionService:
 
         total_quizzes = get_lesson_quiz_count(db, lesson_id)
         quizzes_ans = round_row.quizzes_answered
-        threshold_met = total_quizzes > 0 and (quizzes_ans / total_quizzes) > 0.50
+        all_chapters_done = crud_learning_progress.all_lesson_chapters_learnt(
+            db, username, lesson_id
+        )
+        threshold_met = (
+            total_quizzes > 0 and (quizzes_ans / total_quizzes) > 0.50 and all_chapters_done
+        )
 
         if not threshold_met:
             return QuizResponseResult(

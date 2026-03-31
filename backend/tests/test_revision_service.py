@@ -11,6 +11,7 @@ from src.crud.crud_content import (
     create_chapter_quiz,
     create_lesson,
 )
+from src.crud.crud_learning_progress import mark_chapter_learnt
 from src.crud.crud_revision import (
     complete_round,
     get_latest_round,
@@ -165,12 +166,16 @@ class TestRecordQuizResponse:
         assert r0.quizzes_answered == 0
 
     def test_round_completes_at_50_percent(self, setup):  # pylint: disable=redefined-outer-name
-        """Answering >50% flips round status to done."""
+        """Answering >50% of total lesson quizzes flips round status to done."""
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
 
-        # 2 quizzes in round — answer 2 → 100% > 50%
+        # Mark all chapters learnt (required second condition)
+        mark_chapter_learnt(db, "testuser", setup["chapter1"].id)
+        mark_chapter_learnt(db, "testuser", setup["chapter2"].id)
+
+        # 3 total lesson quizzes — answer 2 → 66% > 50%, all chapters learnt
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
         RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 1)
         result = RevisionService.record_quiz_response(
@@ -179,6 +184,25 @@ class TestRecordQuizResponse:
 
         assert result.round_done is True
 
+    def test_round_does_not_complete_without_all_chapters_learnt(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """R0 stays open when >50% answered but not all chapters are learnt."""
+        db = setup["db"]
+        lesson = setup["lesson"]
+        quiz_ids = setup["quiz_ids_ch1"]
+
+        # Only chapter1 learnt — chapter2 still pending
+        mark_chapter_learnt(db, "testuser", setup["chapter1"].id)
+
+        RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
+        RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 1)
+        result = RevisionService.record_quiz_response(
+            db, "testuser", quiz_ids[1], lesson.id, 0, True, 1
+        )
+
+        assert result.round_done is False
+
     def test_next_round_created_after_completion(
         self, setup
     ):  # pylint: disable=redefined-outer-name
@@ -186,6 +210,10 @@ class TestRecordQuizResponse:
         db = setup["db"]
         lesson = setup["lesson"]
         quiz_ids = setup["quiz_ids_ch1"]
+
+        # Mark all chapters learnt (required second condition)
+        mark_chapter_learnt(db, "testuser", setup["chapter1"].id)
+        mark_chapter_learnt(db, "testuser", setup["chapter2"].id)
 
         RevisionService.on_chapter_learnt(db, "testuser", lesson.id, quiz_ids, 1)
         RevisionService.record_quiz_response(db, "testuser", quiz_ids[0], lesson.id, 0, True, 5)

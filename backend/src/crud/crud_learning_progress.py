@@ -73,6 +73,15 @@ def increment_lesson_count(db: Session, username: str) -> int:
     return get_lesson_count(db, username)
 
 
+def all_lesson_chapters_learnt(db: Session, username: str, lesson_id: int) -> bool:
+    """Return True if every chapter in the lesson has been marked as learnt by the user."""
+    total = db.query(Chapter).filter(Chapter.lesson_id == lesson_id).count()
+    if total == 0:
+        return False
+    learnt = count_learnt_chapters_in_lesson(db, username, lesson_id)
+    return learnt >= total
+
+
 def get_learnt_chapter_ids_for_user(db: Session, username: str) -> Set[int]:
     """Return all chapter IDs the user has marked as learnt."""
     rows = (

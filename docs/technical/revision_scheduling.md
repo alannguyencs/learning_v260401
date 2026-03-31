@@ -72,7 +72,12 @@ Case C: R0 is done
 
 ### Round Completion Threshold
 
-`quizzes_answered / quizzes_in_round > 0.50`
+Both conditions must be true simultaneously:
+
+1. `quizzes_answered / total_lesson_quizzes > 0.50`
+2. All chapters in the lesson are marked as learnt by the user
+
+`total_lesson_quizzes` is the count of all quizzes across every chapter in the lesson (not just the chapters learnt so far). This prevents R0 from completing while the user is still progressing through chapters.
 
 ### Next Round Interval
 
@@ -129,7 +134,8 @@ RevisionService.record_quiz_response(db, username, quiz_id, lesson_id, round_num
   │     ├── upsert_quiz_recall(db, username, quiz_id, new_rate, lesson_count)
   │     └── increment_round_answered(db, round_row.id) → updated round_row
   │
-  ├── If quizzes_answered / quizzes_in_round > 0.50:
+  ├── If quizzes_answered / total_lesson_quizzes > 0.50
+  │   AND all_lesson_chapters_learnt(db, username, lesson_id):
   │     ├── complete_round(db, round_row.id, lesson_count)
   │     ├── Create next round (round_num+1, due_at = lesson_count + 2^(round_num+1))
   │     └── Return QuizResponseResult(round_done=True, next_round_num, next_round_due_at)
@@ -173,13 +179,20 @@ RevisionService.record_quiz_response(db, username, quiz_id, lesson_id, round_num
 | `get_quiz_recall(username, quiz_id)` | SELECT recall row |
 | `get_quiz_recalls_for_lesson(username, lesson_id)` | SELECT all recall rows for a lesson |
 
+**`crud_learning_progress.py`** (used by `RevisionService`):
+
+| Function | Description |
+|----------|-------------|
+| `all_lesson_chapters_learnt(username, lesson_id)` | True if every chapter in the lesson has a `user_chapter_progress` row for the user |
+
 ## Constraints & Edge Cases
 
 - R0 is due immediately (`due_at_lesson_count = lesson_count` at time of first chapter learnt).
 - Skips (`is_correct=None`) do not increment `quizzes_answered` and do not update recall.
 - Quizzes added after R0 is done go into the next open round (R1 or higher).
 - `quizzes_in_round` for next round after completion is set to total quizzes in the lesson.
-- If `quizzes_in_round = 0`, the completion threshold is never met (no division by zero).
+- If `total_lesson_quizzes = 0`, the completion threshold is never met (no division by zero).
+- If not all chapters are learnt, R0 stays open even when >50% of answered quizzes is reached; completion fires on the next answer once the second condition is satisfied.
 
 ## Component Checklist
 
