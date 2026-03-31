@@ -53,11 +53,17 @@ describe("QuizSlide", () => {
         onNext={jest.fn()}
       />,
     );
-    expect(screen.getByPlaceholderText("Type your answer...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Type your answer..."),
+    ).toBeInTheDocument();
   });
 
   it("shows feedback panel after submit", () => {
-    const mockFeedback = { is_correct: true, feedback: "Well explained.", round_done: false };
+    const mockFeedback = {
+      is_correct: true,
+      feedback: "Well explained.",
+      round_done: false,
+    };
     render(
       <QuizSlide
         quiz={mcQuiz}
@@ -72,7 +78,11 @@ describe("QuizSlide", () => {
   });
 
   it("Next Slide button appears after feedback shown", () => {
-    const mockFeedback = { is_correct: false, feedback: "Try again.", round_done: false };
+    const mockFeedback = {
+      is_correct: false,
+      feedback: "Try again.",
+      round_done: false,
+    };
     render(
       <QuizSlide
         quiz={recallQuiz}

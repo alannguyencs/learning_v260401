@@ -65,7 +65,9 @@ describe("useSlide", () => {
     apiService.getNextSlide
       .mockResolvedValueOnce(firstSlide)
       .mockResolvedValueOnce(secondSlide);
-    apiService.markChapterLearnt.mockResolvedValue({ lesson_fully_learnt: true });
+    apiService.markChapterLearnt.mockResolvedValue({
+      lesson_fully_learnt: true,
+    });
 
     const { result } = renderHook(() => useSlide());
 
@@ -87,7 +89,11 @@ describe("useSlide", () => {
       quiz: { id: 5, question: "Q?" },
       chapter: null,
     };
-    const mockFeedback = { is_correct: true, feedback: "Good.", round_done: false };
+    const mockFeedback = {
+      is_correct: true,
+      feedback: "Good.",
+      round_done: false,
+    };
     apiService.getNextSlide.mockResolvedValue(mockSlide);
     apiService.respondToQuiz.mockResolvedValue(mockFeedback);
 
@@ -96,7 +102,12 @@ describe("useSlide", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
-      await result.current.submitAnswer(5, { round_num: 0, lesson_id: 1, user_answer: "A", is_skip: false });
+      await result.current.submitAnswer(5, {
+        round_num: 0,
+        lesson_id: 1,
+        user_answer: "A",
+        is_skip: false,
+      });
     });
 
     expect(result.current.feedback).toEqual(mockFeedback);

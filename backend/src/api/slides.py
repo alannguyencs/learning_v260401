@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from src.auth import authenticate_user_from_request
-from src.crud import crud_learning_progress
+from src.crud import crud_dashboard, crud_learning_progress
 from src.crud.crud_content import get_chapter_quiz
 from src.crud.crud_slides import log_quiz_skip, remove_quiz_skip
 from src.database import get_db
@@ -106,6 +106,14 @@ def respond_to_quiz(
     remove_quiz_skip(db, user.username, quiz_id)
     result = RevisionService.record_quiz_response(
         db, user.username, quiz_id, body.lesson_id, body.round_num, is_correct, lesson_count
+    )
+    crud_dashboard.log_quiz_answer(
+        db,
+        username=user.username,
+        quiz_id=quiz_id,
+        lesson_id=body.lesson_id,
+        round_num=body.round_num,
+        is_correct=is_correct,
     )
     return QuizRespondResponse(
         is_correct=is_correct,

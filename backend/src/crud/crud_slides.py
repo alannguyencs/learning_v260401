@@ -39,11 +39,18 @@ def get_next_chapters_all_books(db: Session, username: str) -> List[Chapter]:
 def get_eligible_quiz_ids_for_round(
     db: Session, username: str, lesson_id: int, round_num: int
 ) -> List[int]:
-    """Return quiz IDs for the lesson not yet answered or skipped in this round."""
+    """Return quiz IDs for the lesson not yet answered or skipped in this round.
+
+    Only includes quizzes from chapters the user has already learnt.
+    """
+    learnt_chapter_ids = get_learnt_chapter_ids_for_user(db, username)
     all_quizzes = (
         db.query(ChapterQuiz)
         .join(Chapter, ChapterQuiz.chapter_id == Chapter.id)
-        .filter(Chapter.lesson_id == lesson_id)
+        .filter(
+            Chapter.lesson_id == lesson_id,
+            ChapterQuiz.chapter_id.in_(learnt_chapter_ids) if learnt_chapter_ids else False,
+        )
         .all()
     )
     all_ids = {q.id for q in all_quizzes}

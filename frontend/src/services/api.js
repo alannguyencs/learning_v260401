@@ -56,6 +56,11 @@ const apiService = {
     );
     return response.data;
   },
+
+  getActivityLog: async () => {
+    const response = await api.get("/api/dashboard/activity-log");
+    return response.data;
+  },
 };
 
 export default apiService;

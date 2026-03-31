@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import useSlide from "../hooks/useSlide";
 import BookSelector from "../components/BookSelector";
 import ChapterSlide from "../components/ChapterSlide";
@@ -22,6 +23,14 @@ const SlidePage = () => {
   return (
     <div className="min-h-screen bg-gray-800">
       <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="flex justify-end mb-2">
+          <Link
+            to="/dashboard"
+            className="text-sm text-gray-400 hover:text-gray-200 underline"
+          >
+            Activity Log
+          </Link>
+        </div>
         <BookSelector bookId={bookId} onSelect={selectBook} />
 
         {loading && (
@@ -29,7 +38,9 @@ const SlidePage = () => {
         )}
 
         {error && (
-          <div className="bg-red-900 text-red-200 rounded p-4 mb-4">{error}</div>
+          <div className="bg-red-900 text-red-200 rounded p-4 mb-4">
+            {error}
+          </div>
         )}
 
         {!loading && !error && slide?.slide_type === "chapter" && (

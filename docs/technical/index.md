@@ -8,3 +8,4 @@
 | 4 | [Learning Progress](./learning_progress.md) | Chapter-learnt tracking, lesson count service |
 | 5 | [Revision Scheduling](./revision_scheduling.md) | R0/Rn rounds, round completion, MEMORIZE recall tracking |
 | 6 | [Slide Stack](./slide_stack.md) | Slide selector, AI grader, REST endpoints |
+| 7 | [Dashboard](./dashboard.md) | Activity log page showing interaction history |

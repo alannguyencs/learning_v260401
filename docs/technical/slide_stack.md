@@ -85,8 +85,9 @@ Body: { round_num, lesson_id, user_answer, is_skip }
         → { is_correct, feedback }
   │
   ├── remove_quiz_skip(db, username, quiz_id)
-  └── record_quiz_response(..., is_correct) → QuizResponseResult
-      Return { is_correct, feedback, round_done }
+  ├── record_quiz_response(..., is_correct) → QuizResponseResult
+  ├── crud_dashboard.log_quiz_answer(db, username, quiz_id, lesson_id, round_num, is_correct)  ← writes to quiz_answer_log
+  └── Return { is_correct, feedback, round_done }
 ```
 
 ## API Layer
