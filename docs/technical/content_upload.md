@@ -66,6 +66,10 @@ Read endpoints use the session cookie via `authenticate_user_from_request`.
 | `expected_answer` | Text | nullable — populated for open-ended types |
 | `option_a/b/c/d` | Text | nullable — populated for `multiple_choice` only |
 | `correct_options` | JSONB | nullable — e.g. `["A"]` or `["A","C"]` |
+| `section_index` | Integer | nullable — lesson section number (1=Summary, 2=Recommendation, etc.) |
+| `section_name` | String | nullable — human-readable section label (e.g. "Summary") |
+| `quiz_take_away` | Text | nullable — one-sentence anchor shown after answering |
+| `quiz_metadata` | JSONB | nullable — format-specific data (blanks, key_points, per-option explanations) |
 | `created_at` | Timestamp | DEFAULT NOW() |
 
 ## Pipeline
@@ -86,6 +90,9 @@ Local agent
   │
   └── POST /api/content/quizzes { chapter_id, quizzes: [...] }
             verify_agent_token → crud_content.create_chapter_quiz × N
+            each quiz carries: quiz_type, question, expected_answer,
+            option_a/b/c/d, correct_options, section_index, section_name,
+            quiz_take_away, quiz_metadata
 ```
 
 ### Frontend Read Sequence
@@ -109,6 +116,8 @@ Frontend (session cookie)
 | POST | `/api/content/lessons` | Bearer | `{book_id, lesson_index, title}` | `LessonResponse` |
 | POST | `/api/content/chapters` | Bearer | `{lesson_id, chapter_index, title, content}` | `ChapterResponse` |
 | POST | `/api/content/quizzes` | Bearer | `{chapter_id, quizzes: [QuizCreate]}` | `{inserted: int}` |
+
+`QuizCreate` now accepts four additional optional fields: `section_index`, `section_name`, `quiz_take_away`, `quiz_metadata`.
 | GET | `/api/content/books` | Session | — | `list[BookResponse]` |
 | GET | `/api/content/books/{book_id}/structure` | Session | — | `BookStructureResponse` |
 
@@ -144,14 +153,16 @@ Set `WEBAPP_ACCESS_TOKEN` in `.env` before running the agent upload workflow.
 
 ## Component Checklist
 
-- [ ] Migration — `scripts/sql/001_content_schema.sql`
-- [ ] Model — `backend/src/models/content.py` (`Book`, `Lesson`, `Chapter`, `ChapterQuiz`)
-- [ ] CRUD — `backend/src/crud/crud_content.py`
-- [ ] Schemas — `backend/src/schemas/content.py`
-- [ ] API — `backend/src/api/content.py` (6 endpoints + `verify_agent_token`)
-- [ ] Config — `backend/src/configs.py` (`webapp_access_token`)
-- [ ] Router — registered in `backend/src/api/api_router.py`
-- [ ] Tests — `backend/tests/test_content_api.py`
+- [x] Migration — `scripts/sql/001_content_schema.sql`
+- [x] Migration — `scripts/sql/006_chapter_quizzes_rich_metadata.sql` (section_index, section_name, quiz_take_away, quiz_metadata)
+- [x] Model — `backend/src/models/content.py` (`Book`, `Lesson`, `Chapter`, `ChapterQuiz`)
+- [x] CRUD — `backend/src/crud/crud_content.py`
+- [x] Schemas — `backend/src/schemas/content.py`
+- [x] API — `backend/src/api/content.py` (6 endpoints + `verify_agent_token`)
+- [x] Config — `backend/src/configs.py` (`webapp_access_token`)
+- [x] Router — registered in `backend/src/api/api_router.py`
+- [x] Tests — `backend/tests/test_content_api.py`
+- [x] Upload script — `.claude/skills/lesson-upload/upload.py` (full pipeline rewrite)
 
 ---
 

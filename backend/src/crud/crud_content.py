@@ -89,6 +89,10 @@ def create_chapter_quiz(
     option_c: Optional[str],
     option_d: Optional[str],
     correct_options: Optional[list],
+    section_index: Optional[int] = None,
+    section_name: Optional[str] = None,
+    quiz_take_away: Optional[str] = None,
+    quiz_metadata: Optional[dict] = None,
 ) -> ChapterQuiz:
     """Create a quiz question for a chapter."""
     db_quiz = ChapterQuiz(
@@ -101,6 +105,10 @@ def create_chapter_quiz(
         option_c=option_c,
         option_d=option_d,
         correct_options=correct_options,
+        section_index=section_index,
+        section_name=section_name,
+        quiz_take_away=quiz_take_away,
+        quiz_metadata=quiz_metadata,
     )
     db.add(db_quiz)
     db.commit()

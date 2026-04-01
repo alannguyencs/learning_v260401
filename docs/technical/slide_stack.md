@@ -112,7 +112,7 @@ Body: { round_num, lesson_id, user_answer, is_skip }
 |-------|------|-------------|
 | `slide_type` | str | `'chapter'`, `'quiz'`, or `'none'` |
 | `chapter` | dict \| None | Chapter data enriched with book/lesson info |
-| `quiz` | dict \| None | Quiz data enriched with round/lesson/book info |
+| `quiz` | dict \| None | Quiz data enriched with round/lesson/book info, including `section_name`, `quiz_take_away`, `quiz_metadata` |
 
 **`QuizGrader`** (`backend/src/service/quiz_grader.py`):
 
@@ -172,7 +172,7 @@ Student answer: {user_answer}
 | `SlidePage` | `frontend/src/pages/SlidePage.jsx` | Orchestrates `useSlide`, renders correct sub-component |
 | `BookSelector` | `frontend/src/components/BookSelector.jsx` | Fetches book list, dropdown to filter slides by book |
 | `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt / Skip buttons |
-| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders MC/open-ended quiz, feedback panel, Next Slide |
+| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC (options + per-option explanations); shows section_name badge and quiz_take_away in feedback |
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 
 ## Frontend — Services & Hooks
@@ -214,7 +214,7 @@ Student answer: {user_answer}
 - [x] Page — `frontend/src/pages/SlidePage.jsx`
 - [x] Component — `frontend/src/components/BookSelector.jsx`
 - [x] Component — `frontend/src/components/ChapterSlide.jsx`
-- [x] Component — `frontend/src/components/QuizSlide.jsx`
+- [x] Component — `frontend/src/components/QuizSlide.jsx` (format-specific UI: cloze, free_recall, teach_back, MC)
 - [x] Component — `frontend/src/components/AllCaughtUp.jsx`
 - [x] Route — `frontend/src/App.js` (`/slides` → `SlidePage`)
 - [x] API methods — `frontend/src/services/api.js`

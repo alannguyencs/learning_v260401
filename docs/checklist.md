@@ -9,6 +9,7 @@
 - [x] docs/plan/260330_slide_selection_api.md
 - [x] docs/plan/260330_frontend_slides.md
 - [x] docs/plan/260331_dashboard.md
+- [x] docs/plan/260401_rich_quiz_metadata.md
 
 ## DB Cloud Migration
 

@@ -113,6 +113,10 @@ def create_quizzes(
             option_c=quiz.option_c,
             option_d=quiz.option_d,
             correct_options=quiz.correct_options,
+            section_index=quiz.section_index,
+            section_name=quiz.section_name,
+            quiz_take_away=quiz.quiz_take_away,
+            quiz_metadata=quiz.quiz_metadata,
         )
     return QuizBatchResponse(inserted=len(body.quizzes))
 

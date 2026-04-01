@@ -81,6 +81,10 @@ class QuizCreate(BaseModel):
     option_c: Optional[str] = None
     option_d: Optional[str] = None
     correct_options: Optional[List[str]] = None
+    section_index: Optional[int] = None
+    section_name: Optional[str] = None
+    quiz_take_away: Optional[str] = None
+    quiz_metadata: Optional[dict] = None
 
 
 class QuizBatchCreate(BaseModel):

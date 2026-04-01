@@ -180,3 +180,67 @@ class TestTier3Skipped:
         # No revision rounds created (on_chapter_learnt not called), no skips
         result = SlideSelector.get_next_slide(db, "testuser")
         assert result.slide_type == "none"
+
+
+class TestRichMetadataInQuizDict:
+    """Tests that _build_quiz_dict includes the new rich metadata fields."""
+
+    def test_quiz_slide_includes_rich_metadata(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """_build_quiz_dict includes section_name, quiz_take_away, quiz_metadata when present."""
+        db = setup["db"]
+        lesson1 = setup["lesson1"]
+
+        # Dedicated chapter with only the rich quiz so SlideSelector returns it
+        rich_chapter = create_chapter(db, lesson1.id, 99, "Rich Chapter", "content_rich")
+        q = create_chapter_quiz(
+            db,
+            rich_chapter.id,
+            "free_recall",
+            "Describe the FBI framework.",
+            "Emergency, Essentials, Equity, Enjoyment.",
+            None,
+            None,
+            None,
+            None,
+            None,
+            section_index=1,
+            section_name="Summary",
+            quiz_take_away="FBI forces discipline by funding Enjoyment last.",
+            quiz_metadata={"key_points": ["Emergency first", "Enjoyment last"]},
+        )
+
+        # Mark rich_chapter learnt → R0 created with only the rich quiz
+        lp = LearningProgressService.mark_chapter_learnt(db, "testuser", rich_chapter.id)
+        RevisionService.on_chapter_learnt(
+            db, "testuser", lp.lesson_id, lp.chapter_quiz_ids, lp.lesson_count
+        )
+
+        result = SlideSelector.get_next_slide(db, "testuser")
+        assert result.slide_type == "quiz"
+        quiz_dict = result.quiz
+        assert quiz_dict["id"] == q.id
+        assert quiz_dict["section_name"] == "Summary"
+        assert quiz_dict["quiz_take_away"] == "FBI forces discipline by funding Enjoyment last."
+        assert quiz_dict["quiz_metadata"] == {"key_points": ["Emergency first", "Enjoyment last"]}
+        _ = lesson1
+
+    def test_quiz_slide_null_metadata_safe(self, setup):  # pylint: disable=redefined-outer-name
+        """_build_quiz_dict returns None for new fields when DB columns are NULL."""
+        db = setup["db"]
+        chapter1 = setup["chapter1"]
+        lesson1 = setup["lesson1"]
+
+        lp = LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
+        RevisionService.on_chapter_learnt(
+            db, "testuser", lp.lesson_id, lp.chapter_quiz_ids, lp.lesson_count
+        )
+
+        result = SlideSelector.get_next_slide(db, "testuser")
+        assert result.slide_type == "quiz"
+        quiz_dict = result.quiz
+        assert quiz_dict["section_name"] is None
+        assert quiz_dict["quiz_take_away"] is None
+        assert quiz_dict["quiz_metadata"] is None
+        _ = lesson1

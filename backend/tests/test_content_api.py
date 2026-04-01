@@ -4,6 +4,7 @@ import pytest
 from passlib.context import CryptContext
 
 from src.configs import settings
+from src.crud.crud_content import list_quizzes_for_chapter
 from src.crud.crud_user import create_user
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -206,6 +207,100 @@ class TestUploadQuizzes:
         )
         assert response.status_code == 200
         assert response.json()["inserted"] == 1
+
+    def test_upload_quiz_with_rich_metadata(self, client, db_session):
+        """POST /api/content/quizzes with rich metadata fields stores all new columns."""
+        chapter_id = self._setup_chapter(client)
+        response = client.post(
+            "/api/content/quizzes",
+            json={
+                "chapter_id": chapter_id,
+                "quizzes": [
+                    {
+                        "quiz_type": "free_recall",
+                        "question": "Describe the FBI framework.",
+                        "expected_answer": "Emergency, Essentials, Equity, Enjoyment.",
+                        "section_index": 1,
+                        "section_name": "Summary",
+                        "quiz_take_away": "FBI forces discipline by funding Enjoyment last.",
+                        "quiz_metadata": {"key_points": ["Emergency first", "Enjoyment last"]},
+                    }
+                ],
+            },
+            headers=BEARER_HEADER,
+        )
+        assert response.status_code == 200
+        assert response.json()["inserted"] == 1
+
+        quizzes = list_quizzes_for_chapter(db_session, chapter_id)
+        assert len(quizzes) == 1
+        q = quizzes[0]
+        assert q.section_index == 1
+        assert q.section_name == "Summary"
+        assert q.quiz_take_away == "FBI forces discipline by funding Enjoyment last."
+        assert q.quiz_metadata == {"key_points": ["Emergency first", "Enjoyment last"]}
+
+    def test_upload_cloze_quiz_metadata(self, client, db_session):
+        """POST cloze quiz with blanks in quiz_metadata stores JSONB correctly."""
+        chapter_id = self._setup_chapter(client)
+        response = client.post(
+            "/api/content/quizzes",
+            json={
+                "chapter_id": chapter_id,
+                "quizzes": [
+                    {
+                        "quiz_type": "cloze",
+                        "question": "The happiness equation is ___.",
+                        "expected_answer": "H = O/D",
+                        "section_index": 1,
+                        "section_name": "Summary",
+                        "quiz_metadata": {"blanks": ["H = O/D"], "context_hint": ""},
+                    }
+                ],
+            },
+            headers=BEARER_HEADER,
+        )
+        assert response.status_code == 200
+
+        quizzes = list_quizzes_for_chapter(db_session, chapter_id)
+        assert quizzes[0].quiz_metadata["blanks"] == ["H = O/D"]
+
+    def test_upload_mc_quiz_with_option_explanations(self, client, db_session):
+        """POST MC quiz with response_to_user_option_* in quiz_metadata stores correctly."""
+        chapter_id = self._setup_chapter(client)
+        metadata = {
+            "quiz_type_cognitive": "recall",
+            "quiz_learnt": "Two index fund rules",
+            "response_to_user_option_a": "Incorrect — timing the market fails.",
+            "response_to_user_option_b": "Correct — put in and never sell.",
+            "response_to_user_option_c": "Incorrect — not in lesson.",
+            "response_to_user_option_d": "Incorrect — not mentioned.",
+        }
+        response = client.post(
+            "/api/content/quizzes",
+            json={
+                "chapter_id": chapter_id,
+                "quizzes": [
+                    {
+                        "quiz_type": "multiple_choice",
+                        "question": "What are the two index fund rules?",
+                        "option_a": "Buy low sell high",
+                        "option_b": "Put in and never sell",
+                        "option_c": "Diversify",
+                        "option_d": "Rebalance quarterly",
+                        "correct_options": ["B"],
+                        "quiz_metadata": metadata,
+                    }
+                ],
+            },
+            headers=BEARER_HEADER,
+        )
+        assert response.status_code == 200
+
+        quizzes = list_quizzes_for_chapter(db_session, chapter_id)
+        stored = quizzes[0].quiz_metadata
+        assert stored["quiz_type_cognitive"] == "recall"
+        assert stored["response_to_user_option_b"] == "Correct — put in and never sell."
 
 
 class TestListBooks:

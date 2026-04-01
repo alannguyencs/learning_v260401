@@ -45,7 +45,7 @@ GET /api/content/books/{book_id}/structure (session cookie)
 ```
 
 ## Scope
-- Included: upload books, lessons, chapters, quizzes via API; list books; book structure view
+- Included: upload books, lessons, chapters, quizzes via API; list books; book structure view; rich quiz metadata (section labels, takeaways, format-specific fields)
 - Not included: manual content entry in UI, content editing or deletion, versioning
 
 ## Acceptance Criteria
@@ -53,6 +53,7 @@ GET /api/content/books/{book_id}/structure (session cookie)
 - [ ] Upload endpoints reject requests without a valid Bearer token
 - [ ] Frontend can list all available books
 - [ ] Frontend can retrieve the full hierarchical structure of a book
+- [ ] Quiz slides display section name, takeaway, and format-specific metadata after answering
 
 ---
 

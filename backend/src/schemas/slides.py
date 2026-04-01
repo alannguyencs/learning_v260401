@@ -35,6 +35,9 @@ class QuizSlide(BaseModel):
     lesson_id: int
     lesson_title: str
     book_title: str
+    section_name: Optional[str] = None
+    quiz_take_away: Optional[str] = None
+    quiz_metadata: Optional[dict] = None
 
 
 class SlideResponse(BaseModel):

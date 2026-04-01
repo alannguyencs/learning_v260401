@@ -61,4 +61,8 @@ class ChapterQuiz(Base):
     option_c = Column(Text)
     option_d = Column(Text)
     correct_options = Column(JSON)
+    section_index = Column(Integer)
+    section_name = Column(String)
+    quiz_take_away = Column(Text)
+    quiz_metadata = Column(JSON)
     created_at = Column(DateTime, server_default=func.now())
