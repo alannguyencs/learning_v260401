@@ -2,29 +2,27 @@
 
 from unittest.mock import MagicMock, patch
 
-from src.service.quiz_grader import GradingResult, QuizGrader
+from src.service.quiz_grader import GradingOutput, GradingResult, QuizGrader
 
 
-def _mock_llm_response(is_correct: bool, feedback: str):
-    """Build a mock anthropic message response."""
-    mock_msg = MagicMock()
-    mock_msg.content = [
-        MagicMock(text=f'{{"is_correct": {str(is_correct).lower()}, "feedback": "{feedback}"}}')
-    ]
-    return mock_msg
+def _mock_gemini_response(is_correct: bool, feedback: str):
+    """Build a mock Gemini generate_content response."""
+    mock_response = MagicMock()
+    mock_response.parsed = GradingOutput(is_correct=is_correct, feedback=feedback)
+    return mock_response
 
 
 class TestQuizGrader:
     """Tests for QuizGrader.grade."""
 
     def test_grader_returns_is_correct_true(self):
-        """Mocked LLM returning is_correct=true → GradingResult.is_correct=True."""
-        mock_response = _mock_llm_response(True, "Correct answer.")
+        """Mocked LLM returning is_correct=true."""
+        mock_response = _mock_gemini_response(True, "Correct answer.")
 
-        with patch("src.service.quiz_grader.anthropic.Anthropic") as mock_cls:
+        with patch("src.service.quiz_grader.genai.Client") as mock_cls:
             mock_client = MagicMock()
             mock_cls.return_value = mock_client
-            mock_client.messages.create.return_value = mock_response
+            mock_client.models.generate_content.return_value = mock_response
 
             result = QuizGrader.grade(
                 question="What is ML?",
@@ -37,13 +35,13 @@ class TestQuizGrader:
         assert result.is_correct is True
 
     def test_grader_returns_feedback_string(self):
-        """Mocked LLM response → feedback string populated in GradingResult."""
-        mock_response = _mock_llm_response(True, "Good explanation of the concept.")
+        """Mocked LLM response produces feedback string."""
+        mock_response = _mock_gemini_response(True, "Good explanation.")
 
-        with patch("src.service.quiz_grader.anthropic.Anthropic") as mock_cls:
+        with patch("src.service.quiz_grader.genai.Client") as mock_cls:
             mock_client = MagicMock()
             mock_cls.return_value = mock_client
-            mock_client.messages.create.return_value = mock_response
+            mock_client.models.generate_content.return_value = mock_response
 
             result = QuizGrader.grade(
                 question="Explain backpropagation.",
@@ -52,16 +50,16 @@ class TestQuizGrader:
                 quiz_type="teach_back",
             )
 
-        assert result.feedback == "Good explanation of the concept."
+        assert result.feedback == "Good explanation."
 
     def test_grader_returns_is_correct_false(self):
-        """Mocked LLM returning is_correct=false → GradingResult.is_correct=False."""
-        mock_response = _mock_llm_response(False, "The answer missed key concepts.")
+        """Mocked LLM returning is_correct=false."""
+        mock_response = _mock_gemini_response(False, "The answer missed key concepts.")
 
-        with patch("src.service.quiz_grader.anthropic.Anthropic") as mock_cls:
+        with patch("src.service.quiz_grader.genai.Client") as mock_cls:
             mock_client = MagicMock()
             mock_cls.return_value = mock_client
-            mock_client.messages.create.return_value = mock_response
+            mock_client.models.generate_content.return_value = mock_response
 
             result = QuizGrader.grade(
                 question="What is ML?",
@@ -74,14 +72,9 @@ class TestQuizGrader:
         assert result.feedback == "The answer missed key concepts."
 
     def test_mc_auto_graded_no_llm(self):
-        """MC type is auto-graded in the API layer; QuizGrader.grade is not called."""
-        with patch("src.service.quiz_grader.anthropic.Anthropic") as mock_cls:
-            # Verify that creating an Anthropic client is never triggered for MC
-            # by testing the auto-grade logic directly (not going through grader)
+        """MC is auto-graded in API layer; QuizGrader not called."""
+        with patch("src.service.quiz_grader.genai.Client") as mock_cls:
             correct_options = ["A", "C"]
-            user_answer_correct = "A"
-            user_answer_wrong = "B"
-
-            assert user_answer_correct in correct_options
-            assert user_answer_wrong not in correct_options
+            assert "A" in correct_options
+            assert "B" not in correct_options
             mock_cls.assert_not_called()

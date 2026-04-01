@@ -10,6 +10,7 @@
 - [x] docs/plan/260330_frontend_slides.md
 - [x] docs/plan/260331_dashboard.md
 - [x] docs/plan/260401_rich_quiz_metadata.md
+- [x] docs/plan/260401_gemini_quiz_grader.md
 
 ## DB Cloud Migration
 

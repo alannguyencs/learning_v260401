@@ -1,6 +1,6 @@
 # fastapi
 fastapi
-anthropic
+google-genai>=0.1.0
 uvicorn
 python-multipart
 python-dotenv

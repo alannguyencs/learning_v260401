@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str = os.getenv("JWT_SECRET_KEY", "default-jwt-secret-change-in-production")
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
     webapp_access_token: str = os.getenv("WEBAPP_ACCESS_TOKEN", "")
+    gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
 
     class Config:
         """Pydantic configuration."""

@@ -118,7 +118,7 @@ Body: { round_num, lesson_id, user_answer, is_skip }
 
 | Method | Description |
 |--------|-------------|
-| `grade(question, expected_answer, user_answer, quiz_type)` | Calls Claude API, returns `GradingResult` |
+| `grade(question, expected_answer, user_answer, quiz_type)` | Calls Gemini API with structured output, returns `GradingResult` |
 
 **`GradingResult`** dataclass:
 
@@ -129,9 +129,9 @@ Body: { round_num, lesson_id, user_answer, is_skip }
 
 ## LLM Requests Layer
 
-**System prompt:** `backend/resources/prompts/quiz_grader.md`
+**System prompt:** `backend/resources/prompts/quiz_grader.md` — concatenated with user message into a single prompt (Gemini does not use a separate system parameter)
 
-**Model:** `claude-haiku-4-5-20251001`, temperature: 0.1, max_tokens: 256
+**Model:** `gemini-2.5-flash`, temperature: 0.1
 
 **User message structure:**
 ```
@@ -141,9 +141,12 @@ Expected answer: {expected_answer}
 Student answer: {user_answer}
 ```
 
-**Output schema:**
-```json
-{"is_correct": bool, "feedback": "one sentence explaining the grade"}
+**Output schema:** `GradingOutput` Pydantic model passed as `response_schema` parameter with `response_mime_type="application/json"` for guaranteed structured output:
+
+```python
+class GradingOutput(BaseModel):
+    is_correct: bool
+    feedback: str
 ```
 
 ## CRUD Layer
