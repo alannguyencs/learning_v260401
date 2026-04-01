@@ -4,13 +4,13 @@ Save to: `data/lesson/{channel_slug}/{yymmdd}_{slug}.md`
 
 See SKILL.md for the `{channel_slug}/{yymmdd}_{slug}` naming convention. Must match the metadata file.
 
-Generate a document with sections separated by `---` horizontal rules. Most channels have 6 sections; theMITmonk lessons have 7 (extra "Do and Don't" section).
+Generate a document with sections separated by `---` horizontal rules. All channels have 6 sections.
 
 Use the Write tool (not Bash) to create the lesson file directly.
 
 ---
 
-## Section 1: ## Material
+## Section 0: ## Material
 
 ```markdown
 ## Material
@@ -24,89 +24,44 @@ Use the Write tool (not Bash) to create the lesson file directly.
 
 ---
 
-## Section 2: ## Summary
+## Section 1: ## Summary
 
-Structure:
-1. **Opening line** — 1-2 sentences with the key insight in **bold**
-2. **Why it matters** — bullet points with specific numbers/stats from transcript
-3. **Core framework** — if the video presents a model or comparison, use a markdown table
-4. **Key Takeaways** — numbered list, 3-5 items, each a one-line compressed insight
+Structure — answer three questions, each as bullet points:
+1. **What** — 2-4 bullets describing the main topic, claim, or situation
+2. **Why** — 2-4 bullets on why it matters, with specific numbers/stats from transcript
+3. **How** — 2-4 bullets on what to do or how to apply the insight
 
 ### Guidelines
 - Pull specific numbers, percentages, and quotes from the transcript
 - Bold the most important phrases for scannability
-- Tables work well for before/after comparisons, layer models, or protocol breakdowns
-- Each takeaway should be self-contained — understandable without reading the rest
+- Each bullet should be self-contained — understandable without reading the rest
 
 ### Example
 
 ```markdown
 ## Summary
 
-Hong Kong's 2025 graduate job market hit a 5-year low with vacancies dropping 55%, driven by
-**a "jobless recovery" where AI replaces entry-level work faster than the economy creates new junior roles**.
+**What:**
+- Hong Kong's 2025 graduate job market hit a **5-year low** with vacancies dropping **55%**
+- A "jobless recovery" — GDP grows but entry-level jobs don't follow
+- Corporate structure shifting from pyramid to diamond: **fewer junior roles, wider management band, small AI-powered base**
 
-**Why it matters:**
-- Youth unemployment (ages 20-24) reached 12.3% — second highest on record
+**Why:**
+- Youth unemployment (ages 20-24) reached **12.3%** — second highest on record
 - Only ~30,000 full-time graduate jobs available, lowest in 5 years
+- Employers now demand "job-ready" graduates — no bandwidth for training from scratch
 
-**Corporate Structure Shift — Pyramid to Diamond:**
-
-| Layer | Old (Pyramid) | New (Diamond) |
-|-------|--------------|---------------|
-| Top | Few executives | Few executives |
-| Middle | Some managers | **Wide band of managers** |
-| Bottom | **Many entry-level** | Small AI-powered base |
-
-**Key Takeaways:**
-1. "Jobless recovery" — GDP grows but jobs don't follow; profits outpace hiring
-2. AI eliminated the corporate groundwork that trained juniors
-3. Employers now demand "job-ready" graduates — no bandwidth for training from scratch
+**How:**
+- Build **AI literacy** — tools like ChatGPT, automation scripting, prompt engineering
+- Get internship experience before graduating — 85% of hires come via referrals, not portals
+- Adopt an **"AI Plus" mindset** — augment your output with AI rather than compete against it
 ```
 
 ---
 
-## Section 3: ## Connect to Known (ASCII format)
+## Section 2: ## Recommendation (ASCII flowchart)
 
-Map 3-5 new concepts to familiar experiences. Analogies should come from:
-- **Software engineering** (preferred) — CI/CD, microservices, ORMs, Git, design patterns
-- **Daily life** — cooking, driving, sports
-- **Well-known frameworks** — Agile, TCP/IP, OSI model
-
-### Box layout
-
-Each concept is a pair: `[New Concept box] ------> [Familiar Experience box]`
-
-- Left box: concept name + short subtitle (2-3 words)
-- Right box: 1-2 bullet points explaining the analogy
-- Aim for boxes that are visually consistent in width
-
-```
-+-----------------------------------------------------------------------------+
-|                            CONNECT TO KNOWN                                 |
-+-----------------------------------------------------------------------------+
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | Jobless Recovery    |-------->| * Like a CI/CD pipeline that ships |     |
-|  | GDP up, jobs flat   |         |   faster but needs fewer devs     |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | "Job-ready" demand  |-------->| * Like requiring production exp    |     |
-|  | internships required|         |   for a "junior dev" role — the   |     |
-|  |                     |         |   classic catch-22 paradox         |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-+-----------------------------------------------------------------------------+
-|  NEW CONCEPT --------------------------------> FAMILIAR EXPERIENCE          |
-+-----------------------------------------------------------------------------+
-```
-
----
-
-## Section 4: ## Recommendation (ASCII flowchart)
-
-An ASCII-style flowchart showing the recommended action plan based on the lesson content. This makes the video's advice concrete and sequential.
+An ASCII-style flowchart showing the recommended action plan based on the lesson content. This makes the advice concrete and sequential.
 
 ### Guidelines
 - Start with `START HERE` at the top
@@ -114,7 +69,7 @@ An ASCII-style flowchart showing the recommended action plan based on the lesson
 - Show a clear step-by-step flow from top to bottom
 - Branch into parallel paths when the content has distinct tracks (e.g., job vs freelance vs founder)
 - Each box should have a numbered step name and 2-3 lines of actionable detail
-- Include specific numbers, thresholds, or rules from the video (e.g., "< 5%", "3-6 months", "90%")
+- Include specific numbers, thresholds, or rules from the lesson (e.g., "< 5%", "3-6 months", "90%")
 - Side boxes can show details or options (connected with `────>`)
 - End with a memorable closing box (e.g., "REPEAT. COMPOUND. WAIT." or "STAY IN THE RACE.")
 - Place this section between Connect to Known and Create Chunk
@@ -176,16 +131,47 @@ An ASCII-style flowchart showing the recommended action plan based on the lesson
 
 ---
 
-## Section 5: ## Create Chunk (ASCII format)
+## Section 3: ## One-Liners
 
-Two parts:
+- **Quotable one-liners** (5) — pithy, memorable phrases that compress the main insights
+- Use italics for each line
+- Draw directly from the transcript — exact quotes or tightly compressed versions
 
-### Part A: One-Liners
+### Example (from "20 Quantum Cheat Codes")
 
-- **Quotable one-liners** (2-3) — pithy, memorable phrases that compress the main insights
-  - Use italics: *"The ladder didn't break — the bottom rungs were automated away."*
+```markdown
+## One-Liners
 
-### Part B: Visual Chunk (ASCII workflow)
+*"Saving is not investing."*
+
+*"Salary buys you furniture. Equity buys your future."*
+
+*"Failure is not your tormentor — it's your teacher."*
+
+*"Wealth isn't about what you buy. It's about what you keep."*
+
+*"When your desires approach zero, your happiness goes to infinity."*
+```
+
+### Example (from "From Homeless to MIT Grad")
+
+```markdown
+## One-Liners
+
+*"Solve a problem, nail a product, and the mission will follow."*
+
+*"Passions don't last, but problems do."*
+
+*"Everybody lies — watch what customers do, not what they say."*
+
+*"Revenue is not cash. Profit is not cash. Only cash is real. The rest is accounting."*
+
+*"Lead with love: people → product → profits, in that order."*
+```
+
+---
+
+## Section 4: ## Visual Chunk (ASCII workflow)
 
 A single ASCII diagram that captures the main process/framework. Guidelines:
 - Title the workflow clearly
@@ -229,43 +215,7 @@ A single ASCII diagram that captures the main process/framework. Guidelines:
 
 ---
 
-## Section 6 (theMITmonk only): ## Do and Don't
-
-**This section applies only to lessons from the theMITmonk channel.** Skip for all other channels.
-
-A markdown table that contrasts what NOT to do vs. what TO do for each key concept in the video. This makes the lesson actionable at a glance.
-
-### Structure
-
-| Step | Don't | Do |
-|------|-------|----|
-| {concept name} | {common mistake or wrong approach} | {recommended action with specific example} |
-
-### Guidelines
-- One row per key concept or step from the video
-- **Don't column**: the default/lazy/wrong approach people take
-- **Do column**: the specific action the video recommends, with a concrete example where possible
-- Keep each cell to 1-2 sentences max
-- Pull specific numbers, quotes, and examples from the transcript
-- Place this section after Create Chunk and before Story (theMITmonk only)
-
-### Example
-
-```markdown
-## Do and Don't
-
-| Step | Don't | Do |
-|------|-------|----|
-| Job Market | Apply through the front door (job portals); 2% interview rate | Find the side door — show you can do the job directly (72-hour modeling test → hired) |
-| Job Search | Spam resumes online; treat it like Russian roulette | Use the 3R hack: Reach the hiring manager, get Referrals (85% of hires), optimize for Recruiters on LinkedIn |
-| Resume | Write a generic biography with empty words | Treat it as a sales pitch — "I did X → impact Y → outcome Z"; AI-customize for every role |
-| Freelancing | Stay at the bottom of the value chain (e.g., script writing at $200) | Move up — rare + valuable = high pay (e.g., video editing at $1K) |
-| Perfectionism | Wait until your product/resume/portfolio is "perfect" before launching | Ship at 90% and iterate — "it's startup, not wait-up" |
-```
-
----
-
-## Section 7 (or 6 for non-theMITmonk): ## Story
+## Section 5: ## Story
 
 Write a simple, engaging story that a high school student can read to understand the main content of the article. Guidelines:
 
@@ -280,7 +230,7 @@ Write a simple, engaging story that a high school student can read to understand
 ```markdown
 ## Story
 
-Imagine there's a criminal gang that runs an illegal pizza delivery business. The boss bakes poisoned pizzas (that's the ransomware), and he recruits delivery drivers all over town (the affiliates) to drop them at people's doors. When someone eats a slice and gets sick, the only cure costs $600 — and the boss keeps 30% while the driver pockets 70%. Business is booming because 70% of victims just pay up.
+There's a criminal gang that runs an illegal pizza delivery business. The boss bakes poisoned pizzas (that's the ransomware), and he recruits delivery drivers all over town (the affiliates) to drop them at people's doors. When someone eats a slice and gets sick, the only cure costs $600 — and the boss keeps 30% while the driver pockets 70%. Business is booming because 70% of victims just pay up.
 
 One day, a delivery driver drops a poisoned pizza at the apartment of a girl named Elena. What the driver doesn't know is that Elena's boyfriend, Mihai, is the best hacker at a secret cybersecurity team. Mihai is furious.
 

@@ -24,13 +24,21 @@ function AnswerBadge({ value }) {
 function formatTime(raw) {
   if (!raw) return "—";
   const d = new Date(raw);
-  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 function formatDate(raw) {
   if (!raw) return "—";
   const d = new Date(raw);
-  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 const DashboardPage = () => {
@@ -64,13 +72,18 @@ const DashboardPage = () => {
         )}
 
         {error && (
-          <div className="bg-red-900 text-red-200 rounded p-4 mb-4">{error}</div>
+          <div className="bg-red-900 text-red-200 rounded p-4 mb-4">
+            {error}
+          </div>
         )}
 
         {!loading && !error && log.length === 0 && (
           <div className="text-center py-16 text-gray-400">
             <p className="mb-4">No activity yet.</p>
-            <Link to="/slides" className="text-blue-400 underline hover:text-blue-300">
+            <Link
+              to="/slides"
+              className="text-blue-400 underline hover:text-blue-300"
+            >
               Start learning on the Slides page
             </Link>
           </div>
@@ -108,26 +121,36 @@ const DashboardPage = () => {
                     <td className="px-3 py-2 text-gray-300 whitespace-nowrap font-mono">
                       {formatTime(row.event_time)}
                     </td>
-                    <td className={`px-3 py-2 whitespace-nowrap ${actionClass(row.action)}`}>
+                    <td
+                      className={`px-3 py-2 whitespace-nowrap ${actionClass(row.action)}`}
+                    >
                       {row.action}
                     </td>
                     <td className="px-3 py-2 text-gray-300">
                       {row.book_id ?? <span className="text-gray-500">—</span>}
                     </td>
                     <td className="px-3 py-2 text-gray-300 text-center">
-                      {row.lesson_index ?? <span className="text-gray-500">—</span>}
+                      {row.lesson_index ?? (
+                        <span className="text-gray-500">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-gray-300 max-w-xs truncate">
-                      {row.lesson_title ?? <span className="text-gray-500">—</span>}
+                      {row.lesson_title ?? (
+                        <span className="text-gray-500">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-gray-300 text-center">
-                      {row.chapter_id ?? <span className="text-gray-500">—</span>}
+                      {row.chapter_id ?? (
+                        <span className="text-gray-500">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-center">
                       <AnswerBadge value={row.answer_result} />
                     </td>
                     <td className="px-3 py-2 text-gray-300 text-center font-mono">
-                      {row.recall_rate != null ? row.recall_rate.toFixed(2) : (
+                      {row.recall_rate != null ? (
+                        row.recall_rate.toFixed(2)
+                      ) : (
                         <span className="text-gray-500">—</span>
                       )}
                     </td>

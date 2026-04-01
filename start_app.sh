@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Learning App Startup Script
-# This script starts backend (port 8000) and frontend (port 3000)
+# This script starts backend and frontend using ports from .env (default 8000/3000)
 
 set -e  # Exit on error
 

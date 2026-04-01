@@ -147,7 +147,7 @@ class TestActivityLogSkip:
 class TestActivityLogAnswer:
     """ANSWER event tests."""
 
-    def _get_quiz(self, auth_client, ids):
+    def _get_quiz(self, auth_client, ids):  # pylint: disable=redefined-outer-name
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
         slide_resp = auth_client.get("/api/slides/next")
         return slide_resp.json().get("quiz")

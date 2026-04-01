@@ -10,90 +10,23 @@
 
 ## Summary
 
-Twenty cheat codes for life: **invest in index funds (don't time), build passion (don't follow it), practice relentlessly, career = investment portfolio, move where action is, chase equity not salary, get a mentor, emergency fund, FBI for finances, avoid status debt, financial literacy, automate everything, go analog, failure = teacher, ask for help, don't play victim, choose partner wisely, forgive your past, bring value to others, and H = O/D (happiness = own/desire)**.
+**What:**
+- 20 cheat codes from a journey: homeless in Mumbai → monk → MIT grad → multi-millionaire entrepreneur, CEO at companies that created **$60B+ in value**
+- Covers three domains: **money** (index funds, FBI system, emergency fund, no status debt), **career** (equity over salary, mentor, move where action is), and **life** (failure as teacher, choose partner wisely, H=O/D)
+- Core thesis: succeeding in life is not simple — but these compressed lessons shorten the learning curve by decades
 
-**Why it matters:**
-- $5K/year in S&P 500 from 20s → **$1.4M** at retirement; panic-selling in 2008 cost 40% of net worth permanently
-- Only **4% of students** can monetize their passion (Canadian university study)
-- Average US credit card interest: **22-28%** — designer purchases on credit destroy wealth
-- A **one-week social media detox** improves attention span and cognitive function (2017 study)
-- Fired **3 times**, each time unemployed for 6+ months — "failure is not your tormentor, it's your teacher"
+**Why:**
+- $5K/year in S&P 500 from your 20s → **$1.4M** at retirement; panic-selling in 2008 then refusing to re-enter permanently cost **40% of net worth**
+- Only **4% of students** can monetize their passion (Canadian university study) — 96% cannot
+- Average US credit card interest: **22–28%** — designer purchases on credit silently destroy wealth
+- Fired **3 times**, each time unemployed for **6+ months** — "failure is not your tormentor, it's your teacher"
 - Happiness equation from a monk: **H = O/D** — when desires approach zero, happiness approaches infinity
 
-**The Twenty Cheat Codes:**
-
-| # | Cheat Code | Core Idea |
-|---|-----------|-----------|
-| 1 | Invest, Don't Save | $5K/yr in index fund → $1.4M; don't time/beat market; stay in |
-| 2 | Build Passion, Don't Follow | 96% can't monetize passion; be great at something, passion follows |
-| 3 | Practice, Practice, Practice | Persistence > talent; "Ferrari with no engine" |
-| 4 | Career = Portfolio | Skills + connections compound; 15K hours in 5 years → CEO |
-| 5 | Move Where Action Is | NYC too late, missed SF; you can't grow on Zoom in pajamas |
-| 6 | Equity > Salary | Salary buys furniture, equity buys future; 9/10 miss but one hit changes life |
-| 7 | Get a Mentor | Waited until 40 — too late; 10 years after mentorship → CEO |
-| 8 | Emergency Fund | 3-6 months expenses; friend got brain tumor — expect unexpected |
-| 9 | FBI (Financial Bureau) | Track spending; 4 Es: Emergency, Essentials, Equity, Enjoyment (fund in order) |
-| 10 | Avoid Status Debt | Wealth = what you keep; 22% credit card rates; first home at 36 (22% of income) |
-| 11 | Financial Literacy | Psychology of Money + Algebra of Wealth; compound interest, credit scores, taxes |
-| 12 | Automate Finances | Auto savings/investing before paycheck; auto bills; auto spending controls |
-| 13 | Go Analog | Doom scrolling kills thinking; 1-week detox improves cognition; read books |
-| 14 | Failure = Teacher | Fired 3 times; 6+ months unemployed each; failure prepares you for success |
-| 15 | Ask for Help | Ed Sheeran rejected by every label; find your tribe; Dumbledore quote |
-| 16 | Don't Play Victim | Friends with bosses who fired him; business is never personal; no grudges |
-| 17 | Choose Partner Wisely | System 1 (fast/emotional) vs System 2 (slow/rational); dated 6-7 years before marriage |
-| 18 | Forgive Your Past | Abusive father; homeless in Mumbai; ran away as teen; "put down the bag of bricks" |
-| 19 | Bring Value to Others | "You live as long as the last person who remembers you"; impact > income |
-| 20 | H = O/D | Happiness = Own ÷ Desire; desires → 0 = happiness → infinity |
-
-**Key Takeaways:**
-1. Two rules for investing: put it in an index fund and stay in the market; panic-selling in 2008 then refusing to re-enter cost 40% of net worth permanently
-2. "Salary buys you furniture. Equity buys your future." — 9 out of 10 equity bets miss, but one rainmaking event changes your life; ownership mindset matters even before the win
-3. Career as investment portfolio: help desk in a dark room → 15,000 hours over 5 years → program manager → CEO; "if you want to make more money than others, offer more value than others"
-4. Fired 3 times, each time 6+ months unemployed, on-the-spot firings — but stayed friends with bosses who fired him; "business is never personal"; failure is the teacher, not the tormentor
-5. Monk's happiness equation: H = O/D; own > desire = happy; desire > own = unhappy; desire → 0 = happiness → infinity; manage desires, not just possessions
-
----
-
-## Connect to Known
-
-```
-+-----------------------------------------------------------------------------+
-|                            CONNECT TO KNOWN                                 |
-+-----------------------------------------------------------------------------+
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | Career = Portfolio  |-------->| * Like a diversified codebase —     |     |
-|  | (Skills + connections|        |   backend, frontend, infra, soft  |     |
-|  | compound)           |         |   skills all compound; help desk  |     |
-|  |                     |         |   → systems → management → CTO   |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | Equity > Salary     |-------->| * Like stock options vs base pay — |     |
-|  | (Ownership mindset) |         |   most grants expire worthless    |     |
-|  |                     |         |   but one IPO/acquisition can     |     |
-|  |                     |         |   eclipse decades of salary       |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | FBI: 4 Es           |-------->| * Like memory allocation — stack   |     |
-|  | (Emergency,         |         |   (emergency), heap (essentials), |     |
-|  | Essentials, Equity, |         |   static (equity), and dynamic   |     |
-|  | Enjoyment)          |         |   (enjoyment); allocate in order  |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-|  +---------------------+         +------------------------------------+     |
-|  | H = O/D             |-------->| * Like resource utilization — if   |     |
-|  | (Happiness equation)|         |   demand (desires) exceeds        |     |
-|  |                     |         |   capacity (what you own), system |     |
-|  |                     |         |   is stressed; reduce demand or   |     |
-|  |                     |         |   increase capacity               |     |
-|  +---------------------+         +------------------------------------+     |
-|                                                                             |
-+-----------------------------------------------------------------------------+
-|  NEW CONCEPT --------------------------------> FAMILIAR EXPERIENCE          |
-+-----------------------------------------------------------------------------+
-```
+**How:**
+- Invest in an index fund and **never sell** — two rules only: put it in, stay in; ignore crashes
+- Build your **FBI** (Financial Bureau of Investigation): track spending, fund in order — Emergency → Essentials → Equity → Enjoyment
+- Get a mentor **before 40**, not after — 10 years after mentoring, he became CEO; don't navigate blind
+- Apply **H = O/D** daily: manage desires, not just possessions — contentment is a skill, not a circumstance
 
 ---
 
@@ -114,26 +47,24 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
 ┌─────────────────────┐              ┌──────────────────────────┐
 │ MONEY TRACK          │              │ CAREER TRACK              │
 │                      │              │                           │
-│ 1. Open index fund   │              │ 1. Identify where the     │
-│    (S&P 500). Set up │              │    action is in your      │
-│    $5K/year auto     │              │    industry. Move there.  │
-│    deposit. Never    │              │    No remote pajamas.     │
-│    sell in a crash.  │              │                           │
-│    ($5K/yr → $1.4M)  │              │ 2. Find a mentor NOW      │
-│                      │              │    (not at 40). Ask one   │
-│ 2. Build emergency   │              │    person this week.      │
-│    fund: 3-6 months  │              │                           │
-│    of expenses in a  │              │ 3. Negotiate for equity   │
-│    separate account. │              │    in your next role.     │
-│    Don't touch it.   │              │    9/10 miss, but one     │
-│                      │              │    hit changes your life. │
-│ 3. Set up FBI:       │              │                           │
-│    Fund in order:    │              │ 4. Log your hours: aim    │
-│    Emergency →       │              │    for 15,000 over 5 yrs. │
-│    Essentials →      │              │    Skills + connections   │
-│    Equity →          │              │    compound like interest. │
-│    Enjoyment         │              └──────────────────────────┘
-│                      │                            │
+│ 1. Open index fund   │              │ 1. Move where action is.  │
+│    (S&P 500). Auto   │              │    Remote won't grow your │
+│    deposit $5K/yr.   │              │    network or reputation. │
+│    Never sell.       │              │                           │
+│    ($5K/yr → $1.4M)  │              │ 2. Find a mentor NOW —    │
+│                      │              │    not at 40. Ask one     │
+│ 2. Emergency fund:   │              │    person this week.      │
+│    3–6 months of     │              │                           │
+│    expenses. Separate│              │ 3. Negotiate for equity   │
+│    account. Untouched│              │    in your next role.     │
+│                      │              │    9/10 miss, but one     │
+│ 3. Build your FBI:   │              │    hit changes your life. │
+│    Emergency →       │              │                           │
+│    Essentials →      │              │ 4. Log your hours: aim    │
+│    Equity →          │              │    for 15,000 over 5 yrs. │
+│    Enjoyment         │              │    Skills + connections   │
+│    (fund in order)   │              │    compound like interest.│
+│                      │              └──────────────────────────┘
 │ 4. Automate all      │                            │
 │    finances: savings │                            │
 │    before paycheck,  │                            │
@@ -142,9 +73,9 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
 │                      │                            │
 │ 5. Kill status debt: │                            │
 │    no designer buys  │                            │
-│    on 22-28% credit  │                            │
-│    cards. Wealth =   │                            │
-│    what you keep.    │                            │
+│    on 22–28% credit. │                            │
+│    Wealth = what     │                            │
+│    you keep.         │                            │
 └─────────────────────┘                            │
          │                                         │
          └────────────────────┬────────────────────┘
@@ -152,8 +83,8 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
                  ┌──────────────────────────┐
                  │ MINDSET TRACK             │
                  │                           │
-                 │ 1. Do a 1-week social     │
-                 │    media detox. Replace   │
+                 │ 1. 1-week social media    │
+                 │    detox. Replace doom    │
                  │    scrolling with books.  │
                  │                           │
                  │ 2. Reframe every failure: │
@@ -163,8 +94,8 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
                  │                           │
                  │ 3. Ask for help from one  │
                  │    person you admire this │
-                 │    week. Fear of rejection │
-                 │    is worse than the "no."│
+                 │    week. Rejection costs  │
+                 │    less than stagnation.  │
                  │                           │
                  │ 4. Drop one grudge today. │
                  │    Business is never      │
@@ -172,38 +103,18 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
                  └──────────────────────────┘
                               │
                               ▼
-                 ┌──────────────────────────┐
-                 │ LIFE TRACK                │
-                 │                           │
-                 │ 1. Choose partner with    │
-                 │    System 2 (rational),   │
-                 │    not System 1 (gut).    │
-                 │    Date 6-7 years before  │
-                 │    deciding.              │
-                 │                           │
-                 │ 2. Write down one thing   │
-                 │    from your past to      │
-                 │    forgive. Put down the  │
-                 │    bag of bricks.         │
-                 │                           │
-                 │ 3. Ask: "How will I be    │
-                 │    remembered?" Impact    │
-                 │    over income.           │
-                 └──────────────────────────┘
-                              │
-                              ▼
           ┌───────────────────────────────────────┐
           │  H = O/D                               │
-          │  Happiness = Own / Desire               │
-          │  Desires → 0 = Happiness → infinity     │
-          │  "Manage your desires, not just your    │
-          │   possessions."                         │
+          │  Happiness = Own ÷ Desire              │
+          │  Desires → 0 = Happiness → ∞           │
+          │  "Manage your desires, not just your   │
+          │   possessions."                        │
           └───────────────────────────────────────┘
 ```
 
 ---
 
-## Create Chunk
+## One-Liners
 
 *"Saving is not investing."*
 
@@ -215,46 +126,49 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
 
 *"When your desires approach zero, your happiness goes to infinity."*
 
+---
+
+## Visual Chunk
+
 ```
 +-----------------------------------------------------------------------------+
-|              20 QUANTUM CHEAT CODES                                         |
+|                     20 QUANTUM CHEAT CODES                                  |
 +-----------------------------------------------------------------------------+
 |                                                                             |
-|   MONEY                         CAREER                                     |
-|   1. Index fund + stay in        4. Career = portfolio                    |
-|      ($5K/yr → $1.4M)             (skills + connections                  |
-|   8. Emergency fund (3-6 mo)       compound over time)                   |
-|   9. FBI: 4 Es (Emergency →     5. Move where action is                  |
-|      Essentials → Equity →      6. Equity > salary                       |
-|      Enjoyment)                  7. Get a mentor                          |
-|   10. No status debt (22% CC)                                             |
-|   11. Financial literacy                                                  |
-|   12. Automate everything                                                 |
+|   MONEY                         CAREER                                      |
+|   1. Index fund + stay in        4. Career = portfolio                     |
+|      ($5K/yr → $1.4M)               (skills + connections                 |
+|   8. Emergency fund (3–6 mo)         compound over time)                  |
+|   9. FBI: 4 Es                   5. Move where action is                   |
+|      Emergency → Essentials      6. Equity > salary                        |
+|      → Equity → Enjoyment        7. Get a mentor (not at 40)               |
+|  10. No status debt (22% CC)                                               |
+|  11. Financial literacy                                                    |
+|  12. Automate everything                                                   |
 |                                                                             |
-|   MINDSET                        GROWTH                                    |
-|   2. Build passion, don't        3. Practice, practice                    |
-|      follow (96% can't            13. Go analog (read books)             |
-|      monetize passion)            14. Failure = teacher                   |
-|   13. Go analog (doom scroll       (fired 3 times)                       |
-|      kills thinking)             15. Ask for help (Ed Sheeran)           |
-|                                  16. No victim card                       |
+|   MINDSET                        GROWTH                                     |
+|   2. Build passion, don't        3. Practice relentlessly                  |
+|      follow (96% can't           13. Go analog: read books                 |
+|      monetize passion)           14. Failure = teacher                     |
+|  16. No victim card                  (fired 3× → each led                 |
+|                                       somewhere new)                       |
+|                                  15. Ask for help                          |
 |                                                                             |
-|   LIFE                                                                     |
-|   +-----------------------------------------------------------+           |
-|   | 17. CHOOSE PARTNER: System 2 (rational) > System 1 (gut)  |           |
-|   |     6-7 years together before marriage; best decision ever |           |
-|   | 18. FORGIVE PAST: abusive father → homeless → monk         |           |
-|   |     "Put down the bag of bricks"                           |           |
-|   | 19. BRING VALUE: "You live as long as the last person      |           |
-|   |     who remembers you"; impact > income                    |           |
-|   | 20. H = O/D: Happiness = Own ÷ Desire                     |           |
-|   |     Desires → 0 = Happiness → ∞                           |           |
-|   +-----------------------------------------------------------+           |
+|   LIFE                                                                      |
+|   +-----------------------------------------------------------+            |
+|   | 17. CHOOSE PARTNER: System 2 (rational) > System 1 (gut)  |            |
+|   |     6–7 years together before marriage                    |            |
+|   | 18. FORGIVE PAST: abusive father → homeless → monk         |            |
+|   |     "Put down the bag of bricks"                          |            |
+|   | 19. BRING VALUE: "You live as long as the last person      |            |
+|   |     who remembers you"; impact > income                   |            |
+|   | 20. H = O/D: Happiness = Own ÷ Desire                     |            |
+|   |     Desires → 0 = Happiness → ∞                          |            |
+|   +-----------------------------------------------------------+            |
 |                                                                             |
 +-----------------------------------------------------------------------------+
-|  KEY: Index fund + stay in. Build passion (don't follow). Career =        |
-|  portfolio. Equity > salary. Failure = teacher. Automate finances.        |
-|  Choose partner with System 2. Forgive past. H = O/D.                    |
+|  KEY: Stay in the market. Build skills like a portfolio. Equity > salary.  |
+|  Failure teaches. Manage desires. H = O/D.                                 |
 +-----------------------------------------------------------------------------+
 ```
 
@@ -262,16 +176,18 @@ Twenty cheat codes for life: **invest in index funds (don't time), build passion
 
 ## Story
 
-Imagine following one person, Ravi, through his 20s, 30s, and beyond — applying each cheat code along the way.
+Wei is a 35-year-old R&D engineer at a small tech startup in Hong Kong. He rides the bus to the science park every morning, a cup of instant coffee in hand, thinking about the same two things: his mortgage payment due Friday, and the patent he filed last year that nobody has bought yet.
 
-Codes 1-3 — Money and Passion: At 22, Ravi puts $5K/year into an S&P 500 index fund. He doesn't time the market — even when it crashes 50% in 2008. He stays in. By retirement, that becomes $1.4M. His friend panicked and pulled out in 2008, then refused to re-enter — net worth permanently 40% lower. Ravi is passionate about music but knows only 4% of people can monetize their passion. Instead, he practices relentlessly at his day job — like Taylor Swift and Kobe Bryant, who put in hours when others stopped. Persistence beats talent. A Ferrari with no engine is just something to look at.
+Wei is good at his job. Really good. His computer vision models are tight, his code is clean, and his boss relies on him for anything technically difficult. But at the end of every month, half his salary disappears into rent and groceries, and the other half gets split six ways between an emergency fund, a bit of gold, some blue-chip stocks, and whatever's left for his daughter's new shoes.
 
-Codes 4-7 — Career Building: Ravi starts in a dark, windowless room as a help desk guy. He works 14-15 hours a day, building skills and connections — 15,000 hours in 5 years. He treats his career as an investment portfolio. He moves to New York where the action is (should have moved sooner). He negotiates for equity, not just salary — "salary buys furniture, equity buys your future." Nine equity bets fail. The tenth changes his life. At 40, he finally gets a mentor — wishes he'd done it at 25. Ten years later, he becomes CEO.
+Cheat codes 1–2 — Money mindset: Wei used to think he was being responsible by saving. Then he read that $5,000 a year in an S&P 500 index fund, started in your 30s, grows to over a million by retirement — and he realized saving in a bank account at 0.5% interest is not the same thing. He opened an index fund. He set up an auto-transfer. He told himself: two rules — put it in, stay in. During the next market dip, he watched the numbers fall and felt the pull to sell. He didn't. He remembered the story of the man who panic-sold in 2008 and never went back — permanently 40% poorer. Wei kept his hands off the screen.
 
-Codes 8-12 — Financial Foundations: Ravi sets up an emergency fund (3-6 months). His friend gets a brain tumor with no warning — no safety net. Ravi creates his FBI: tracking spending across 4 Es (Emergency → Essentials → Equity → Enjoyment — funded in order). He avoids status debt — no designer clothes on 22% credit cards. He reads "Psychology of Money" and "Algebra of Wealth." He automates everything: savings hit before his paycheck, bills pay themselves, spending has guardrails.
+Cheat codes 4–6 — Career as portfolio: Wei spent his PhD building AI models for food recognition. Nobody told him that 15,000 hours of deliberate skill-building compounds like interest. He started treating his current job the way a portfolio manager treats assets — each project a position, each collaboration a connection. He stopped thinking "stable salary" and started asking: "Is there any equity here? Could I own a piece of this?" His startup couldn't offer much, but even 0.2% equity changed how he thought about his work — he started acting like an owner, not a contractor.
 
-Codes 13-16 — Mindset: Ravi goes analog — one-week social media detox improves his cognition. He gets fired. Three times. Each time, 6+ months unemployed. Each time brutal, embarrassing. But failure is not the tormentor — it's the teacher. He asks for help despite fear of rejection (like Ed Sheeran, rejected by every label, now selling out stadiums). He stays friends with bosses who fired him — business is never personal. No victim card. No grudges. Life is too short.
+Cheat codes 7–9 — Emergency fund and FBI: Wei's colleague got rushed to hospital last winter. Brain tumor. No warning. Wei looked at his own emergency fund — three months of expenses, sitting untouched. He added a fourth month. Then he built his FBI: he opened a spreadsheet and labeled his cash flow across four buckets — Emergency, Essentials, Equity, Enjoyment — and committed to never funding bucket four until the first three were covered. The Enjoyment bucket was thin that month, but he slept better.
 
-Codes 17-20 — Life: Ravi dates his partner for 6-7 years before marrying — using System 2 (rational, long-term compatibility) not just System 1 (fast, emotional gut). Best decision of his life. He confronts his past — an abusive father, homelessness in Mumbai, sleeping on train station benches. He puts down the bag of bricks and forgives. He focuses on impact: "You live only as long as the last person who remembers you." And from a senior monk, he learns the happiness equation: H = O/D. Happiness = what you Own ÷ what you Desire. When desires approach zero, happiness approaches infinity.
+Cheat codes 14–16 — Failure and forgiveness: Wei had a project fail publicly at work once. The client saw the demo, the model misfired on a key test case, and the meeting ended early. He spent a week avoiding the team. Then he remembered: failure is the teacher, not the tormentor. He wrote a post-mortem, fixed the model, and sent the client an updated report unprompted. The client came back. So did his confidence. He stopped holding a grudge against the colleague who had pointed out the flaw in the first place. Business is never personal.
 
-**The lesson:** Twenty cheat codes, one life. Invest in index funds and stay in the market. Build passion through mastery, don't follow it blindly. Practice relentlessly. Treat your career as an investment portfolio of skills and connections. Move where the action is. Chase equity, not salary. Get a mentor before 40. Build an emergency fund and automate your finances. Go analog to think deeply. Embrace failure as your teacher. Don't play victim. Choose your partner with System 2. Forgive your past. Bring value to others. And remember the monk's equation: H = O/D — when your desires approach zero, your happiness approaches infinity.
+Cheat code 20 — H = O/D: Late at night after his daughter was asleep, Wei used to scroll through tech news and feel a low hum of anxiety — other engineers raising rounds, colleagues at bigger companies, the patent still unsold. Then he wrote the equation on a Post-it and stuck it to his monitor: H = O/D. What he owned was real. What he desired was infinite and optional. He started subtracting desires instead of adding income. The hum got quieter.
+
+**The lesson:** Twenty cheat codes, one equation — stay in the index fund, build skills like a portfolio, chase equity not salary, get a mentor before 40, fund the emergency bucket first, go analog to think deeply, and above all: H = O/D. Manage your desires and your happiness manages itself.
