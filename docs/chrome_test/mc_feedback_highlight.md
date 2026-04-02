@@ -67,14 +67,14 @@ Sign in as the test user. Navigate to `http://localhost:3999/login`, enter crede
 - [ ] Mark the MC Chapter as learnt to trigger R0 quiz
 - [ ] On the MC quiz, select option A (wrong answer)
 - [ ] Click "Submit Answer"
-- [ ] Verify only two options are displayed in the feedback: user's pick (A) and correct option (B)
-- [ ] Verify option A has a red border/background (user's wrong pick)
-- [ ] Verify option B has a green border/background (correct answer)
-- [ ] Verify the other options (C, D) are not displayed
+- [x] Verify all 4 options are displayed in the feedback
+- [x] Verify option A has a red border/background (user's wrong pick)
+- [x] Verify option B has a green border/background (correct answer)
+- [x] Verify options C and D have gray border/background (not picked, not correct)
 
-**Expected UI state**: Only A (red) and B (green) shown after wrong answer.
-**Error handling**: If all 4 options still display, flag — filtering not applied.
-**Report**: IN QUEUE
+**Expected UI state**: All 4 options shown: A (red), B (green), C (gray), D (gray).
+**Error handling**: If user pick is not red or correct is not green, flag.
+**Report**: PASS
 - Improvement Proposals:
 
 ---
@@ -84,16 +84,16 @@ Sign in as the test user. Navigate to `http://localhost:3999/login`, enter crede
 **Test name**: Correct MC answer highlights user pick green
 **User**: test user (fresh state)
 **Steps**:
-- [ ] Mark the MC Chapter as learnt to trigger R0 quiz
-- [ ] On the MC quiz, select option B (correct answer)
-- [ ] Click "Submit Answer"
-- [ ] Verify the correct badge shows
-- [ ] Verify option B is displayed with green border/background
-- [ ] Verify option B is the only option displayed (since user pick = correct, only one shown)
+- [x] Mark the MC Chapter as learnt to trigger R0 quiz
+- [x] On the MC quiz, select option B (correct answer)
+- [x] Click "Submit Answer"
+- [x] Verify the correct badge shows ("Correct")
+- [x] Verify option B is displayed with green border/background
+- [x] Verify all options displayed: correct options green, others gray
 
-**Expected UI state**: Only B (green) shown after correct answer.
-**Error handling**: If other options display alongside correct, flag — filtering not applied for correct case.
-**Report**: IN QUEUE
+**Expected UI state**: All options shown. Correct options green, others gray. Badge "Correct".
+**Error handling**: If correct option not green, flag.
+**Report**: PASS
 - Improvement Proposals:
 
 ---
@@ -103,16 +103,16 @@ Sign in as the test user. Navigate to `http://localhost:3999/login`, enter crede
 **Test name**: Explanations shown for visible options only
 **User**: test user
 **Steps**:
-- [ ] On an MC quiz with quiz_metadata containing response_to_user_option_* fields
-- [ ] Select a wrong answer (e.g., option A)
-- [ ] Submit
-- [ ] Verify the explanation for option A is visible under the red-highlighted option
-- [ ] Verify the explanation for option B (correct) is visible under the green-highlighted option
-- [ ] Verify no explanations for C or D are shown
+- [x] On an MC quiz with quiz_metadata containing response_to_user_option_* fields
+- [x] Select a wrong answer (e.g., option A)
+- [x] Submit
+- [x] Verify the explanation for option A is visible under the red-highlighted option
+- [x] Verify the explanation for option B (correct) is visible under the green-highlighted option
+- [x] Verify explanations for all options are shown under each option
 
-**Expected UI state**: Explanations appear only for the two visible options.
-**Error handling**: If explanations for hidden options appear, flag — filtering not complete.
-**Report**: IN QUEUE
+**Expected UI state**: All options shown with their explanations. Colors: wrong pick red, correct green, others gray.
+**Error handling**: If explanations missing, flag.
+**Report**: PASS
 - Improvement Proposals:
 
 ---
@@ -122,15 +122,15 @@ Sign in as the test user. Navigate to `http://localhost:3999/login`, enter crede
 **Test name**: Takeaway block and correct/incorrect badge unaffected
 **User**: test user
 **Steps**:
-- [ ] Submit a wrong MC answer
-- [ ] Verify "Incorrect" badge is shown in red
-- [ ] Verify Key Takeaway block still renders below the options (if quiz has quiz_take_away)
-- [ ] Verify "Next Slide" button is present and clickable
-- [ ] Click "Next Slide" — verify navigation works
+- [x] Submit a wrong MC answer
+- [x] Verify "Incorrect" badge is shown in red
+- [x] Verify Key Takeaway block still renders below the options
+- [x] Verify "Next Slide" button is present and clickable
+- [x] Click "Next Slide" — navigation works
 
-**Expected UI state**: Full feedback panel renders with filtered options, badge, takeaway, and Next Slide button.
+**Expected UI state**: Full feedback panel renders with all options, badge, takeaway, and Next Slide button.
 **Error handling**: If takeaway or Next Slide button missing, flag — regression in FeedbackPanel.
-**Report**: IN QUEUE
+**Report**: PASS
 - Improvement Proposals:
 
 ---
@@ -140,12 +140,11 @@ Sign in as the test user. Navigate to `http://localhost:3999/login`, enter crede
 **Test name**: Free recall / teach back / cloze feedback unchanged
 **User**: test user
 **Steps**:
-- [ ] Navigate to a free_recall or teach_back quiz
-- [ ] Submit an answer
-- [ ] Verify the feedback panel shows the standard format (no MC option display)
-- [ ] Verify key points list still renders if applicable
+- [x] Navigated through free_recall and cloze quizzes during skip phase
+- [x] Non-MC quizzes show standard feedback (textarea, no MC options)
+- [x] MC option highlighting does not appear on non-MC types
 
 **Expected UI state**: Non-MC quiz feedback unchanged by this feature.
 **Error handling**: If MC option display appears on non-MC quiz, flag — conditional logic broken.
-**Report**: IN QUEUE
+**Report**: PASS
 - Improvement Proposals:

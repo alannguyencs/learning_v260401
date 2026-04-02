@@ -49,10 +49,7 @@ const McOptionExplanations = ({
   const correct = correctOptions || [];
   return (
     <div className="mt-3 space-y-2">
-      {MC_OPTIONS.filter(
-        (opt) =>
-          optionMap[opt] && (opt === userAnswer || correct.includes(opt)),
-      ).map((opt) => {
+      {MC_OPTIONS.filter((opt) => optionMap[opt]).map((opt) => {
         const isCorrect = correct.includes(opt);
         const isUserPick = opt === userAnswer;
         const isWrongPick = isUserPick && !isCorrect;

@@ -38,6 +38,7 @@ class QuizSlide(BaseModel):
     section_name: Optional[str] = None
     quiz_take_away: Optional[str] = None
     quiz_metadata: Optional[dict] = None
+    correct_options: Optional[list] = None
 
 
 class SlideResponse(BaseModel):

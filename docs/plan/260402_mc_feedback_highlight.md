@@ -19,9 +19,10 @@
 
 ## Proposed Solution
 
-After submitting an MC quiz answer, show **only** the relevant options:
-- **Wrong answer**: Show the user's pick (red border/text) and the correct option (green border/text). Hide other options.
-- **Correct answer**: Show only the user's pick (green border/text). No other options needed.
+After submitting an MC quiz answer, show **all** options with color coding:
+- **Correct option(s)**: green border/text
+- **User's wrong pick**: red border/text
+- **Other options (not picked, not correct)**: gray border/text (unchanged)
 
 Per-option explanations still render for the visible options.
 

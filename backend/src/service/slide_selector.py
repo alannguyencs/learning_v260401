@@ -67,6 +67,7 @@ def _build_quiz_dict(db: Session, quiz_id: int, round_num: int, lesson_id: int) 
         "section_name": quiz.section_name,
         "quiz_take_away": quiz.quiz_take_away,
         "quiz_metadata": quiz.quiz_metadata,
+        "correct_options": quiz.correct_options,
     }
 
 
