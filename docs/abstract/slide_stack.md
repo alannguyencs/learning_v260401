@@ -33,8 +33,8 @@ SlidePage fetches GET /api/slides/next
   │
   ├── Quiz slide (revision round):
   │     User answers MC (radio buttons) or open-ended (textarea)
-  │     [Submit Answer] → is_correct badge + AI feedback shown
-  │     MC feedback: shows only user pick (red if wrong) + correct option (green)
+  │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
+  │     MC feedback: all options shown (wrong pick red, correct green, others gray)
   │     [Next Slide]   → advances to next slide
   │     [Skip]         → logs skip, advances to next slide
   │
@@ -52,7 +52,7 @@ SlidePage fetches GET /api/slides/next
 **Included:**
 - Chapter reading + mark-as-learnt interaction
 - MC and open-ended quiz answering
-- AI feedback display for open-ended answers
+- AI-graded PASSED/FAILED with itemized good/bad points for open-ended answers
 - Book filtering via dropdown
 - Spaced-repetition round display (Revision R0, R1, …)
 - All-caught-up state

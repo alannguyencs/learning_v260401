@@ -95,7 +95,7 @@ Body: { round_num, lesson_id, user_answer, is_skip }
   ├── If is_skip=true:
   │     log_quiz_skip(db, username, quiz_id, lesson_id, round_num)
   │     record_quiz_response(..., is_correct=None)
-  │     Return { is_correct: null, feedback: null, round_done }
+  │     Return { is_correct: null, good_points: null, bad_points: null, round_done }
   │
   ├── If quiz_type == 'multiple_choice':
   │     is_correct = (len(correct_options)==1 AND user_answer in correct_options)
@@ -103,12 +103,13 @@ Body: { round_num, lesson_id, user_answer, is_skip }
   │
   └── Else (open-ended):
         QuizGrader.grade(question, expected_answer, user_answer, quiz_type)
-        → { is_correct, feedback }
+        → { good_points, bad_points }
+        → is_correct = good_points / total >= 0.66
   │
   ├── remove_quiz_skip(db, username, quiz_id)
   ├── record_quiz_response(..., is_correct) → QuizResponseResult
   ├── crud_dashboard.log_quiz_answer(db, username, quiz_id, lesson_id, round_num, is_correct)  ← writes to quiz_answer_log
-  └── Return { is_correct, feedback, round_done }
+  └── Return { is_correct, good_points, bad_points, round_done }
 ```
 
 ### POST /api/slides/chat — Contextual AI Q&A
@@ -174,8 +175,9 @@ Return { response }
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `is_correct` | bool | Whether answer is correct |
-| `feedback` | str | One-sentence explanation |
+| `is_correct` | bool | Whether answer passed (good_points/total >= 0.66) |
+| `good_points` | list[str] | Points the student got right |
+| `bad_points` | list[str] | Points the student missed or got wrong |
 
 **`SlideChatService`** (`backend/src/service/slide_chat_service.py`):
 
@@ -201,9 +203,11 @@ Student answer: {user_answer}
 
 ```python
 class GradingOutput(BaseModel):
-    is_correct: bool
-    feedback: str
+    good_points: list[str]
+    bad_points: list[str]
 ```
+
+`is_correct` is computed from the threshold: `len(good_points) / max(total, 1) >= 0.66`.
 
 ### Slide Chat — SlideChatService.answer
 

@@ -97,12 +97,15 @@ def respond_to_quiz(
         result = RevisionService.record_quiz_response(
             db, user.username, quiz_id, body.lesson_id, body.round_num, None, lesson_count
         )
-        return QuizRespondResponse(is_correct=None, feedback=None, round_done=result.round_done)
+        return QuizRespondResponse(
+            is_correct=None, good_points=None, bad_points=None, round_done=result.round_done
+        )
 
     if quiz.quiz_type == "multiple_choice":
         correct_options = quiz.correct_options or []
         is_correct = len(correct_options) == 1 and body.user_answer in correct_options
-        feedback = None
+        good_points = None
+        bad_points = None
     else:
         grading = QuizGrader.grade(
             quiz.question,
@@ -111,7 +114,8 @@ def respond_to_quiz(
             quiz.quiz_type,
         )
         is_correct = grading.is_correct
-        feedback = grading.feedback
+        good_points = grading.good_points
+        bad_points = grading.bad_points
 
     remove_quiz_skip(db, user.username, quiz_id)
     result = RevisionService.record_quiz_response(
@@ -127,7 +131,8 @@ def respond_to_quiz(
     )
     return QuizRespondResponse(
         is_correct=is_correct,
-        feedback=feedback,
+        good_points=good_points,
+        bad_points=bad_points,
         round_done=result.round_done,
     )
 

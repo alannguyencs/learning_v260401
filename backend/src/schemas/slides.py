@@ -1,6 +1,6 @@
 """Pydantic schemas for slide API requests and responses."""
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -69,7 +69,8 @@ class QuizRespondResponse(BaseModel):
     """Response from POST /api/slides/quizzes/{id}/respond."""
 
     is_correct: Optional[bool] = None
-    feedback: Optional[str] = None
+    good_points: Optional[List[str]] = None
+    bad_points: Optional[List[str]] = None
     round_done: bool
 
 

@@ -13,6 +13,7 @@
 - [x] docs/plan/260401_gemini_quiz_grader.md
 - [x] docs/plan/260402_slide_chat.md
 - [ ] docs/plan/260402_mc_feedback_highlight.md
+- [x] docs/plan/260402_quiz_pass_fail_grading.md
 
 ## DB Cloud Migration
 

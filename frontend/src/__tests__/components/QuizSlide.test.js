@@ -58,35 +58,74 @@ describe("QuizSlide", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows feedback panel after submit", () => {
-    const mockFeedback = {
-      is_correct: true,
-      feedback: "Well explained.",
-      round_done: false,
-    };
+  it("shows PASSED label when is_correct is true", () => {
     render(
       <QuizSlide
         quiz={mcQuiz}
-        feedback={mockFeedback}
+        feedback={{
+          is_correct: true,
+          good_points: null,
+          bad_points: null,
+          round_done: false,
+        }}
         onSubmit={jest.fn()}
         onSkip={jest.fn()}
         onNext={jest.fn()}
       />,
     );
     expect(screen.getByTestId("feedback-panel")).toBeInTheDocument();
-    expect(screen.getByText(/Well explained/)).toBeInTheDocument();
+    expect(screen.getByText(/PASSED/)).toBeInTheDocument();
   });
 
-  it("Next Slide button appears after feedback shown", () => {
-    const mockFeedback = {
-      is_correct: false,
-      feedback: "Try again.",
-      round_done: false,
-    };
+  it("shows FAILED label when is_correct is false", () => {
     render(
       <QuizSlide
         quiz={recallQuiz}
-        feedback={mockFeedback}
+        feedback={{
+          is_correct: false,
+          good_points: ["Got concept A"],
+          bad_points: ["Missed B", "Missed C"],
+          round_done: false,
+        }}
+        onSubmit={jest.fn()}
+        onSkip={jest.fn()}
+        onNext={jest.fn()}
+      />,
+    );
+    expect(screen.getByText(/FAILED/)).toBeInTheDocument();
+  });
+
+  it("shows good and bad points lists", () => {
+    render(
+      <QuizSlide
+        quiz={recallQuiz}
+        feedback={{
+          is_correct: true,
+          good_points: ["Explained gradients", "Mentioned chain rule"],
+          bad_points: ["Missed backprop detail"],
+          round_done: false,
+        }}
+        onSubmit={jest.fn()}
+        onSkip={jest.fn()}
+        onNext={jest.fn()}
+      />,
+    );
+    expect(screen.getByText("Explained gradients")).toBeInTheDocument();
+    expect(screen.getByText("Mentioned chain rule")).toBeInTheDocument();
+    expect(screen.getByText("Missed backprop detail")).toBeInTheDocument();
+    expect(screen.getByText("2/3 points")).toBeInTheDocument();
+  });
+
+  it("Next Slide button appears after feedback shown", () => {
+    render(
+      <QuizSlide
+        quiz={recallQuiz}
+        feedback={{
+          is_correct: false,
+          good_points: [],
+          bad_points: ["Wrong"],
+          round_done: false,
+        }}
         onSubmit={jest.fn()}
         onSkip={jest.fn()}
         onNext={jest.fn()}
@@ -110,7 +149,7 @@ describe("QuizSlide", () => {
     expect(onSkip).toHaveBeenCalledTimes(1);
   });
 
-  it("MC wrong answer: shows user pick red and correct green, hides others", () => {
+  it("MC wrong answer: shows user pick red and correct green", () => {
     const mcWithMeta = {
       ...mcQuiz,
       correct_options: ["B"],
@@ -130,39 +169,14 @@ describe("QuizSlide", () => {
         onNext={jest.fn()}
       />,
     );
-    // Select option A (wrong)
     fireEvent.click(screen.getByText("A. Machine Learning"));
-    // Now render with feedback to simulate post-submit
-    render(
-      <QuizSlide
-        quiz={mcWithMeta}
-        feedback={{ is_correct: false, feedback: "Wrong.", round_done: false }}
-        onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
-      />,
-    );
-    // The FeedbackPanel should be present
-    expect(screen.getAllByTestId("feedback-panel").length).toBeGreaterThan(0);
-  });
-
-  it("MC correct answer: shows only user pick in green", () => {
-    const mcWithMeta = {
-      ...mcQuiz,
-      correct_options: ["A"],
-      quiz_metadata: {
-        response_to_user_option_a: "Correct!",
-        response_to_user_option_b: "Wrong.",
-        response_to_user_option_c: "Nope.",
-        response_to_user_option_d: "Nope.",
-      },
-    };
     render(
       <QuizSlide
         quiz={mcWithMeta}
         feedback={{
-          is_correct: true,
-          feedback: "Good job!",
+          is_correct: false,
+          good_points: null,
+          bad_points: null,
           round_done: false,
         }}
         onSubmit={jest.fn()}
@@ -170,7 +184,6 @@ describe("QuizSlide", () => {
         onNext={jest.fn()}
       />,
     );
-    expect(screen.getByTestId("feedback-panel")).toBeInTheDocument();
-    expect(screen.getByText(/Good job!/)).toBeInTheDocument();
+    expect(screen.getAllByTestId("feedback-panel").length).toBeGreaterThan(0);
   });
 });
