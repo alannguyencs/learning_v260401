@@ -98,7 +98,7 @@ Body: { round_num, lesson_id, user_answer, is_skip }
   │     Return { is_correct: null, feedback: null, round_done }
   │
   ├── If quiz_type == 'multiple_choice':
-  │     is_correct = (user_answer in correct_options)
+  │     is_correct = (len(correct_options)==1 AND user_answer in correct_options)
   │     feedback = null
   │
   └── Else (open-ended):

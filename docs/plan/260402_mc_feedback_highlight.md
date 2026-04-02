@@ -229,3 +229,9 @@ After implementation is complete, execute the Chrome Claude Extension E2E tests 
 ## Open Questions
 
 None — all requirements clear from user screenshot and description.
+
+---
+
+## Change Request — 2026-04-02
+
+**Multi-correct MC quizzes**: When `correct_options` contains multiple answers (e.g. `["B","C"]`) and the user selects only one of them via a single radio button, this must be treated as **incorrect**. Previously `user_answer in correct_options` returned True for a partial match. Fixed to require `len(correct_options) == 1` for a single selection to be correct. This means single-select radio UIs can never fully satisfy multi-correct quizzes, which is the intended behavior — partial knowledge is not a pass.

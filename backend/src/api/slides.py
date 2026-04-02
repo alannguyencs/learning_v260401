@@ -101,7 +101,7 @@ def respond_to_quiz(
 
     if quiz.quiz_type == "multiple_choice":
         correct_options = quiz.correct_options or []
-        is_correct = body.user_answer in correct_options
+        is_correct = len(correct_options) == 1 and body.user_answer in correct_options
         feedback = None
     else:
         grading = QuizGrader.grade(
