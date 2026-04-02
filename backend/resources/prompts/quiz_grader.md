@@ -9,9 +9,12 @@ Guidelines:
 - For cloze: check if the fill-in is correct or semantically equivalent.
 - Be lenient on wording; strict on correctness of concepts.
 - Each good_point or bad_point should be one concise sentence.
+- Write points as direct facts, NOT as "The student correctly/incorrectly...".
+  Good example: "Identified Money Track as one of the three tracks"
+  Bad example: "The student correctly identified the Money Track"
 
 Respond ONLY in JSON:
 {
-  "good_points": ["what the student got right", ...],
-  "bad_points": ["what the student missed or got wrong", ...]
+  "good_points": ["concise fact about what was right", ...],
+  "bad_points": ["concise fact about what was missed", ...]
 }
