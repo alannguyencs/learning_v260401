@@ -40,6 +40,7 @@ Read endpoints use the session cookie via `authenticate_user_from_request`.
 | `book_id` | String | FK → books.book_id, NOT NULL |
 | `lesson_index` | Integer | NOT NULL |
 | `title` | String | NOT NULL |
+| `raw_content` | Text | nullable — full paper text or YouTube transcript |
 | `created_at` | Timestamp | DEFAULT NOW() |
 | — | — | UNIQUE(book_id, lesson_index) |
 
@@ -82,7 +83,7 @@ Local agent
   ├── POST /api/content/books { book_id, title }
   │         verify_agent_token → crud_content.create_book
   │
-  ├── POST /api/content/lessons { book_id, lesson_index, title }
+  ├── POST /api/content/lessons { book_id, lesson_index, title, raw_content? }
   │         verify_agent_token → crud_content.create_lesson
   │
   ├── POST /api/content/chapters { lesson_id, chapter_index, title, content }
@@ -113,7 +114,7 @@ Frontend (session cookie)
 | Method | Path | Auth | Request | Response |
 |--------|------|------|---------|----------|
 | POST | `/api/content/books` | Bearer | `{book_id, title}` | `BookResponse` |
-| POST | `/api/content/lessons` | Bearer | `{book_id, lesson_index, title}` | `LessonResponse` |
+| POST | `/api/content/lessons` | Bearer | `{book_id, lesson_index, title, raw_content?}` | `LessonResponse` |
 | POST | `/api/content/chapters` | Bearer | `{lesson_id, chapter_index, title, content}` | `ChapterResponse` |
 | POST | `/api/content/quizzes` | Bearer | `{chapter_id, quizzes: [QuizCreate]}` | `{inserted: int}` |
 
@@ -133,7 +134,7 @@ Bearer auth: `Authorization: Bearer <WEBAPP_ACCESS_TOKEN>` validated by `verify_
 | `create_book(book_id, title)` | Insert new book |
 | `list_books()` | All books ordered by book_id |
 | `get_lesson(lesson_id)` | Query by PK |
-| `create_lesson(book_id, lesson_index, title)` | Insert new lesson |
+| `create_lesson(book_id, lesson_index, title, raw_content?)` | Insert new lesson (optionally with raw content) |
 | `list_lessons_in_book(book_id)` | Lessons ordered by lesson_index |
 | `get_lesson_chapter_count(lesson_id)` | Count chapters in lesson |
 | `get_chapter(chapter_id)` | Query by PK |
@@ -142,6 +143,7 @@ Bearer auth: `Authorization: Bearer <WEBAPP_ACCESS_TOKEN>` validated by `verify_
 | `create_chapter_quiz(chapter_id, ...)` | Insert one quiz |
 | `list_quizzes_for_chapter(chapter_id)` | All quizzes for a chapter |
 | `list_quizzes_for_lesson(lesson_id)` | All quizzes in all chapters of a lesson |
+| `get_lesson_by_chapter_id(chapter_id)` | Get lesson that owns a given chapter |
 
 ## Configuration
 

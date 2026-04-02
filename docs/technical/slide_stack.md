@@ -12,9 +12,30 @@ POST /api/slides/chapters/{id}/learnt
 POST /api/slides/quizzes/{id}/respond
                                 → auto-grade (MC) or QuizGrader.grade (open-ended)
                                 → RevisionService.record_quiz_response
+POST /api/slides/chat           → SlideChatService.answer (Gemini 2.5 Flash)
+GET  /api/slides/chat           → get_chat_messages(username, slide_identifier)
 ```
 
 ## Data Model
+
+**`SlideChatMessage`** (`slide_chat_messages`)
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | Integer | PK |
+| `username` | String | FK → users.username, NOT NULL |
+| `slide_identifier` | String | NOT NULL — `"chapter:{id}"` or `"quiz:{id}"` |
+| `role` | String | NOT NULL — `"user"` or `"assistant"` |
+| `content` | Text | NOT NULL |
+| `created_at` | Timestamp | NOT NULL, DEFAULT NOW() |
+
+Index: `(username, slide_identifier, created_at)`
+
+**`Lesson`** — added column:
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `raw_content` | Text | nullable — full paper text or YouTube transcript |
 
 **`quiz_skip_log`**
 
@@ -90,6 +111,33 @@ Body: { round_num, lesson_id, user_answer, is_skip }
   └── Return { is_correct, feedback, round_done }
 ```
 
+### POST /api/slides/chat — Contextual AI Q&A
+
+```
+Body: { slide_type, chapter_id?, quiz_id?, message }
+  │
+  ▼
+Build slide_identifier + load slide context
+  ├── chapter: chapter.content
+  └── quiz: quiz question + expected_answer + chapter.content
+  │
+  ▼
+Load lesson.raw_content (may be NULL)
+  │
+  ▼
+get_recent_chat_messages(username, slide_identifier, limit=10)
+  │
+  ▼
+SlideChatService.answer(slide_context, raw_content, recent, message)
+  → Gemini 2.5 Flash → response text
+  │
+  ▼
+save_chat_message × 2 (user + assistant)
+  │
+  ▼
+Return { response }
+```
+
 ## API Layer
 
 | Method | Path | Auth | Handler |
@@ -97,6 +145,8 @@ Body: { round_num, lesson_id, user_answer, is_skip }
 | GET | `/api/slides/next` | Session | `get_next_slide` |
 | POST | `/api/slides/chapters/{chapter_id}/learnt` | Session | `mark_chapter_learnt` |
 | POST | `/api/slides/quizzes/{quiz_id}/respond` | Session | `respond_to_quiz` |
+| POST | `/api/slides/chat` | Session | `slide_chat` |
+| GET | `/api/slides/chat` | Session | `get_slide_chat_history` |
 
 ## Service Layer
 
@@ -127,6 +177,12 @@ Body: { round_num, lesson_id, user_answer, is_skip }
 | `is_correct` | bool | Whether answer is correct |
 | `feedback` | str | One-sentence explanation |
 
+**`SlideChatService`** (`backend/src/service/slide_chat_service.py`):
+
+| Method | Description |
+|--------|-------------|
+| `answer(slide_context, raw_content, recent_messages, user_message)` | Builds prompt with context, calls Gemini, returns free-text response |
+
 ## LLM Requests Layer
 
 **System prompt:** `backend/resources/prompts/quiz_grader.md` — concatenated with user message into a single prompt (Gemini does not use a separate system parameter)
@@ -149,6 +205,32 @@ class GradingOutput(BaseModel):
     feedback: str
 ```
 
+### Slide Chat — SlideChatService.answer
+
+**System prompt:** `backend/resources/prompts/slide_chat.md`
+
+**Model:** `gemini-2.5-flash`, temperature: 0.3, free-text output
+
+**Prompt structure:**
+```
++----------------------------------------------------------+
+|  SYSTEM PROMPT (slide_chat.md)                           |
+|  - Learning assistant role                               |
+|  - Answer based on context, be concise and educational   |
++----------------------------------------------------------+
+|  USER PROMPT                                             |
+|  +----------------------------------------------------+  |
+|  | Lesson Source Material (raw_content, max 8000 ch)  |  |
+|  +----------------------------------------------------+  |
+|  | Current Slide Content (chapter or quiz fields)     |  |
+|  +----------------------------------------------------+  |
+|  | Recent Conversation (last 10 messages)             |  |
+|  +----------------------------------------------------+  |
+|  | User Question                                      |  |
+|  +----------------------------------------------------+  |
++----------------------------------------------------------+
+```
+
 ## CRUD Layer
 
 **`crud_slides.py`:**
@@ -161,6 +243,14 @@ class GradingOutput(BaseModel):
 | `log_quiz_skip(username, quiz_id, lesson_id, round_num)` | Insert skip log row (idempotent) |
 | `remove_quiz_skip(username, quiz_id)` | Delete skip log row on answer |
 | `get_skipped_quizzes(username)` | Skipped quizzes ordered by skipped_at ASC |
+
+**`crud_slide_chat.py`:**
+
+| Function | Description |
+|----------|-------------|
+| `get_chat_messages(username, slide_identifier)` | All messages for user+slide, ordered ASC |
+| `get_recent_chat_messages(username, slide_identifier, limit)` | Last N messages for context |
+| `save_chat_message(username, slide_identifier, role, content)` | Insert one message row |
 
 ## Frontend — Pages & Routes
 
@@ -177,6 +267,8 @@ class GradingOutput(BaseModel):
 | `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt / Skip buttons |
 | `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC (options + per-option explanations); shows section_name badge and quiz_take_away in feedback |
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
+| `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
+| `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
 
 ## Frontend — Services & Hooks
 
@@ -198,6 +290,16 @@ class GradingOutput(BaseModel):
 | `getNextSlide(bookId)` | GET `/api/slides/next?book_id=bookId` |
 | `markChapterLearnt(chapterId)` | POST `/api/slides/chapters/{id}/learnt` |
 | `respondToQuiz(quizId, body)` | POST `/api/slides/quizzes/{id}/respond` |
+| `sendChatMessage(body)` | POST `/api/slides/chat` |
+| `getChatHistory(slideType, chapterId, quizId)` | GET `/api/slides/chat` |
+
+**`useSlideChat`** (`frontend/src/hooks/useSlideChat.js`):
+
+| Method | Description |
+|--------|-------------|
+| `messages` | Array of `{ role, content, created_at }` |
+| `loading` | Boolean — true while waiting for AI response |
+| `sendMessage(text)` | POST chat, append user msg + AI response to state |
 
 ## Component Checklist
 
@@ -224,6 +326,24 @@ class GradingOutput(BaseModel):
 - [x] Tests — `frontend/src/__tests__/components/ChapterSlide.test.js`
 - [x] Tests — `frontend/src/__tests__/components/QuizSlide.test.js`
 - [x] Tests — `frontend/src/__tests__/hooks/useSlide.test.js`
+- [x] Migration — `scripts/sql/007_slide_chat.sql`
+- [x] Model — `backend/src/models/slide_chat.py` (`SlideChatMessage`)
+- [x] Model update — `backend/src/models/content.py` (`Lesson.raw_content`)
+- [x] CRUD — `backend/src/crud/crud_slide_chat.py`
+- [x] Service — `backend/src/service/slide_chat_service.py`
+- [x] System prompt — `backend/resources/prompts/slide_chat.md`
+- [x] Schemas — `backend/src/schemas/slides.py` (chat request/response)
+- [x] API — `backend/src/api/slides.py` (POST/GET `/slides/chat`)
+- [x] Tests — `backend/tests/test_slide_chat_api.py`
+- [x] Tests — `backend/tests/test_slide_chat_service.py`
+- [x] Tests — `backend/tests/test_crud_slide_chat.py`
+- [x] Hook — `frontend/src/hooks/useSlideChat.js`
+- [x] Component — `frontend/src/components/ChatButton.jsx`
+- [x] Component — `frontend/src/components/ChatPanel.jsx`
+- [x] Page update — `frontend/src/pages/SlidePage.jsx` (ChatButton overlay)
+- [x] API methods — `frontend/src/services/api.js` (chat methods)
+- [x] Tests — `frontend/src/__tests__/components/SlideChat.test.js`
+- [x] Tests — `frontend/src/__tests__/hooks/useSlideChat.test.js`
 
 ---
 

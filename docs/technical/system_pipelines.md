@@ -117,6 +117,33 @@ Return { is_correct, feedback, round_done }
 Show feedback panel → [Next Slide] → fetchNextSlide()
 ```
 
+## Slide Chat Pipeline — [details](./slide_stack.md)
+
+```
+User clicks chat icon on slide
+  │
+  ▼
+ChatPanel opens → GET /api/slides/chat (load history)
+  │
+  ▼
+User types question → POST /api/slides/chat
+  │
+  ▼
+Build context:
+  ├── slide content (chapter or quiz)
+  ├── lesson raw_content (if available)
+  └── recent chat messages (last 10)
+  │
+  ▼
+SlideChatService.answer → Gemini 2.5 Flash
+  │
+  ▼
+Save user message + AI response to slide_chat_messages
+  │
+  ▼
+Return { response } → display in ChatPanel
+```
+
 ---
 
 [Parent](./index.md) | [Next: Authentication >](./authentication.md)

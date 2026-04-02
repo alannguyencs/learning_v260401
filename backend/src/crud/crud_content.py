@@ -31,9 +31,17 @@ def get_lesson(db: Session, lesson_id: int) -> Optional[Lesson]:
     return db.query(Lesson).filter(Lesson.id == lesson_id).first()
 
 
-def create_lesson(db: Session, book_id: str, lesson_index: int, title: str) -> Lesson:
+def create_lesson(
+    db: Session,
+    book_id: str,
+    lesson_index: int,
+    title: str,
+    raw_content: Optional[str] = None,
+) -> Lesson:
     """Create a new lesson in a book."""
-    db_lesson = Lesson(book_id=book_id, lesson_index=lesson_index, title=title)
+    db_lesson = Lesson(
+        book_id=book_id, lesson_index=lesson_index, title=title, raw_content=raw_content
+    )
     db.add(db_lesson)
     db.commit()
     db.refresh(db_lesson)
@@ -134,6 +142,14 @@ def list_quizzes_for_lesson(db: Session, lesson_id: int) -> List[ChapterQuiz]:
         .filter(Chapter.lesson_id == lesson_id)
         .all()
     )
+
+
+def get_lesson_by_chapter_id(db: Session, chapter_id: int) -> Optional[Lesson]:
+    """Get the lesson that owns a given chapter."""
+    chapter = db.query(Chapter).filter(Chapter.id == chapter_id).first()
+    if not chapter:
+        return None
+    return db.query(Lesson).filter(Lesson.id == chapter.lesson_id).first()
 
 
 def get_lesson_quiz_count(db: Session, lesson_id: int) -> int:

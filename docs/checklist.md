@@ -11,6 +11,7 @@
 - [x] docs/plan/260331_dashboard.md
 - [x] docs/plan/260401_rich_quiz_metadata.md
 - [x] docs/plan/260401_gemini_quiz_grader.md
+- [x] docs/plan/260402_slide_chat.md
 
 ## DB Cloud Migration
 

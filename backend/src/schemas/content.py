@@ -31,6 +31,7 @@ class LessonCreate(BaseModel):
     book_id: str
     lesson_index: int
     title: str
+    raw_content: Optional[str] = None
 
 
 class LessonResponse(BaseModel):

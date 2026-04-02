@@ -1,24 +1,34 @@
-"""Slide API endpoints: next slide, mark chapter learnt, quiz respond."""
+"""Slide API endpoints: next slide, mark chapter learnt, quiz respond, chat."""
 
-from typing import Optional
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 
 from src.auth import authenticate_user_from_request
 from src.crud import crud_dashboard, crud_learning_progress
-from src.crud.crud_content import get_chapter_quiz
+from src.crud.crud_content import (
+    get_chapter,
+    get_chapter_quiz,
+    get_lesson,
+    get_lesson_by_chapter_id,
+)
+from src.crud.crud_slide_chat import get_chat_messages, get_recent_chat_messages, save_chat_message
 from src.crud.crud_slides import log_quiz_skip, remove_quiz_skip
 from src.database import get_db
 from src.schemas.slides import (
+    ChatMessageResponse,
     ChapterLearntResponse,
     QuizRespondRequest,
     QuizRespondResponse,
+    SlideChatRequest,
+    SlideChatResponse,
     SlideResponse,
 )
 from src.service.learning_progress_service import LearningProgressService
 from src.service.quiz_grader import QuizGrader
 from src.service.revision_service import RevisionService
+from src.service.slide_chat_service import SlideChatService
 from src.service.slide_selector import SlideSelector
 
 router = APIRouter()
@@ -120,3 +130,74 @@ def respond_to_quiz(
         feedback=feedback,
         round_done=result.round_done,
     )
+
+
+def _build_slide_context(db: Session, slide_type: str, chapter_id, quiz_id):
+    """Build slide_identifier, slide_context text, and lesson from slide params."""
+    if slide_type == "chapter":
+        if not chapter_id:
+            raise HTTPException(status_code=400, detail="chapter_id required for chapter slides")
+        chapter = get_chapter(db, chapter_id)
+        if not chapter:
+            raise HTTPException(status_code=404, detail="Chapter not found")
+        lesson = get_lesson(db, chapter.lesson_id)
+        return f"chapter:{chapter_id}", chapter.content, lesson
+
+    if slide_type == "quiz":
+        if not quiz_id:
+            raise HTTPException(status_code=400, detail="quiz_id required for quiz slides")
+        quiz = get_chapter_quiz(db, quiz_id)
+        if not quiz:
+            raise HTTPException(status_code=404, detail="Quiz not found")
+        chapter = get_chapter(db, quiz.chapter_id)
+        lesson = get_lesson_by_chapter_id(db, quiz.chapter_id)
+        context_parts = [f"Quiz question: {quiz.question}"]
+        if quiz.expected_answer:
+            context_parts.append(f"Expected answer: {quiz.expected_answer}")
+        if chapter:
+            context_parts.append(f"Chapter content:\n{chapter.content}")
+        return f"quiz:{quiz_id}", "\n\n".join(context_parts), lesson
+
+    raise HTTPException(status_code=400, detail="slide_type must be 'chapter' or 'quiz'")
+
+
+@router.post("/slides/chat", response_model=SlideChatResponse)
+def slide_chat(
+    body: SlideChatRequest,
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Send a chat message about the current slide and get an AI response."""
+    slide_id, slide_context, lesson = _build_slide_context(
+        db, body.slide_type, body.chapter_id, body.quiz_id
+    )
+    raw_content = lesson.raw_content if lesson else None
+    recent = get_recent_chat_messages(db, user.username, slide_id, limit=10)
+
+    response_text = SlideChatService.answer(slide_context, raw_content, recent, body.message)
+
+    save_chat_message(db, user.username, slide_id, "user", body.message)
+    save_chat_message(db, user.username, slide_id, "assistant", response_text)
+
+    return SlideChatResponse(response=response_text)
+
+
+@router.get("/slides/chat", response_model=List[ChatMessageResponse])
+def get_slide_chat_history(
+    slide_type: str = Query(...),
+    chapter_id: Optional[int] = Query(None),
+    quiz_id: Optional[int] = Query(None),
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Get chat history for a specific slide."""
+    slide_id, _, _ = _build_slide_context(db, slide_type, chapter_id, quiz_id)
+    messages = get_chat_messages(db, user.username, slide_id)
+    return [
+        ChatMessageResponse(
+            role=msg.role,
+            content=msg.content,
+            created_at=msg.created_at.isoformat(),
+        )
+        for msg in messages
+    ]

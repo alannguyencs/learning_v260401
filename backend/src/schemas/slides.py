@@ -70,3 +70,26 @@ class QuizRespondResponse(BaseModel):
     is_correct: Optional[bool] = None
     feedback: Optional[str] = None
     round_done: bool
+
+
+class SlideChatRequest(BaseModel):
+    """Request body for POST /api/slides/chat."""
+
+    slide_type: str
+    chapter_id: Optional[int] = None
+    quiz_id: Optional[int] = None
+    message: str
+
+
+class SlideChatResponse(BaseModel):
+    """Response from POST /api/slides/chat."""
+
+    response: str
+
+
+class ChatMessageResponse(BaseModel):
+    """A single chat message in history."""
+
+    role: str
+    content: str
+    created_at: str

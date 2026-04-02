@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import useSlide from "../hooks/useSlide";
 import BookSelector from "../components/BookSelector";
+import ChatButton from "../components/ChatButton";
 import ChapterSlide from "../components/ChapterSlide";
 import QuizSlide from "../components/QuizSlide";
 import AllCaughtUp from "../components/AllCaughtUp";
@@ -77,6 +78,14 @@ const SlidePage = () => {
 
         {!loading && !error && slide?.slide_type === "none" && <AllCaughtUp />}
       </div>
+
+      {!loading && !error && slide && slide.slide_type !== "none" && (
+        <ChatButton
+          slideType={slide.slide_type}
+          chapterId={slide.chapter?.id || null}
+          quizId={slide.quiz?.id || null}
+        />
+      )}
     </div>
   );
 };
