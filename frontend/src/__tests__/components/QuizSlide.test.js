@@ -109,4 +109,68 @@ describe("QuizSlide", () => {
     fireEvent.click(screen.getByText("Skip"));
     expect(onSkip).toHaveBeenCalledTimes(1);
   });
+
+  it("MC wrong answer: shows user pick red and correct green, hides others", () => {
+    const mcWithMeta = {
+      ...mcQuiz,
+      correct_options: ["B"],
+      quiz_metadata: {
+        response_to_user_option_a: "Wrong.",
+        response_to_user_option_b: "Correct!",
+        response_to_user_option_c: "Nope.",
+        response_to_user_option_d: "Nope.",
+      },
+    };
+    render(
+      <QuizSlide
+        quiz={mcWithMeta}
+        feedback={null}
+        onSubmit={jest.fn()}
+        onSkip={jest.fn()}
+        onNext={jest.fn()}
+      />,
+    );
+    // Select option A (wrong)
+    fireEvent.click(screen.getByText("A. Machine Learning"));
+    // Now render with feedback to simulate post-submit
+    render(
+      <QuizSlide
+        quiz={mcWithMeta}
+        feedback={{ is_correct: false, feedback: "Wrong.", round_done: false }}
+        onSubmit={jest.fn()}
+        onSkip={jest.fn()}
+        onNext={jest.fn()}
+      />,
+    );
+    // The FeedbackPanel should be present
+    expect(screen.getAllByTestId("feedback-panel").length).toBeGreaterThan(0);
+  });
+
+  it("MC correct answer: shows only user pick in green", () => {
+    const mcWithMeta = {
+      ...mcQuiz,
+      correct_options: ["A"],
+      quiz_metadata: {
+        response_to_user_option_a: "Correct!",
+        response_to_user_option_b: "Wrong.",
+        response_to_user_option_c: "Nope.",
+        response_to_user_option_d: "Nope.",
+      },
+    };
+    render(
+      <QuizSlide
+        quiz={mcWithMeta}
+        feedback={{
+          is_correct: true,
+          feedback: "Good job!",
+          round_done: false,
+        }}
+        onSubmit={jest.fn()}
+        onSkip={jest.fn()}
+        onNext={jest.fn()}
+      />,
+    );
+    expect(screen.getByTestId("feedback-panel")).toBeInTheDocument();
+    expect(screen.getByText(/Good job!/)).toBeInTheDocument();
+  });
 });

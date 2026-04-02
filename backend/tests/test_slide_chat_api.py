@@ -1,5 +1,7 @@
 """Tests for slide chat API endpoints."""
 
+# pylint: disable=redefined-outer-name
+
 from unittest.mock import MagicMock, patch
 
 import pytest

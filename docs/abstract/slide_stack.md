@@ -34,6 +34,7 @@ SlidePage fetches GET /api/slides/next
   ├── Quiz slide (revision round):
   │     User answers MC (radio buttons) or open-ended (textarea)
   │     [Submit Answer] → is_correct badge + AI feedback shown
+  │     MC feedback: shows only user pick (red if wrong) + correct option (green)
   │     [Next Slide]   → advances to next slide
   │     [Skip]         → logs skip, advances to next slide
   │

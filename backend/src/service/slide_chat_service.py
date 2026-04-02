@@ -34,9 +34,7 @@ class SlideChatService:
         parts.append(f"## Current Slide Content\n{slide_context}")
 
         if recent_messages:
-            conversation = "\n".join(
-                f"{msg.role}: {msg.content}" for msg in recent_messages
-            )
+            conversation = "\n".join(f"{msg.role}: {msg.content}" for msg in recent_messages)
             parts.append(f"## Recent Conversation\n{conversation}")
 
         parts.append(f"## User Question\n{user_message}")

@@ -41,7 +41,11 @@ describe("ChatPanel", () => {
     render(
       <ChatPanel
         messages={[
-          { role: "user", content: "Test Q", created_at: "2026-04-02T10:00:00" },
+          {
+            role: "user",
+            content: "Test Q",
+            created_at: "2026-04-02T10:00:00",
+          },
           {
             role: "assistant",
             content: "Test A",

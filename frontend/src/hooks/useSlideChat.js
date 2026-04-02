@@ -8,7 +8,11 @@ const useSlideChat = (slideType, chapterId, quizId) => {
   const loadHistory = useCallback(async () => {
     if (!slideType) return;
     try {
-      const data = await apiService.getChatHistory(slideType, chapterId, quizId);
+      const data = await apiService.getChatHistory(
+        slideType,
+        chapterId,
+        quizId,
+      );
       setMessages(data);
     } catch {
       setMessages([]);
@@ -21,7 +25,11 @@ const useSlideChat = (slideType, chapterId, quizId) => {
   }, [loadHistory]);
 
   const sendMessage = async (text) => {
-    const userMsg = { role: "user", content: text, created_at: new Date().toISOString() };
+    const userMsg = {
+      role: "user",
+      content: text,
+      created_at: new Date().toISOString(),
+    };
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
     try {

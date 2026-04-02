@@ -1,5 +1,7 @@
 """Tests for slide chat CRUD operations."""
 
+# pylint: disable=redefined-outer-name
+
 import pytest
 from passlib.context import CryptContext
 

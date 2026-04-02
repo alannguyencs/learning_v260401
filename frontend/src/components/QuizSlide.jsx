@@ -33,7 +33,12 @@ const KeyPointsList = ({ points, label }) => {
   );
 };
 
-const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
+const McOptionExplanations = ({
+  optionMap,
+  correctOptions,
+  metadata,
+  userAnswer,
+}) => {
   if (!metadata) return null;
   const explMap = {
     A: metadata.response_to_user_option_a,
@@ -44,19 +49,32 @@ const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
   const correct = correctOptions || [];
   return (
     <div className="mt-3 space-y-2">
-      {MC_OPTIONS.filter((opt) => optionMap[opt]).map((opt) => {
+      {MC_OPTIONS.filter(
+        (opt) =>
+          optionMap[opt] && (opt === userAnswer || correct.includes(opt)),
+      ).map((opt) => {
         const isCorrect = correct.includes(opt);
+        const isUserPick = opt === userAnswer;
+        const isWrongPick = isUserPick && !isCorrect;
         return (
           <div
             key={opt}
             className={`p-2 rounded text-sm border ${
               isCorrect
                 ? "border-green-600 bg-green-900/20"
-                : "border-gray-600 bg-gray-800/40"
+                : isWrongPick
+                  ? "border-red-600 bg-red-900/20"
+                  : "border-gray-600 bg-gray-800/40"
             }`}
           >
             <span
-              className={`font-semibold ${isCorrect ? "text-green-400" : "text-gray-400"}`}
+              className={`font-semibold ${
+                isCorrect
+                  ? "text-green-400"
+                  : isWrongPick
+                    ? "text-red-400"
+                    : "text-gray-400"
+              }`}
             >
               {opt}. {optionMap[opt]}
             </span>
@@ -70,7 +88,7 @@ const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
   );
 };
 
-const FeedbackPanel = ({ feedback, quiz, onNext }) => {
+const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
   const meta = quiz.quiz_metadata;
   const optionMap = {
     A: quiz.option_a,
@@ -95,6 +113,7 @@ const FeedbackPanel = ({ feedback, quiz, onNext }) => {
           optionMap={optionMap}
           correctOptions={quiz.correct_options}
           metadata={meta}
+          userAnswer={userAnswer}
         />
       )}
 
@@ -233,7 +252,12 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
       )}
 
       {feedback && (
-        <FeedbackPanel feedback={feedback} quiz={quiz} onNext={onNext} />
+        <FeedbackPanel
+          feedback={feedback}
+          quiz={quiz}
+          onNext={onNext}
+          userAnswer={answer}
+        />
       )}
     </div>
   );
