@@ -9,7 +9,6 @@ from src.configs import settings
 
 PROMPT_PATH = Path(__file__).parent.parent.parent / "resources" / "prompts" / "slide_chat.md"
 MODEL = "gemini-2.5-flash"
-RAW_CONTENT_MAX_CHARS = 8000
 
 
 class SlideChatService:
@@ -28,8 +27,7 @@ class SlideChatService:
         parts = []
 
         if raw_content:
-            truncated = raw_content[:RAW_CONTENT_MAX_CHARS]
-            parts.append(f"## Lesson Source Material\n{truncated}")
+            parts.append(f"## Lesson Source Material\n{raw_content}")
 
         parts.append(f"## Current Slide Content\n{slide_context}")
 

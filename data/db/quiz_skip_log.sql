@@ -1,0 +1,4 @@
+-- Table: quiz_skip_log
+-- Rows: 0
+-- Export tool: db-compress
+
