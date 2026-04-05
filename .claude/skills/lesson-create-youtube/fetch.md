@@ -84,22 +84,23 @@ print(json.dumps({
 
 ## Step 2: Fetch the transcript
 
-Use the `youtube_transcript_api` CLI tool:
+Use the `youtube_transcript_api` Python library (v3+):
 
-```bash
-youtube_transcript_api {VIDEO_ID} --format text
+```python
+python3 -c "
+from youtube_transcript_api import YouTubeTranscriptApi
+ytt_api = YouTubeTranscriptApi()
+transcript = ytt_api.fetch('{VIDEO_ID}')
+for entry in transcript:
+    print(entry.text)
+" > /tmp/yt_transcript.txt
 ```
 
-This returns plain text with line breaks. Save to a temp file for later embedding in the JSON:
-
-```bash
-youtube_transcript_api {VIDEO_ID} --format text > /tmp/yt_transcript.txt
-```
+This returns plain text with line breaks saved to a temp file for later embedding in the JSON.
 
 ### Fallbacks if transcript fetch fails
 
-1. Try specifying languages: `--languages en es zh-Hant`
-2. Try without specifying format (default JSON with timestamps)
+1. Try specifying languages: `ytt_api.fetch('{VIDEO_ID}', languages=['en', 'es', 'zh-Hant'])`
 3. **Audio transcription fallback** — if the video has no captions at all (error: "Subtitles are disabled"), use `yt-dlp` + `mlx-whisper` to transcribe from audio:
 
 ```bash
@@ -127,7 +128,13 @@ Fetch the page and transcript in **parallel** (two separate Bash tool calls in t
 
 ```
 Call 1: curl -s "https://www.youtube.com/watch?v={VIDEO_ID}" -o /tmp/yt_page.html
-Call 2: youtube_transcript_api {VIDEO_ID} --format text > /tmp/yt_transcript.txt
+Call 2: python3 -c "
+from youtube_transcript_api import YouTubeTranscriptApi
+ytt_api = YouTubeTranscriptApi()
+transcript = ytt_api.fetch('{VIDEO_ID}')
+for entry in transcript:
+    print(entry.text)
+" > /tmp/yt_transcript.txt
 ```
 
 Then run the Python extraction script on the saved HTML.
