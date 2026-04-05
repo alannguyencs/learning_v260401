@@ -176,13 +176,16 @@ def upload_book(api_url, token, book_id, book_title):
         sys.exit(1)
 
 
-def upload_lesson_record(api_url, token, book_id, lesson_index, title):
+def upload_lesson_record(api_url, token, book_id, lesson_index, title, raw_content=None):
     """POST /api/content/lessons. Returns lesson_id."""
+    payload = {"book_id": book_id, "lesson_index": lesson_index, "title": title}
+    if raw_content:
+        payload["raw_content"] = raw_content
     data = _post_json(
         api_url,
         token,
         "content/lessons",
-        {"book_id": book_id, "lesson_index": lesson_index, "title": title},
+        payload,
         "/tmp/lesson_upload.json",
     )
     if "id" in data:
@@ -345,8 +348,9 @@ def main():
     # Step 3: Upload book (idempotent)
     upload_book(api_url, token, book_id, book_title)
 
-    # Step 4: Upload lesson record
-    lesson_id = upload_lesson_record(api_url, token, book_id, lesson_index, lesson_title)
+    # Step 4: Upload lesson record (include transcript as raw_content)
+    raw_content = metadata.get("transcript")
+    lesson_id = upload_lesson_record(api_url, token, book_id, lesson_index, lesson_title, raw_content)
 
     # Step 5: Parse lesson sections
     sections = parse_lesson_sections(lesson_content)

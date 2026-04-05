@@ -29,6 +29,7 @@ class Lesson(Base):
     book_id = Column(String, ForeignKey("books.book_id"), nullable=False, index=True)
     lesson_index = Column(Integer, nullable=False)
     title = Column(String, nullable=False)
+    raw_content = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
 
 

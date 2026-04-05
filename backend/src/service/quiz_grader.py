@@ -1,7 +1,8 @@
 """QuizGrader: uses Gemini API to grade open-ended quiz answers."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import List
 
 from google import genai
 from google.genai import types
@@ -11,13 +12,14 @@ from src.configs import settings
 
 PROMPT_PATH = Path(__file__).parent.parent.parent / "resources" / "prompts" / "quiz_grader.md"
 MODEL = "gemini-2.5-flash"
+PASS_THRESHOLD = 0.66
 
 
 class GradingOutput(BaseModel):
     """Structured output schema for Gemini quiz grading."""
 
-    is_correct: bool = Field(description="Whether the student answer is correct")
-    feedback: str = Field(description="One sentence explaining the grade")
+    good_points: List[str] = Field(description="List of correct points in the student answer")
+    bad_points: List[str] = Field(description="List of missing or incorrect points")
 
 
 @dataclass
@@ -25,7 +27,8 @@ class GradingResult:
     """Result of grading an open-ended quiz answer."""
 
     is_correct: bool
-    feedback: str
+    good_points: List[str] = field(default_factory=list)
+    bad_points: List[str] = field(default_factory=list)
 
 
 class QuizGrader:
@@ -65,7 +68,11 @@ class QuizGrader:
         else:
             parsed = GradingOutput.model_validate_json(response.text)
 
+        total = len(parsed.good_points) + len(parsed.bad_points)
+        is_correct = (len(parsed.good_points) / max(total, 1)) >= PASS_THRESHOLD
+
         return GradingResult(
-            is_correct=parsed.is_correct,
-            feedback=parsed.feedback,
+            is_correct=is_correct,
+            good_points=parsed.good_points,
+            bad_points=parsed.bad_points,
         )

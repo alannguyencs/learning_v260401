@@ -1,6 +1,6 @@
 """Pydantic schemas for slide API requests and responses."""
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -38,6 +38,7 @@ class QuizSlide(BaseModel):
     section_name: Optional[str] = None
     quiz_take_away: Optional[str] = None
     quiz_metadata: Optional[dict] = None
+    correct_options: Optional[list] = None
 
 
 class SlideResponse(BaseModel):
@@ -68,5 +69,29 @@ class QuizRespondResponse(BaseModel):
     """Response from POST /api/slides/quizzes/{id}/respond."""
 
     is_correct: Optional[bool] = None
-    feedback: Optional[str] = None
+    good_points: Optional[List[str]] = None
+    bad_points: Optional[List[str]] = None
     round_done: bool
+
+
+class SlideChatRequest(BaseModel):
+    """Request body for POST /api/slides/chat."""
+
+    slide_type: str
+    chapter_id: Optional[int] = None
+    quiz_id: Optional[int] = None
+    message: str
+
+
+class SlideChatResponse(BaseModel):
+    """Response from POST /api/slides/chat."""
+
+    response: str
+
+
+class ChatMessageResponse(BaseModel):
+    """A single chat message in history."""
+
+    role: str
+    content: str
+    created_at: str

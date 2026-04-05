@@ -14,17 +14,26 @@ const TakeawayBlock = ({ text }) => {
   );
 };
 
-const KeyPointsList = ({ points, label }) => {
+const COLOR_MAP = {
+  yellow: { label: "text-yellow-400", bullet: "text-yellow-500" },
+  green: { label: "text-green-400", bullet: "text-green-500" },
+  red: { label: "text-red-400", bullet: "text-red-500" },
+};
+
+const KeyPointsList = ({ points, label, color = "yellow" }) => {
   if (!points || points.length === 0) return null;
+  const colors = COLOR_MAP[color] || COLOR_MAP.yellow;
   return (
     <div className="mt-3 p-3 bg-gray-900 rounded">
-      <p className="text-xs text-yellow-400 font-semibold uppercase tracking-wide mb-2">
+      <p
+        className={`text-xs ${colors.label} font-semibold uppercase tracking-wide mb-2`}
+      >
         {label}
       </p>
       <ul className="space-y-1">
         {points.map((pt, i) => (
           <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-            <span className="text-yellow-500 mt-0.5">•</span>
+            <span className={`${colors.bullet} mt-0.5`}>•</span>
             <span>{pt}</span>
           </li>
         ))}
@@ -33,7 +42,12 @@ const KeyPointsList = ({ points, label }) => {
   );
 };
 
-const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
+const McOptionExplanations = ({
+  optionMap,
+  correctOptions,
+  metadata,
+  userAnswer,
+}) => {
   if (!metadata) return null;
   const explMap = {
     A: metadata.response_to_user_option_a,
@@ -46,17 +60,27 @@ const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
     <div className="mt-3 space-y-2">
       {MC_OPTIONS.filter((opt) => optionMap[opt]).map((opt) => {
         const isCorrect = correct.includes(opt);
+        const isUserPick = opt === userAnswer;
+        const isWrongPick = isUserPick && !isCorrect;
         return (
           <div
             key={opt}
             className={`p-2 rounded text-sm border ${
               isCorrect
                 ? "border-green-600 bg-green-900/20"
-                : "border-gray-600 bg-gray-800/40"
+                : isWrongPick
+                  ? "border-red-600 bg-red-900/20"
+                  : "border-gray-600 bg-gray-800/40"
             }`}
           >
             <span
-              className={`font-semibold ${isCorrect ? "text-green-400" : "text-gray-400"}`}
+              className={`font-semibold ${
+                isCorrect
+                  ? "text-green-400"
+                  : isWrongPick
+                    ? "text-red-400"
+                    : "text-gray-400"
+              }`}
             >
               {opt}. {optionMap[opt]}
             </span>
@@ -70,7 +94,7 @@ const McOptionExplanations = ({ optionMap, correctOptions, metadata }) => {
   );
 };
 
-const FeedbackPanel = ({ feedback, quiz, onNext }) => {
+const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
   const meta = quiz.quiz_metadata;
   const optionMap = {
     A: quiz.option_a,
@@ -79,15 +103,38 @@ const FeedbackPanel = ({ feedback, quiz, onNext }) => {
     D: quiz.option_d,
   };
 
+  const goodCount = feedback.good_points?.length || 0;
+  const badCount = feedback.bad_points?.length || 0;
+  const totalPoints = goodCount + badCount;
+
   return (
     <div className="mt-4" data-testid="feedback-panel">
       <div
         className={`text-lg font-bold mb-2 ${feedback.is_correct ? "text-green-400" : "text-red-400"}`}
       >
-        {feedback.is_correct ? "\u2713 Correct" : "\u2717 Incorrect"}
+        {feedback.is_correct ? "\u2713 PASSED" : "\u2717 FAILED"}
       </div>
-      {feedback.feedback && (
-        <p className="text-gray-300 italic mb-2">{feedback.feedback}</p>
+
+      {totalPoints > 0 && (
+        <p className="text-gray-400 text-sm mb-2">
+          {goodCount}/{totalPoints} points
+        </p>
+      )}
+
+      {feedback.good_points?.length > 0 && (
+        <KeyPointsList
+          points={feedback.good_points}
+          label="Good Points"
+          color="green"
+        />
+      )}
+
+      {feedback.bad_points?.length > 0 && (
+        <KeyPointsList
+          points={feedback.bad_points}
+          label="Missed Points"
+          color="red"
+        />
       )}
 
       {quiz.quiz_type === "multiple_choice" && (
@@ -95,6 +142,7 @@ const FeedbackPanel = ({ feedback, quiz, onNext }) => {
           optionMap={optionMap}
           correctOptions={quiz.correct_options}
           metadata={meta}
+          userAnswer={userAnswer}
         />
       )}
 
@@ -233,7 +281,12 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
       )}
 
       {feedback && (
-        <FeedbackPanel feedback={feedback} quiz={quiz} onNext={onNext} />
+        <FeedbackPanel
+          feedback={feedback}
+          quiz={quiz}
+          onNext={onNext}
+          userAnswer={answer}
+        />
       )}
     </div>
   );

@@ -68,7 +68,11 @@ def create_lesson(
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     return crud_content.create_lesson(
-        db, book_id=body.book_id, lesson_index=body.lesson_index, title=body.title
+        db,
+        book_id=body.book_id,
+        lesson_index=body.lesson_index,
+        title=body.title,
+        raw_content=body.raw_content,
     )
 
 

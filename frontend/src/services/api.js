@@ -61,6 +61,19 @@ const apiService = {
     const response = await api.get("/api/dashboard/activity-log");
     return response.data;
   },
+
+  sendChatMessage: async (body) => {
+    const response = await api.post("/api/slides/chat", body);
+    return response.data;
+  },
+
+  getChatHistory: async (slideType, chapterId, quizId) => {
+    const params = { slide_type: slideType };
+    if (chapterId) params.chapter_id = chapterId;
+    if (quizId) params.quiz_id = quizId;
+    const response = await api.get("/api/slides/chat", { params });
+    return response.data;
+  },
 };
 
 export default apiService;

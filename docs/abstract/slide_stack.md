@@ -13,7 +13,7 @@ After authentication, users land on a blank page. There is no learning interface
 
 ## Solution
 
-A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 3-tier priority algorithm (due revisions → new chapters → skipped items). Open-ended quiz answers are graded by AI.
+A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 3-tier priority algorithm (due revisions → new chapters → skipped items). Open-ended quiz answers are graded by AI. A floating chat icon on each slide lets the user ask contextual questions, answered by AI using the lesson source material, slide content, and conversation history.
 
 ## User Flow
 
@@ -33,9 +33,15 @@ SlidePage fetches GET /api/slides/next
   │
   ├── Quiz slide (revision round):
   │     User answers MC (radio buttons) or open-ended (textarea)
-  │     [Submit Answer] → is_correct badge + AI feedback shown
+  │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
+  │     MC feedback: all options shown (wrong pick red, correct green, others gray)
   │     [Next Slide]   → advances to next slide
   │     [Skip]         → logs skip, advances to next slide
+  │
+  ├── Chat (on any chapter or quiz slide):
+  │     [Chat icon] → opens chat panel
+  │     User types question → AI responds using slide + lesson context
+  │     Conversation persists per slide across sessions
   │
   └── All caught up:
         Congratulations message shown when no slides remain
@@ -46,10 +52,11 @@ SlidePage fetches GET /api/slides/next
 **Included:**
 - Chapter reading + mark-as-learnt interaction
 - MC and open-ended quiz answering
-- AI feedback display for open-ended answers
+- AI-graded PASSED/FAILED with itemized good/bad points for open-ended answers
 - Book filtering via dropdown
 - Spaced-repetition round display (Revision R0, R1, …)
 - All-caught-up state
+- Contextual AI Q&A chat on chapter and quiz slides
 
 **Not included:**
 - User progress dashboard (separate feature)
@@ -67,6 +74,10 @@ SlidePage fetches GET /api/slides/next
 - [ ] Clicking "Next Slide" after feedback advances to the next slide
 - [ ] Skipping a quiz or chapter advances to the next slide
 - [ ] When no slides remain, the "All caught up" message is shown
+- [ ] Floating chat icon is visible on chapter and quiz slides
+- [ ] Clicking chat icon opens a chat panel
+- [ ] User can type a question and receive a contextual AI response
+- [ ] Chat history persists per slide across page refreshes
 
 ---
 
