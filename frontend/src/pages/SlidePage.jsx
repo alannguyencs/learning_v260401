@@ -13,6 +13,7 @@ const SlidePage = () => {
     loading,
     error,
     feedback,
+    submitting,
     bookId,
     markLearnt,
     submitAnswer,
@@ -29,7 +30,7 @@ const SlidePage = () => {
             to="/dashboard"
             className="text-sm text-gray-400 hover:text-gray-200 underline"
           >
-            Activity Log
+            Dashboard
           </Link>
         </div>
         <BookSelector bookId={bookId} onSelect={selectBook} />
@@ -56,6 +57,7 @@ const SlidePage = () => {
           <QuizSlide
             quiz={slide.quiz}
             feedback={feedback}
+            submitting={submitting}
             onSubmit={(answer) =>
               submitAnswer(slide.quiz.id, {
                 round_num: slide.quiz.round_num,

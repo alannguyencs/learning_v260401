@@ -62,6 +62,11 @@ const apiService = {
     return response.data;
   },
 
+  getLearningProgress: async () => {
+    const response = await api.get("/api/dashboard/learning-progress");
+    return response.data;
+  },
+
   sendChatMessage: async (body) => {
     const response = await api.post("/api/slides/chat", body);
     return response.data;
