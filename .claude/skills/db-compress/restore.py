@@ -82,6 +82,50 @@ def run_psql(config, sql_file):
     return result.returncode == 0, result.stderr.strip()
 
 
+def run_sql(config, sql):
+    """Run a SQL string via psql -c."""
+    cmd = [
+        "psql",
+        "-h", config["host"],
+        "-U", config["user"],
+        "-d", config["dbname"],
+        "-c", sql,
+        "-q",
+    ]
+
+    env = os.environ.copy()
+    if config.get("password"):
+        env["PGPASSWORD"] = config["password"]
+
+    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    return result.returncode == 0, result.stderr.strip()
+
+
+def reset_sequences(config):
+    """Reset all SERIAL sequences to match the max ID in each table."""
+    # Map: (table, id_column) → sequence_name
+    seq_map = [
+        ("users", "id", "users_id_seq"),
+        ("books", "id", "books_id_seq"),
+        ("lessons", "id", "lessons_id_seq"),
+        ("chapters", "id", "chapters_id_seq"),
+        ("chapter_quizzes", "id", "chapter_quizzes_id_seq"),
+        ("user_chapter_progress", "id", "user_chapter_progress_id_seq"),
+        ("lesson_revision_rounds", "id", "lesson_revision_rounds_id_seq"),
+        ("user_quiz_recall", "id", "user_quiz_recall_id_seq"),
+        ("quiz_answer_log", "id", "quiz_answer_log_id_seq"),
+        ("quiz_skip_log", "id", "quiz_skip_log_id_seq"),
+        ("slide_chat_messages", "id", "slide_chat_messages_id_seq"),
+    ]
+
+    print("\nResetting sequences...")
+    for table, col, seq in seq_map:
+        sql = f"SELECT setval('{seq}', COALESCE((SELECT MAX({col}) FROM {table}), 1));"
+        ok, err = run_sql(config, sql)
+        status = "OK" if ok else f"FAIL: {err[:40]}"
+        print(f"  {seq:<40} {status}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Restore DB from data/db/*.sql files")
     parser.add_argument("--project-root", default=os.getcwd(), help="Project root directory")
@@ -117,6 +161,9 @@ def main():
         ok, err = run_psql(config, sql_file)
         status = "OK" if ok else f"FAIL: {err[:40]}"
         print(f"  {table:<28} {status:>10}")
+
+    # Reset sequences so next INSERT gets the right ID
+    reset_sequences(config)
 
     print(f"\nRestore complete.")
 
