@@ -2,122 +2,134 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import apiService from "../services/api";
 
-function recallColor(rate) {
-  if (rate < 0.5) return "text-green-400";
-  if (rate <= 1.0) return "text-yellow-400";
-  return "text-red-400";
-}
+function AccuracyTrendline({ points }) {
+  if (!points || points.length < 2) return null;
 
-function ProgressBar({ learnt, total }) {
-  const pct = total > 0 ? Math.round((learnt / total) * 100) : 0;
+  const w = 400;
+  const h = 120;
+  const pad = { top: 10, right: 10, bottom: 20, left: 35 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const minY = Math.max(0, Math.min(...points) - 10);
+  const maxY = Math.min(100, Math.max(...points) + 10);
+  const rangeY = maxY - minY || 1;
+
+  const toX = (i) => pad.left + (i / (points.length - 1)) * cw;
+  const toY = (v) => pad.top + ch - ((v - minY) / rangeY) * ch;
+
+  const pathD = points
+    .map(
+      (v, i) =>
+        `${i === 0 ? "M" : "L"}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`,
+    )
+    .join(" ");
+
+  const yTicks = [minY, Math.round((minY + maxY) / 2), maxY];
+
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-green-500 rounded-full transition-all"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="text-sm text-gray-300 whitespace-nowrap">
-        {learnt}/{total} ({pct}%)
-      </span>
-    </div>
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className="w-full max-w-md"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      {yTicks.map((t) => (
+        <g key={t}>
+          <line
+            x1={pad.left}
+            x2={w - pad.right}
+            y1={toY(t)}
+            y2={toY(t)}
+            stroke="#374151"
+            strokeWidth="0.5"
+          />
+          <text
+            x={pad.left - 4}
+            y={toY(t) + 3}
+            textAnchor="end"
+            fill="#9CA3AF"
+            fontSize="9"
+          >
+            {t}%
+          </text>
+        </g>
+      ))}
+      <path
+        d={pathD}
+        fill="none"
+        stroke="#3B82F6"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      {points.map((v, i) => (
+        <circle key={i} cx={toX(i)} cy={toY(v)} r="2.5" fill="#3B82F6" />
+      ))}
+    </svg>
   );
 }
 
-function LessonCard({ lesson }) {
-  const notStarted =
-    lesson.learnt_chapters === 0 &&
-    lesson.round_num == null &&
-    lesson.total_answers === 0;
+function BookCard({ book }) {
+  const hasAnswers = book.lessons.some((l) => l.total_answers > 0);
 
   return (
-    <div
-      className={`rounded-lg border p-4 ${
-        notStarted
-          ? "border-gray-700 bg-gray-800/50"
-          : "border-gray-600 bg-gray-800"
-      }`}
-    >
-      <h3 className="text-base font-semibold text-white mb-3">
-        Lesson {lesson.lesson_index}: {lesson.lesson_title}
-      </h3>
+    <div className="rounded-lg border border-gray-600 bg-gray-800 p-5">
+      <h2 className="text-lg font-bold text-white mb-4">{book.book_title}</h2>
 
-      {notStarted ? (
-        <p className="text-sm text-gray-500 italic">Not started</p>
-      ) : (
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 w-20">Chapters</span>
-            <div className="flex-1">
-              <ProgressBar
-                learnt={lesson.learnt_chapters}
-                total={lesson.total_chapters}
-              />
-            </div>
-          </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-gray-400 text-left border-b border-gray-700">
+              <th className="pb-2 pr-4 font-medium">Lesson</th>
+              <th className="pb-2 pr-4 font-medium">Revision</th>
+              <th className="pb-2 font-medium">Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            {book.lessons.map((lesson, i) => {
+              const pct =
+                lesson.total_answers > 0
+                  ? Math.round(
+                      (lesson.correct_answers / lesson.total_answers) * 100,
+                    )
+                  : null;
+              return (
+                <tr key={i} className="border-b border-gray-700/50">
+                  <td className="py-2 pr-4 text-gray-300">
+                    {lesson.lesson_title}
+                  </td>
+                  <td className="py-2 pr-4 text-gray-300 whitespace-nowrap">
+                    {lesson.round_num != null ? (
+                      <>
+                        R{lesson.round_num} {lesson.round_status}
+                      </>
+                    ) : (
+                      <span className="text-gray-500">&mdash;</span>
+                    )}
+                  </td>
+                  <td className="py-2 text-gray-300 whitespace-nowrap">
+                    {pct != null ? (
+                      <>
+                        {lesson.correct_answers}/{lesson.total_answers} = {pct}%
+                      </>
+                    ) : (
+                      <span className="text-gray-500">&mdash;</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 w-20">Revision</span>
-            <span className="text-gray-300">
-              {lesson.round_num != null ? (
-                <>
-                  R{lesson.round_num} {lesson.round_status}
-                  {lesson.quizzes_in_round != null &&
-                    ` \u00B7 ${lesson.round_quizzes_answered}/${lesson.quizzes_in_round} answered`}
-                </>
-              ) : (
-                <span className="text-gray-500">No revision yet</span>
-              )}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 w-20">Accuracy</span>
-            <span className="text-gray-300">
-              {lesson.total_answers > 0 ? (
-                <>
-                  {lesson.correct_answers}/{lesson.total_answers} correct (
-                  {Math.round(
-                    (lesson.correct_answers / lesson.total_answers) * 100,
-                  )}
-                  %)
-                </>
-              ) : (
-                <span className="text-gray-500">No quizzes yet</span>
-              )}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400 w-20">Recall</span>
-            {lesson.avg_forgetting_rate != null ? (
-              <span className={recallColor(lesson.avg_forgetting_rate)}>
-                avg {lesson.avg_forgetting_rate.toFixed(2)}
-              </span>
-            ) : (
-              <span className="text-gray-500">&mdash;</span>
-            )}
-          </div>
+      {hasAnswers && book.accuracy_trend.length >= 2 && (
+        <div className="mt-4">
+          <p className="text-xs text-gray-500 mb-1">Accuracy trend (recent)</p>
+          <AccuracyTrendline points={book.accuracy_trend} />
         </div>
       )}
     </div>
   );
-}
-
-function groupByBook(lessons) {
-  const books = {};
-  for (const lesson of lessons) {
-    if (!books[lesson.book_id]) {
-      books[lesson.book_id] = {
-        book_id: lesson.book_id,
-        book_title: lesson.book_title,
-        lessons: [],
-      };
-    }
-    books[lesson.book_id].lessons.push(lesson);
-  }
-  return Object.values(books);
 }
 
 const LearningProgressView = () => {
@@ -157,21 +169,10 @@ const LearningProgressView = () => {
     );
   }
 
-  const books = groupByBook(data);
-
   return (
-    <div className="space-y-8">
-      {books.map((book) => (
-        <div key={book.book_id}>
-          <h2 className="text-lg font-bold text-gray-300 mb-3">
-            {book.book_title}
-          </h2>
-          <div className="space-y-3">
-            {book.lessons.map((lesson) => (
-              <LessonCard key={lesson.lesson_id} lesson={lesson} />
-            ))}
-          </div>
-        </div>
+    <div className="space-y-6">
+      {data.map((book) => (
+        <BookCard key={book.book_id} book={book} />
       ))}
     </div>
   );

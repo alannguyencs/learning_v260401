@@ -15,11 +15,9 @@ GET /api/dashboard/activity-log
 
 GET /api/dashboard/learning-progress
     → crud_dashboard.get_learning_progress(db, username)
-         CTE chapter_progress   → learnt/total chapters per lesson
-         CTE latest_round       → latest revision round per lesson
-         CTE quiz_accuracy      → correct/total answers per lesson
-         CTE avg_recall         → average forgetting_rate per lesson
-    → List[LessonProgressEntry] ordered by book_id, lesson_index
+         per-lesson: lesson_title, latest round, accuracy
+         per-book: sliding-window accuracy trendline (20 points from 119 answers)
+    → List[BookProgressEntry] ordered by book_id
 ```
 
 Quiz answers are also written to `quiz_answer_log` from the slides respond endpoint:
@@ -63,31 +61,41 @@ Migration: `scripts/sql/005_quiz_answer_log.sql`
 }
 ```
 
-`chapter_id`, `answer_result`, and `forgetting_rate` are `null` for ROUND CREATED rows.
-`answer_result` and `forgetting_rate` are `null` for LEARNT CHAPTER and SKIP rows.
-
-### `LessonProgressEntry` response schema
+### `BookProgressEntry` response schema
 
 ```json
 {
-  "lesson_id": 2,
   "book_id": "themitmonk",
   "book_title": "theMITmonk",
-  "lesson_index": 1,
-  "lesson_title": "20 Quantum Cheat Codes...",
-  "total_chapters": 5,
-  "learnt_chapters": 1,
-  "round_num": 0,
-  "round_status": "open",
-  "quizzes_in_round": 9,
-  "round_quizzes_answered": 8,
-  "total_answers": 8,
-  "correct_answers": 4,
-  "avg_forgetting_rate": 0.87
+  "lessons": [
+    {
+      "lesson_title": "20 Quantum Cheat Codes...",
+      "round_num": 1,
+      "round_status": "open",
+      "total_answers": 29,
+      "correct_answers": 13
+    }
+  ],
+  "accuracy_trend": [65, 63, 62, 60, 58, ...]
 }
 ```
 
-Nullable fields: `round_num`, `round_status`, `quizzes_in_round`, `round_quizzes_answered`, `avg_forgetting_rate` (null when no data exists).
+`accuracy_trend` is a list of up to 20 integers (0–100), each representing correct answers per 100 in a sliding window. Empty list if fewer than 100 answers exist for the book.
+
+## Algorithms
+
+### Accuracy Trendline (sliding window)
+
+1. Fetch the 119 most recent `quiz_answer_log` rows for the book (non-skip, ordered by `answered_at DESC`).
+2. Reverse to chronological order.
+3. Create 20 windows of 100 answers each:
+   - Window 1: answers[0..99]
+   - Window 2: answers[1..100]
+   - ...
+   - Window 20: answers[19..118]
+4. For each window, count correct answers → that count is the data point (out of 100).
+5. If fewer than 100 answers exist, return empty list.
+6. If between 100 and 118 answers exist, return fewer than 20 points (one point per extra answer beyond 99).
 
 ## API Layer
 
@@ -101,7 +109,7 @@ Response 401: not authenticated
 
 GET /api/dashboard/learning-progress
 Auth: session cookie
-Response 200: List[LessonProgressEntry]
+Response 200: List[BookProgressEntry]
 Response 401: not authenticated
 ```
 
@@ -117,49 +125,34 @@ Inserts one row into `quiz_answer_log`. Called from `slides.py` after every non-
 
 ### `get_activity_log(db, username) -> list[dict]`
 
-Executes a UNION of four queries across:
-- `user_chapter_progress` — LEARNT CHAPTER events
-- `quiz_skip_log` — SKIP events
-- `quiz_answer_log` — ANSWER events, LEFT JOINed with `user_quiz_recall` for `forgetting_rate`
-- `lesson_revision_rounds` — ROUND CREATED events
-
-Returns rows sorted by `event_time ASC`. `forgetting_rate` is rounded to 2 decimal places.
+Executes a UNION of four queries. Returns rows sorted by `event_time ASC`.
 
 ### `get_learning_progress(db, username) -> list[dict]`
 
-Single CTE-based SQL query aggregating four metrics per lesson:
-- `chapter_progress` — COUNT chapters vs COUNT user_chapter_progress rows
-- `latest_round` — DISTINCT ON lesson_id, ORDER BY round_num DESC
-- `quiz_accuracy` — COUNT + SUM(is_correct) from quiz_answer_log
-- `avg_recall` — AVG(forgetting_rate) from user_quiz_recall JOIN chapter_quizzes JOIN chapters
-
-Returns one row per lesson, ordered by `book_id, lesson_index`.
+Returns per-book data with nested lessons and accuracy trendline:
+1. Query per-lesson metrics (latest round, accuracy) grouped by book
+2. Query 119 most recent answers per book for trendline computation
+3. Compute sliding window trendline in Python
+4. Group into book-level dicts with `lessons` list and `accuracy_trend` list
 
 ## Frontend
 
 **`frontend/src/pages/DashboardPage.jsx`**
 - Tab switcher with "Activity Log" and "Learning Progress" tabs
 - `activeTab` state defaults to `"activity"`
-- Activity Log tab: unchanged behaviour (fetches and renders scrollable table)
+- Activity Log tab: unchanged behaviour
 - Learning Progress tab: renders `LearningProgressView` component
 
 **`frontend/src/components/LearningProgressView.jsx`**
 - Fetches `GET /api/dashboard/learning-progress` on mount
-- Groups lessons by `book_id` / `book_title`
-- Renders book section headers with book title
-- Under each book, renders lesson cards with 4 metrics:
-  - Chapters progress bar (green fill on gray-700 track)
-  - Revision status (round_num + status + answered/total)
-  - Accuracy (correct/total with percentage)
-  - Recall (avg forgetting rate, colour-coded: green < 0.5, yellow 0.5-1.0, red > 1.0)
-- Not started state for lessons with no progress
+- Renders one card per book
+- Each card contains:
+  - Book title header
+  - Lesson table with columns: Lesson, Revision, Accuracy
+  - SVG trendline chart below the table (pure SVG, no charting library)
 - Empty state with link to `/slides`
 
-**`frontend/src/App.js`** — `/dashboard` route unchanged.
-
 **`frontend/src/services/api.js`** — `getLearningProgress()` calls `GET /api/dashboard/learning-progress`.
-
-**`frontend/src/pages/SlidePage.jsx`** — "Dashboard" link in top-right corner (was "Activity Log").
 
 ## Testing
 
@@ -168,11 +161,9 @@ Returns one row per lesson, ordered by `book_id, lesson_index`.
 | Test | Description |
 |------|-------------|
 | `test_learning_progress_unauthenticated` | Returns 401 without session |
-| `test_learning_progress_empty` | Returns lessons with zero progress |
-| `test_learning_progress_with_chapter_learnt` | learnt_chapters = 1 after marking |
-| `test_learning_progress_with_quiz_answers` | total_answers and correct_answers reflect data |
-| `test_learning_progress_with_revision_round` | round_num, round_status populated |
-| `test_learning_progress_with_recall` | avg_forgetting_rate computed |
-| `test_learning_progress_grouped_by_book` | Ordered by book_id then lesson_index |
+| `test_learning_progress_empty` | Returns books with empty lessons when no activity |
+| `test_learning_progress_with_lesson_data` | Lesson row has round_num, accuracy |
+| `test_learning_progress_accuracy_trend_empty` | accuracy_trend is [] when < 100 answers |
+| `test_learning_progress_grouped_by_book` | One entry per book |
 
 **File**: `backend/tests/test_dashboard_api.py` — existing activity log tests unchanged.

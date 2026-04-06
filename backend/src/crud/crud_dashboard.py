@@ -127,27 +127,41 @@ def get_activity_log(db: Session, username: str) -> list[dict]:
     ]
 
 
+def _compute_accuracy_trend(answers: list[bool]) -> list[int]:
+    """
+    Compute sliding-window accuracy trend from a chronological list of answers.
+
+    Takes the most recent 119 answers. Creates up to 20 windows of 100,
+    each sliding by 1. Returns a list of integers (correct per 100).
+    """
+    n = len(answers)
+    if n < 100:
+        return []
+    window_count = min(n - 99, 20)
+    offset = n - 99 - window_count
+    correct_in_first = sum(answers[offset : offset + 100])  # noqa: E203
+    trend = [correct_in_first]
+    for i in range(1, window_count):
+        leaving = answers[offset + i - 1]
+        entering = answers[offset + i + 99]
+        correct_in_first += int(entering) - int(leaving)
+        trend.append(correct_in_first)
+    return trend
+
+
 def get_learning_progress(db: Session, username: str) -> list[dict]:
     """
-    Return per-lesson progress metrics for the user.
+    Return per-book progress with lesson table and accuracy trendline.
 
-    Aggregates chapters progress, latest revision round, quiz accuracy,
-    and average recall strength per lesson, grouped by book.
+    Each book entry contains:
+      - lessons: list of {lesson_title, round_num, round_status,
+                          total_answers, correct_answers}
+      - accuracy_trend: list of up to 20 ints (correct per 100)
     """
-    sql = text(
+    lesson_sql = text(
         """
-        WITH chapter_progress AS (
-            SELECT c.lesson_id,
-                   COUNT(c.id) AS total_chapters,
-                   COUNT(ucp.id) AS learnt_chapters
-            FROM chapters c
-            LEFT JOIN user_chapter_progress ucp
-                ON ucp.chapter_id = c.id AND ucp.username = :username
-            GROUP BY c.lesson_id
-        ),
-        latest_round AS (
-            SELECT lrr.lesson_id, lrr.round_num, lrr.status,
-                   lrr.quizzes_in_round, lrr.quizzes_answered
+        WITH latest_round AS (
+            SELECT lrr.lesson_id, lrr.round_num, lrr.status
             FROM lesson_revision_rounds lrr
             INNER JOIN (
                 SELECT lesson_id, MAX(round_num) AS max_round
@@ -161,67 +175,72 @@ def get_learning_progress(db: Session, username: str) -> list[dict]:
         quiz_accuracy AS (
             SELECT lesson_id,
                    COUNT(*) AS total_answers,
-                   SUM(CASE WHEN is_correct THEN 1 ELSE 0 END) AS correct_answers
+                   SUM(CASE WHEN is_correct THEN 1 ELSE 0 END)
+                       AS correct_answers
             FROM quiz_answer_log
             WHERE username = :username
             GROUP BY lesson_id
-        ),
-        avg_recall AS (
-            SELECT c.lesson_id,
-                   CAST(AVG(uqr.forgetting_rate) AS DECIMAL(5,2))
-                       AS avg_forgetting_rate
-            FROM user_quiz_recall uqr
-            JOIN chapter_quizzes cq ON cq.id = uqr.quiz_id
-            JOIN chapters c ON c.id = cq.chapter_id
-            WHERE uqr.username = :username
-            GROUP BY c.lesson_id
         )
         SELECT l.id AS lesson_id,
                l.book_id,
                b.title AS book_title,
-               l.lesson_index,
                l.title AS lesson_title,
-               COALESCE(cp.total_chapters, 0) AS total_chapters,
-               COALESCE(cp.learnt_chapters, 0) AS learnt_chapters,
                lr.round_num,
                lr.status AS round_status,
-               lr.quizzes_in_round,
-               lr.quizzes_answered AS round_quizzes_answered,
                COALESCE(qa.total_answers, 0) AS total_answers,
-               COALESCE(qa.correct_answers, 0) AS correct_answers,
-               ar.avg_forgetting_rate
+               COALESCE(qa.correct_answers, 0) AS correct_answers
         FROM lessons l
         JOIN books b ON b.book_id = l.book_id
-        LEFT JOIN chapter_progress cp ON cp.lesson_id = l.id
         LEFT JOIN latest_round lr ON lr.lesson_id = l.id
         LEFT JOIN quiz_accuracy qa ON qa.lesson_id = l.id
-        LEFT JOIN avg_recall ar ON ar.lesson_id = l.id
         ORDER BY l.book_id, l.lesson_index
         """
     )
+    lesson_rows = db.execute(lesson_sql, {"username": username}).fetchall()
 
-    rows = db.execute(sql, {"username": username}).fetchall()
-    return [
-        {
-            "lesson_id": row.lesson_id,
-            "book_id": row.book_id,
-            "book_title": row.book_title,
-            "lesson_index": row.lesson_index,
-            "lesson_title": row.lesson_title,
-            "total_chapters": int(row.total_chapters),
-            "learnt_chapters": int(row.learnt_chapters),
-            "round_num": row.round_num,
-            "round_status": row.round_status,
-            "quizzes_in_round": row.quizzes_in_round,
-            "round_quizzes_answered": row.round_quizzes_answered,
-            "total_answers": int(row.total_answers),
-            "correct_answers": int(row.correct_answers),
-            "avg_forgetting_rate": (
-                float(row.avg_forgetting_rate) if row.avg_forgetting_rate is not None else None
-            ),
-        }
-        for row in rows
-    ]
+    trend_sql = text(
+        """
+        SELECT qal.is_correct, l.book_id
+        FROM quiz_answer_log qal
+        JOIN lessons l ON l.id = qal.lesson_id
+        WHERE qal.username = :username
+        ORDER BY l.book_id, qal.answered_at DESC
+        """
+    )
+    trend_rows = db.execute(trend_sql, {"username": username}).fetchall()
+
+    book_answers: dict[str, list[bool]] = {}
+    for row in trend_rows:
+        book_answers.setdefault(row.book_id, []).append(bool(row.is_correct))
+    for answers in book_answers.values():
+        answers.reverse()
+        if len(answers) > 119:
+            del answers[: len(answers) - 119]
+
+    books: dict[str, dict] = {}
+    for row in lesson_rows:
+        if row.book_id not in books:
+            books[row.book_id] = {
+                "book_id": row.book_id,
+                "book_title": row.book_title,
+                "lessons": [],
+                "accuracy_trend": [],
+            }
+        books[row.book_id]["lessons"].append(
+            {
+                "lesson_title": row.lesson_title,
+                "round_num": row.round_num,
+                "round_status": row.round_status,
+                "total_answers": int(row.total_answers),
+                "correct_answers": int(row.correct_answers),
+            }
+        )
+
+    for book_id, book in books.items():
+        answers = book_answers.get(book_id, [])
+        book["accuracy_trend"] = _compute_accuracy_trend(answers)
+
+    return list(books.values())
 
 
 def get_activity_log_count(db: Session, username: str) -> Optional[int]:

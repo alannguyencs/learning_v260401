@@ -15,44 +15,7 @@
 
 ### Seed Data
 
-The learning progress tab requires existing books, lessons, chapters, quizzes, and user progress data.
-
-**Table**: `user_chapter_progress`
-```sql
--- Ensure at least one chapter is marked learnt
-INSERT INTO user_chapter_progress (username, chapter_id, learnt_at)
-VALUES ('alan', (SELECT id FROM chapters WHERE lesson_id = (SELECT id FROM lessons LIMIT 1) LIMIT 1), NOW() - INTERVAL '1 hour')
-ON CONFLICT DO NOTHING;
-```
-**Purpose**: Creates a learnt chapter so chapter progress metric is non-zero.
-
-**Table**: `quiz_answer_log`
-```sql
-INSERT INTO quiz_answer_log (username, quiz_id, lesson_id, round_num, is_correct, answered_at)
-VALUES
-  ('alan', (SELECT id FROM chapter_quizzes LIMIT 1), (SELECT id FROM lessons LIMIT 1), 0, true, NOW() - INTERVAL '30 minutes'),
-  ('alan', (SELECT id FROM chapter_quizzes OFFSET 1 LIMIT 1), (SELECT id FROM lessons LIMIT 1), 0, false, NOW() - INTERVAL '25 minutes')
-ON CONFLICT DO NOTHING;
-```
-**Purpose**: One correct + one wrong answer so accuracy metric shows non-trivial data.
-
-**Table**: `lesson_revision_rounds`
-```sql
-INSERT INTO lesson_revision_rounds (username, lesson_id, round_num, status, due_at_lesson_count, quizzes_in_round, quizzes_answered)
-VALUES ('alan', (SELECT id FROM lessons LIMIT 1), 0, 'open', 0, 9, 2)
-ON CONFLICT DO NOTHING;
-```
-**Purpose**: An open R0 round so revision status is visible.
-
-**Table**: `user_quiz_recall`
-```sql
-INSERT INTO user_quiz_recall (username, quiz_id, forgetting_rate, last_reviewed_lesson_count, review_count)
-VALUES
-  ('alan', (SELECT id FROM chapter_quizzes LIMIT 1), 0.7, 0, 1),
-  ('alan', (SELECT id FROM chapter_quizzes OFFSET 1 LIMIT 1), 1.2, 0, 1)
-ON CONFLICT DO NOTHING;
-```
-**Purpose**: Recall values so average recall metric is visible.
+The learning progress tab requires existing books, lessons, chapters, quizzes, and user progress data. The production database already has this data seeded.
 
 ### Cleanup
 
@@ -87,47 +50,41 @@ Sign in as `alan` (password: `sunny`) before running any test. Navigate to http:
 
 **Report**: IN QUEUE
 - Findings: --
-- Improvement Proposals:
-  + good to have - URL hash support — `/dashboard#progress` to deep-link to the Learning Progress tab
+- Improvement Proposals: --
 
 ---
 
-### Test 2 — Switching to Learning Progress tab shows lesson cards
+### Test 2 — Switching to Learning Progress shows book cards with lesson tables
 
 - [ ] Sign in as `alan`
 - [ ] Navigate to http://localhost:3999/dashboard
 - [ ] Click the "Learning Progress" tab
 - [ ] Verify the activity log table disappears
-- [ ] Verify at least one book section heading is visible (e.g., "theMITmonk")
-- [ ] Verify at least one lesson card is visible with the lesson title
-- [ ] Verify the lesson card shows: Chapters progress, Revision status, Accuracy, Recall metrics
+- [ ] Verify at least one book card is visible with a book title header
+- [ ] Verify each book card contains a table with columns: Lesson, Revision, Accuracy
+- [ ] Verify at least one lesson row in the table
 
-**Expected UI state**: Card-based layout grouped by book. Each lesson card shows 4 metrics.
+**Expected UI state**: One card per book. Each card has a lesson table.
 
 **Report**: IN QUEUE
 - Findings: --
-- Improvement Proposals:
-  + good to have - Expand/collapse book sections for users with many books
+- Improvement Proposals: --
 
 ---
 
-### Test 3 — Lesson card metrics display correct values
+### Test 3 — Accuracy trendline is visible below the lesson table
 
-- [ ] Ensure seed data is applied (Cleanup + re-insert)
 - [ ] Sign in as `alan` and navigate to `/dashboard`
 - [ ] Click "Learning Progress" tab
-- [ ] Find the lesson card for the seeded lesson
-- [ ] Verify Chapters shows a progress bar with correct fraction (e.g., "1/5")
-- [ ] Verify Revision shows "R0 open" with answered count
-- [ ] Verify Accuracy shows correct/total with percentage
-- [ ] Verify Recall shows an average forgetting rate value
+- [ ] Find a book card that has quiz answer data
+- [ ] Verify an SVG trendline chart is visible below the lesson table
+- [ ] Verify the trendline has data points (not empty)
 
-**Expected UI state**: All 4 metrics populated with data matching the seed data.
+**Expected UI state**: SVG line chart below the lesson table showing accuracy trend data points.
 
 **Report**: IN QUEUE
 - Findings: --
-- Improvement Proposals:
-  + good to have - Colour-coded recall value — green for strong, red for weak
+- Improvement Proposals: --
 
 ---
 
@@ -136,15 +93,14 @@ Sign in as `alan` (password: `sunny`) before running any test. Navigate to http:
 - [ ] Run cleanup SQL to empty all progress tables
 - [ ] Sign in as `alan` and navigate to `/dashboard`
 - [ ] Click "Learning Progress" tab
-- [ ] Verify an empty-state message is displayed (e.g., "No progress yet")
+- [ ] Verify an empty-state message is displayed
 - [ ] Verify a link to `/slides` is present
 
-**Expected UI state**: No lesson cards shown. Empty-state message with link to start learning.
+**Expected UI state**: No book cards shown. Empty-state message with link to start learning.
 
 **Report**: IN QUEUE
 - Findings: --
-- Improvement Proposals:
-  + good to have - Show total available lessons count in empty state
+- Improvement Proposals: --
 
 ---
 

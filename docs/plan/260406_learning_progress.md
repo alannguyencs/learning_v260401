@@ -361,3 +361,24 @@ After implementation is complete, execute the Chrome Claude Extension E2E tests 
 ## Open Questions
 
 None — all data exists, no new tables needed, design confirmed in discussion.
+
+---
+
+## Change Request — 2026-04-06
+
+**What changed:** Redesigned Learning Progress from per-lesson cards to per-book cards.
+
+Each book card now contains:
+1. A **lesson table** (columns: Lesson, Current Revision, Accuracy %)
+2. An **accuracy trendline** (SVG chart) computed from a sliding window over the book's 119 most recent answers
+
+**Trendline algorithm:**
+- Fetch 119 most recent answers for the book (skips excluded)
+- Create 20 windows of 100 data points each (sliding by 1)
+- Each data point = correct answers per 100
+
+**Backend:** `get_learning_progress` CRUD rewritten to return `List[BookProgressEntry]` with nested lessons and `accuracy_trend` list. Trendline computed in Python.
+
+**Frontend:** `LearningProgressView.jsx` rewritten — book cards with HTML table + pure SVG trendline chart. No charting library.
+
+**API schema:** `LessonProgressEntry` (flat) → `BookProgressEntry` (nested with trendline).
