@@ -19,8 +19,10 @@ python3 .claude/skills/db-compress/restore.py --project-root . --schema
 
 This will:
 1. Run all schema creation scripts (`scripts/sql/*.sql`) to create tables
-2. Import data from `data/db/{table}.sql` in dependency order
-3. Reset all SERIAL sequences to match imported data
+2. Truncate all tables for a clean slate
+3. Import data from `data/db/{table}.sql` in dependency order
+4. Reset all SERIAL sequences to match imported data
+5. Print row counts for verification
 
 ## Prerequisites
 
@@ -34,3 +36,5 @@ This will:
 ```bash
 python3 .claude/skills/db-compress/restore.py --project-root .
 ```
+
+This still truncates + reimports all data and resets sequences.

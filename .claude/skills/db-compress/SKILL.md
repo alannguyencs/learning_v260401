@@ -9,29 +9,16 @@ description: Export all database tables to data/db/{table}.sql files for portabl
 
 Export all database tables to portable SQL files in `data/db/`.
 
-## Export (this computer → SQL files)
+## Export (this computer -> SQL files)
 
 ```bash
 python3 .claude/skills/db-compress/compress.py --project-root .
 ```
 
 Exports each table as INSERT statements to `data/db/{table}.sql` in dependency order.
+Handles multi-line content (lesson text, quiz JSON) correctly.
+Verifies all exported SQL files are valid at the end.
 
-## Restore (SQL files → another computer)
+## After exporting
 
-Data only (tables already exist):
-```bash
-python3 .claude/skills/db-compress/restore.py --project-root .
-```
-
-Full restore including schema creation:
-```bash
-python3 .claude/skills/db-compress/restore.py --project-root . --schema
-```
-
-## Notes
-
-- Tables are exported/restored in dependency order (parents before children)
-- SQL files use plain INSERT statements for maximum portability
-- DB config is read from `.env` (`DB_URL`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`)
-- `data/db/` files can be committed to git for cross-machine sync
+Commit the updated `data/db/*.sql` files to git so they can be restored on another machine.

@@ -161,7 +161,7 @@ def _build_slide_context(db: Session, slide_type: str, chapter_id, quiz_id):
             context_parts.append(f"Expected answer: {quiz.expected_answer}")
         if chapter:
             context_parts.append(f"Chapter content:\n{chapter.content}")
-        return f"quiz:{quiz_id}", "\n\n".join(context_parts), lesson
+        return f"quiz:{quiz_id}", "\n".join(context_parts), lesson
 
     raise HTTPException(status_code=400, detail="slide_type must be 'chapter' or 'quiz'")
 

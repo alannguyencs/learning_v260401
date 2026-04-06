@@ -78,13 +78,24 @@ def dump_table(config, table, output_path):
         print(f"  ERROR dumping {table}: {result.stderr.strip()}")
         return 0
 
-    # Filter to only INSERT lines and SET/SELECT config lines
-    lines = []
+    # Extract complete INSERT statements (may span multiple lines).
+    # Each statement starts with "INSERT INTO" and ends with ");" on some line.
+    statements = []
+    current = []
+    in_insert = False
     for line in result.stdout.splitlines():
         if line.startswith("INSERT INTO"):
-            lines.append(line)
+            current = [line]
+            in_insert = True
+        elif in_insert:
+            current.append(line)
+        if in_insert and line.rstrip().endswith(";"):
+            statements.append("\n".join(current))
+            current = []
+            in_insert = False
 
-    row_count = len(lines)
+    row_count = len(statements)
+    lines = statements
 
     with open(output_path, "w") as f:
         f.write(f"-- Table: {table}\n")
@@ -125,6 +136,26 @@ def main():
     print("-" * 38)
     print(f"  {'Total':<28} {total_rows:>6}")
     print(f"\n{total_tables} tables exported to data/db/")
+
+    # Verify: each INSERT statement must end with a line containing ');'
+    errors = []
+    for table in TABLES:
+        sql_file = os.path.join(output_dir, f"{table}.sql")
+        if not os.path.exists(sql_file):
+            continue
+        with open(sql_file) as f:
+            content = f.read()
+        for stmt in content.split("INSERT INTO")[1:]:  # skip header before first INSERT
+            # The last non-empty line of each statement must end with ';'
+            stmt_lines = [l for l in stmt.strip().splitlines() if l.strip()]
+            if stmt_lines and not stmt_lines[-1].rstrip().endswith(";"):
+                errors.append(table)
+                break
+    if errors:
+        print(f"\nWARNING: Potentially broken SQL in: {', '.join(errors)}")
+        print("Multi-line content may not have exported correctly.")
+    else:
+        print("Verification: all SQL files OK")
 
 
 if __name__ == "__main__":

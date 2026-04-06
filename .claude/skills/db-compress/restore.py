@@ -147,6 +147,16 @@ def main():
                 print(f"  {script}: {status}")
         print()
 
+    # Truncate all tables (reverse dependency order) for a clean slate
+    reversed_tables = list(reversed(TABLES))
+    truncate_sql = f"TRUNCATE {', '.join(reversed_tables)} CASCADE;"
+    print("Truncating all tables...")
+    ok, err = run_sql(config, truncate_sql)
+    if ok:
+        print("  All tables truncated\n")
+    else:
+        print(f"  WARN: {err}\n")
+
     # Import data
     print(f"Restoring data from data/db/ → {config['dbname']}")
     print(f"{'Table':<30} {'Status':>10}")
@@ -164,6 +174,24 @@ def main():
 
     # Reset sequences so next INSERT gets the right ID
     reset_sequences(config)
+
+    # Verify row counts
+    print("\nVerifying row counts...")
+    total = 0
+    for table in TABLES:
+        sql = f"SELECT COUNT(*) FROM {table};"
+        ok, err = run_sql(config, sql)
+        # Parse count from psql output
+        cmd = ["psql", "-h", config["host"], "-U", config["user"],
+               "-d", config["dbname"], "-t", "-c", sql]
+        env = os.environ.copy()
+        if config.get("password"):
+            env["PGPASSWORD"] = config["password"]
+        result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+        count = int(result.stdout.strip()) if result.stdout.strip().isdigit() else 0
+        total += count
+        print(f"  {table:<28} {count:>6}")
+    print(f"  {'Total':<28} {total:>6}")
 
     print(f"\nRestore complete.")
 
