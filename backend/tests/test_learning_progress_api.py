@@ -148,10 +148,10 @@ class TestLearningProgressWithLessonData:
 class TestLearningProgressAccuracyTrend:
     """Accuracy trendline tests."""
 
-    def test_accuracy_trend_empty_under_100(
+    def test_accuracy_trend_empty_under_20(
         self, auth_client
     ):  # pylint: disable=redefined-outer-name
-        """accuracy_trend is [] when fewer than 100 answers."""
+        """accuracy_trend is [] when fewer than 20 answers."""
         ids = _seed_content(auth_client)
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
         slide = auth_client.get("/api/slides/next").json().get("quiz")
@@ -211,17 +211,27 @@ class TestAccuracyTrendAlgorithm:
 
         return _compute_accuracy_trend(answers)
 
-    def test_under_100_returns_empty(self):
-        """Less than 100 answers returns empty trend."""
-        assert not self._trend([True] * 99)
+    def test_under_20_returns_empty(self):
+        """Fewer than 20 answers returns empty trend."""
+        assert not self._trend([True] * 19)
 
-    def test_exactly_100_returns_one_point(self):
-        """100 answers returns 1 data point."""
-        answers = [True] * 60 + [False] * 40
-        assert self._trend(answers) == [60]
+    def test_exactly_20_returns_20_points(self):
+        """20 answers returns 20 points with window_size=1."""
+        answers = [False] * 10 + [True] * 10
+        trend = self._trend(answers)
+        assert len(trend) == 20
+        assert trend[0] == 0
+        assert trend[-1] == 100
+
+    def test_50_answers_returns_20_points(self):
+        """50 answers returns 20 points with window_size=31."""
+        answers = [True] * 50
+        trend = self._trend(answers)
+        assert len(trend) == 20
+        assert all(p == 100 for p in trend)
 
     def test_119_answers_returns_20_points(self):
-        """119 answers returns 20 data points."""
+        """119 answers returns 20 points with window_size=100."""
         trend = self._trend([True] * 119)
         assert len(trend) == 20
         assert all(p == 100 for p in trend)

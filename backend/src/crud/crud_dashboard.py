@@ -129,23 +129,26 @@ def get_activity_log(db: Session, username: str) -> list[dict]:
 
 def _compute_accuracy_trend(answers: list[bool]) -> list[int]:
     """
-    Compute sliding-window accuracy trend from a chronological list of answers.
+    Compute a 20-point sliding-window accuracy trend.
 
-    Takes the most recent 119 answers. Creates up to 20 windows of 100,
-    each sliding by 1. Returns a list of integers (correct per 100).
+    Always produces exactly 20 data points when >= 20 answers exist.
+    Window size adapts: window_size = n - 19 (min 1, max 100).
+    Uses the most recent min(n, 119) answers.
+    Returns a list of integers 0-100 (percentage per window).
+    Returns [] if fewer than 20 answers.
     """
     n = len(answers)
-    if n < 100:
+    if n < 20:
         return []
-    window_count = min(n - 99, 20)
-    offset = n - 99 - window_count
-    correct_in_first = sum(answers[offset : offset + 100])  # noqa: E203
-    trend = [correct_in_first]
-    for i in range(1, window_count):
-        leaving = answers[offset + i - 1]
-        entering = answers[offset + i + 99]
-        correct_in_first += int(entering) - int(leaving)
-        trend.append(correct_in_first)
+    if n > 119:
+        answers = answers[n - 119 :]  # noqa: E203
+        n = 119
+    ws = n - 19
+    correct = sum(answers[:ws])
+    trend = [round(correct * 100 / ws)]
+    for i in range(1, 20):
+        correct += int(answers[i + ws - 1]) - int(answers[i - 1])
+        trend.append(round(correct * 100 / ws))
     return trend
 
 

@@ -80,22 +80,22 @@ Migration: `scripts/sql/005_quiz_answer_log.sql`
 }
 ```
 
-`accuracy_trend` is a list of up to 20 integers (0–100), each representing correct answers per 100 in a sliding window. Empty list if fewer than 100 answers exist for the book.
+`accuracy_trend` is a list of exactly 20 integers (0–100), each representing accuracy percentage in a sliding window. Empty list if fewer than 20 answers exist for the book. Window size adapts: `window_size = min(n, 119) - 19`.
 
 ## Algorithms
 
-### Accuracy Trendline (sliding window)
+### Accuracy Trendline (adaptive sliding window)
 
-1. Fetch the 119 most recent `quiz_answer_log` rows for the book (non-skip, ordered by `answered_at DESC`).
-2. Reverse to chronological order.
-3. Create 20 windows of 100 answers each:
-   - Window 1: answers[0..99]
-   - Window 2: answers[1..100]
+1. Fetch quiz_answer_log rows for the book, cap at 119 most recent.
+2. Reverse to chronological order. Let `n = len(answers)`.
+3. If `n < 20`, return empty list (not enough data).
+4. Compute `window_size = n - 19` (ranges from 1 when n=20, to 100 when n=119).
+5. Create exactly 20 sliding windows of `window_size` each:
+   - Window 1: answers[0..window_size-1]
+   - Window 2: answers[1..window_size]
    - ...
-   - Window 20: answers[19..118]
-4. For each window, count correct answers → that count is the data point (out of 100).
-5. If fewer than 100 answers exist, return empty list.
-6. If between 100 and 118 answers exist, return fewer than 20 points (one point per extra answer beyond 99).
+   - Window 20: answers[19..n-1]
+6. For each window, compute `round(correct / window_size * 100)` → percentage data point.
 
 ## API Layer
 

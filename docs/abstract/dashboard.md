@@ -49,6 +49,6 @@ A `/dashboard` page with two tabs:
 - [ ] Learning Progress tab shows one card per book.
 - [ ] Each book card has a lesson table with Lesson, Revision, and Accuracy columns.
 - [ ] Each book card has a trendline chart below the table.
-- [ ] Trendline shows 20 data points computed from the most recent 119 answers.
+- [ ] Trendline shows 20 data points when the book has 20+ answers; hidden when fewer than 20.
 - [ ] Empty state is shown when the user has no activity.
 - [ ] "Dashboard" link is accessible from the Slides page.

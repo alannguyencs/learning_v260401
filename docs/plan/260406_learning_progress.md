@@ -382,3 +382,14 @@ Each book card now contains:
 **Frontend:** `LearningProgressView.jsx` rewritten — book cards with HTML table + pure SVG trendline chart. No charting library.
 
 **API schema:** `LessonProgressEntry` (flat) → `BookProgressEntry` (nested with trendline).
+
+---
+
+## Change Request — 2026-04-06 (adaptive window)
+
+**What changed:** Trendline now adapts to any answer count >= 20 instead of requiring 100+.
+
+- Always produces exactly 20 data points when >= 20 answers exist
+- Window size = `n - 19` (1 for 20 answers, 100 for 119 answers)
+- Each point is a percentage (0-100) rather than a raw count
+- If < 20 answers, no trendline shown
