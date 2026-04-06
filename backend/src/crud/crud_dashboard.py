@@ -168,7 +168,7 @@ def get_learning_progress(db: Session, username: str) -> list[dict]:
         ),
         avg_recall AS (
             SELECT c.lesson_id,
-                   ROUND(AVG(uqr.forgetting_rate), 2)
+                   CAST(AVG(uqr.forgetting_rate) AS DECIMAL(5,2))
                        AS avg_forgetting_rate
             FROM user_quiz_recall uqr
             JOIN chapter_quizzes cq ON cq.id = uqr.quiz_id
