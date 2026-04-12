@@ -11,12 +11,7 @@ Fetch the next slide and let the user interact with it in conversation.
 
 ## Setup
 
-Run once at the start to load credentials. Extract from `.env` at project root and reuse for all subsequent calls:
-
-```bash
-TOKEN=$(grep WEBAPP_ACCESS_TOKEN .env | cut -d= -f2)
-API=http://localhost:8999
-```
+Read `.env` at project root using the Read tool to extract `WEBAPP_ACCESS_TOKEN`. Use the literal token value in all curl commands (do NOT use subshells like `$(grep ...)` — they break permission pattern matching).
 
 If you get `{"detail":"Not authenticated"}`, regenerate the token:
 ```bash
@@ -27,7 +22,7 @@ Then update `WEBAPP_ACCESS_TOKEN` in `.env` with the new token.
 ## Step 1: Fetch Next Slide
 
 ```bash
-curl -s -H "Authorization: Bearer $TOKEN" "$API/api/slides/next"
+curl -s -H "Authorization: Bearer {TOKEN}" "http://localhost:8999/api/slides/next"
 ```
 
 ## Step 2: Display and Interact
@@ -46,7 +41,7 @@ Ask: **"Mark as learnt?"** — wait for user confirmation.
 
 On confirm, POST and display result:
 ```bash
-curl -s -X POST -H "Authorization: Bearer $TOKEN" "$API/api/slides/chapters/{chapter_id}/learnt"
+curl -s -X POST -H "Authorization: Bearer {TOKEN}" "http://localhost:8999/api/slides/chapters/{chapter_id}/learnt"
 ```
 - If `lesson_fully_learnt` is true, tell the user the lesson is complete
 - Show `lesson_count`
@@ -75,15 +70,33 @@ For other quiz types (cloze, free_recall, teach_back), just show the question an
 
 Wait for user's answer (or "skip").
 
-## Step 3: Submit Answer
+## Step 3: Evaluate and Submit Answer
 
+### For skip:
 ```bash
-curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{"round_num": N, "lesson_id": N, "user_answer": "ANSWER", "is_skip": false}' \
-  "$API/api/slides/quizzes/{quiz_id}/respond"
+curl -s -X POST -H "Authorization: Bearer {TOKEN}" -H "Content-Type: application/json" \
+  -d '{"round_num": N, "lesson_id": N, "user_answer": "", "is_skip": true}' \
+  "http://localhost:8999/api/slides/quizzes/{quiz_id}/respond"
 ```
 
-For skip: `"is_skip": true`, `"user_answer": ""`.
+### For actual answers — evaluate locally (do NOT rely on backend Gemini):
+
+**You are the grader.** Compare the user's answer against the quiz data you already have (`expected_answer`, `correct_options`, `quiz_metadata`). Apply these grading rules:
+
+- **multiple_choice**: Compare user's selected options against `correct_options`. `good_points`/`bad_points` = null.
+- **cloze**: Check if the fill-in matches `expected_answer` or the `blanks` in `quiz_metadata`. Accept semantically equivalent answers. Generate `good_points`/`bad_points`.
+- **free_recall / teach_back**: Check if the user covered the core concepts in `expected_answer`. Be lenient on wording, strict on concept correctness. Generate `good_points`/`bad_points`.
+
+For `good_points`/`bad_points`, write each as one concise factual sentence (e.g. "The fill-in-the-blank word 'pillows' was correct." NOT "The student correctly...").
+
+For non-MC quizzes, determine `is_correct`: correct if good_points ≥ 66% of total points.
+
+Then submit with `pre_evaluated: true`:
+```bash
+curl -s -X POST -H "Authorization: Bearer {TOKEN}" -H "Content-Type: application/json" \
+  -d '{"round_num": N, "lesson_id": N, "user_answer": "ANSWER", "is_skip": false, "pre_evaluated": true, "is_correct": BOOL, "good_points": ["..."], "bad_points": ["..."]}' \
+  "http://localhost:8999/api/slides/quizzes/{quiz_id}/respond"
+```
 
 Display result:
 - **Correct/Incorrect** — show `is_correct`

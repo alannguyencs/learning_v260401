@@ -1,4 +1,4 @@
-"""Tests for SlideSelector 3-tier algorithm."""
+"""Tests for SlideSelector 2-tier algorithm with skip queue."""
 
 import pytest
 from passlib.context import CryptContext
@@ -11,7 +11,6 @@ from src.crud.crud_content import (
 )
 from src.crud.crud_learning_progress import increment_lesson_count
 from src.crud.crud_revision import complete_round, get_open_round
-from src.crud.crud_slides import log_quiz_skip
 from src.crud.crud_user import create_user
 from src.service.learning_progress_service import LearningProgressService
 from src.service.revision_service import RevisionService
@@ -136,11 +135,33 @@ class TestTier2NewChapter:
         assert result.chapter["book_id"] == "dl"
 
 
-class TestTier3Skipped:
-    """Tests for Tier 3: skipped quizzes resurface."""
+class TestSkipQueue:
+    """Tests for skip queue within Tier 1: skipped quizzes go to back of queue."""
 
-    def test_tier3_skipped_resurfaces(self, setup):  # pylint: disable=redefined-outer-name
-        """Skipped quiz appears when no unlearnt chapters remain."""
+    def test_skipped_quiz_deferred_to_group_b(self, setup):  # pylint: disable=redefined-outer-name
+        """Skipped quiz is deferred; non-skipped quiz is served first."""
+        db = setup["db"]
+        chapter1 = setup["chapter1"]
+        q1 = setup["q1"]
+        lesson1 = setup["lesson1"]
+
+        # Learn chapter1 and set up R0
+        LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
+
+        # Skip q1
+        from src.crud.crud_slides import log_quiz_skip
+
+        log_quiz_skip(db, "testuser", q1.id, lesson1.id, 0)
+
+        result = SlideSelector.get_next_slide(db, "testuser")
+        # Should get a non-skipped quiz (q2) or a chapter, not q1
+        if result.slide_type == "quiz":
+            assert result.quiz["id"] != q1.id
+
+    def test_skipped_quiz_resurfaces_when_group_a_empty(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """Skipped quiz resurfaces after all non-skipped quizzes are exhausted."""
         db = setup["db"]
         chapter1 = setup["chapter1"]
         chapter2 = setup["chapter2"]
@@ -148,26 +169,42 @@ class TestTier3Skipped:
         q1 = setup["q1"]
         lesson1 = setup["lesson1"]
 
-        # Learn all chapters so Tier 2 finds nothing
+        # Learn all chapters
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter2.id)
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter3.id)
 
-        # Mark all revision rounds as done so Tier 1 finds nothing
+        # Complete R0 so Tier 1 has no non-skipped quizzes
         r0 = get_open_round(db, "testuser", lesson1.id, 0)
         if r0:
             complete_round(db, r0.id, completed_at_lesson_count=0)
 
-        # Log a skip for q1
+        # Create R1 due now with lesson_count=0
+        from src.crud.crud_revision import create_round
+
+        increment_lesson_count(db, "testuser")
+        create_round(db, "testuser", lesson1.id, 1, due_at_lesson_count=1, quizzes_in_round=2)
+
+        # Skip q1 in R1 — only q1 belongs to chapter1
+        from src.crud.crud_slides import log_quiz_skip
+
         log_quiz_skip(db, "testuser", q1.id, lesson1.id, 1)
 
+        # Answer q2 (the other quiz on chapter1) via record_quiz_response
+        q2 = setup["q2"]
+        RevisionService.record_quiz_response(db, "testuser", q2.id, lesson1.id, 1, True, 1)
+
+        # Now group A is empty, group B has q1
         result = SlideSelector.get_next_slide(db, "testuser")
-        # Tier 3: skipped quiz resurfaces
         assert result.slide_type == "quiz"
         assert result.quiz["id"] == q1.id
 
+
+class TestNoneWhenAllDone:
+    """Tests for slide_type=none when both tiers are exhausted."""
+
     def test_none_when_all_done(self, setup):  # pylint: disable=redefined-outer-name
-        """slide_type=none when no chapters, revisions, or skips remain."""
+        """slide_type=none when no chapters or revisions remain."""
         db = setup["db"]
         chapter1 = setup["chapter1"]
         chapter2 = setup["chapter2"]
@@ -177,7 +214,7 @@ class TestTier3Skipped:
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter2.id)
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter3.id)
-        # No revision rounds created (on_chapter_learnt not called), no skips
+        # No revision rounds created (on_chapter_learnt not called)
         result = SlideSelector.get_next_slide(db, "testuser")
         assert result.slide_type == "none"
 

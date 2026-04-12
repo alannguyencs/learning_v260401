@@ -11,8 +11,6 @@ Restore the database from `data/db/*.sql` files (created by `/db-compress`).
 
 ## Instructions
 
-Run the restore script with `--schema` to create tables and import data:
-
 ```bash
 python3 .claude/skills/db-compress/restore.py --project-root . --schema
 ```
@@ -22,19 +20,26 @@ This will:
 2. Truncate all tables for a clean slate
 3. Import data from `data/db/{table}.sql` in dependency order
 4. Reset all SERIAL sequences to match imported data
-5. Print row counts for verification
+5. Verify actual row counts against expected counts from SQL file headers
+
+## If verification shows MISMATCH
+
+Row count mismatches mean the SQL files are corrupted (usually multi-line content stripped by an old compress script). To fix:
+
+1. Go to the **source machine** (where the data was originally exported)
+2. Run `python3 .claude/skills/db-compress/compress.py --project-root .` with the latest script
+3. Commit and push the updated `data/db/*.sql` files
+4. Pull on this machine and run restore again
 
 ## Prerequisites
 
-- PostgreSQL running on the target machine
+- PostgreSQL running: `brew services start postgresql` (macOS)
 - Database created: `createdb learning_v2604`
-- `.env` configured with correct `DB_URL`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`
-- `data/db/` directory with exported `.sql` files (from `/db-compress`)
+- `.env` configured with `DB_URL`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`
+- `data/db/` directory with exported `.sql` files
 
 ## Data-only restore (tables already exist)
 
 ```bash
 python3 .claude/skills/db-compress/restore.py --project-root .
 ```
-
-This still truncates + reimports all data and resets sequences.

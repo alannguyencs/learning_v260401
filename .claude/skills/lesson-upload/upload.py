@@ -125,7 +125,9 @@ def parse_lesson_sections(lesson_content):
         if title.lower() == "material":
             continue
         index += 1
-        sections.append({"section_index": index, "title": title, "content": part.strip()})
+        content_lines = [ln for ln in lines if ln != heading_line]
+        content = "\n".join(content_lines).strip()
+        sections.append({"section_index": index, "title": title, "content": content})
     return sections
 
 

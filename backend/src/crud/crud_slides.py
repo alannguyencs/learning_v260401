@@ -38,10 +38,11 @@ def get_next_chapters_all_books(db: Session, username: str) -> List[Chapter]:
 
 def get_eligible_quiz_ids_for_round(
     db: Session, username: str, lesson_id: int, round_num: int
-) -> List[int]:
-    """Return quiz IDs for the lesson not yet answered or skipped in this round.
+) -> tuple[List[int], List[int]]:
+    """Return (non_skipped, skipped) quiz IDs not yet answered in this round.
 
     Only includes quizzes from chapters the user has already learnt.
+    Non-skipped quizzes are served first; skipped quizzes form a back-of-queue.
     """
     learnt_chapter_ids = get_learnt_chapter_ids_for_user(db, username)
     all_quizzes = (
@@ -57,22 +58,35 @@ def get_eligible_quiz_ids_for_round(
 
     answered_ids = get_answered_quiz_ids_in_round(db, username, lesson_id, round_num)
 
-    skipped_rows = db.query(QuizSkipLog.quiz_id).filter(QuizSkipLog.username == username).all()
+    skipped_rows = (
+        db.query(QuizSkipLog)
+        .filter(QuizSkipLog.username == username)
+        .order_by(QuizSkipLog.skipped_at)
+        .all()
+    )
     skipped_ids = {row.quiz_id for row in skipped_rows}
 
-    return list(all_ids - answered_ids - skipped_ids)
+    eligible = all_ids - answered_ids
+    non_skipped = list(eligible - skipped_ids)
+    skipped = [row.quiz_id for row in skipped_rows if row.quiz_id in eligible]
+
+    return non_skipped, skipped
 
 
 def log_quiz_skip(
     db: Session, username: str, quiz_id: int, lesson_id: int, round_num: int
 ) -> None:
-    """Record that a user skipped a quiz."""
+    """Record or refresh a quiz skip. Re-skipping updates the timestamp to push to back of queue."""
+    from datetime import datetime, timezone
+
     existing = (
         db.query(QuizSkipLog)
         .filter(QuizSkipLog.username == username, QuizSkipLog.quiz_id == quiz_id)
         .first()
     )
-    if not existing:
+    if existing:
+        existing.skipped_at = datetime.now(timezone.utc)
+    else:
         db.add(
             QuizSkipLog(
                 username=username,
@@ -81,7 +95,7 @@ def log_quiz_skip(
                 round_num=round_num,
             )
         )
-        db.commit()
+    db.commit()
 
 
 def remove_quiz_skip(db: Session, username: str, quiz_id: int) -> None:

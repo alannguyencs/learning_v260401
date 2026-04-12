@@ -20,7 +20,7 @@ INSERT INTO public.chapters VALUES (2, 2, 1, 'Summary', '## Summary
 - Invest in an index fund and **never sell** — two rules only: put it in, stay in; ignore crashes
 - Build your **FBI** (Financial Bureau of Investigation): track spending, fund in order — Emergency → Essentials → Equity → Enjoyment
 - Get a mentor **before 40**, not after — 10 years after mentoring, he became CEO; don''t navigate blind
-- Apply **H = O/D** daily: manage desires, not just possessions — contentment is a skill, not a circumstance', '2026-04-06 08:15:05.23008') ON CONFLICT DO NOTHING;
+- Apply **H = O/D** daily: manage desires, not just possessions — contentment is a skill, not a circumstance', '2026-04-06 08:37:37.674013') ON CONFLICT DO NOTHING;
 INSERT INTO public.chapters VALUES (3, 2, 2, 'Recommendation', '## Recommendation
 
 ```
@@ -101,7 +101,7 @@ INSERT INTO public.chapters VALUES (3, 2, 2, 'Recommendation', '## Recommendatio
           │  "Manage your desires, not just your   │
           │   possessions."                        │
           └───────────────────────────────────────┘
-```', '2026-04-06 08:15:05.270923') ON CONFLICT DO NOTHING;
+```', '2026-04-06 08:37:37.715447') ON CONFLICT DO NOTHING;
 INSERT INTO public.chapters VALUES (4, 2, 3, 'One-Liners', '## One-Liners
 
 *"Saving is not investing."*
@@ -112,7 +112,7 @@ INSERT INTO public.chapters VALUES (4, 2, 3, 'One-Liners', '## One-Liners
 
 *"Wealth isn''t about what you buy. It''s about what you keep."*
 
-*"When your desires approach zero, your happiness goes to infinity."*', '2026-04-06 08:15:05.306492') ON CONFLICT DO NOTHING;
+*"When your desires approach zero, your happiness goes to infinity."*', '2026-04-06 08:37:37.749547') ON CONFLICT DO NOTHING;
 INSERT INTO public.chapters VALUES (5, 2, 4, 'Visual Chunk', '## Visual Chunk
 
 ```
@@ -155,7 +155,7 @@ INSERT INTO public.chapters VALUES (5, 2, 4, 'Visual Chunk', '## Visual Chunk
 |  KEY: Stay in the market. Build skills like a portfolio. Equity > salary.  |
 |  Failure teaches. Manage desires. H = O/D.                                 |
 +-----------------------------------------------------------------------------+
-```', '2026-04-06 08:15:05.341169') ON CONFLICT DO NOTHING;
+```', '2026-04-06 08:37:37.783961') ON CONFLICT DO NOTHING;
 INSERT INTO public.chapters VALUES (6, 2, 5, 'Story', '## Story
 
 Wei is a 35-year-old R&D engineer at a small tech startup in Hong Kong. He rides the bus to the science park every morning, a cup of instant coffee in hand, thinking about the same two things: his mortgage payment due Friday, and the patent he filed last year that nobody has bought yet.
@@ -172,4 +172,4 @@ Cheat codes 14–16 — Failure and forgiveness: Wei had a project fail publicly
 
 Cheat code 20 — H = O/D: Late at night after his daughter was asleep, Wei used to scroll through tech news and feel a low hum of anxiety — other engineers raising rounds, colleagues at bigger companies, the patent still unsold. Then he wrote the equation on a Post-it and stuck it to his monitor: H = O/D. What he owned was real. What he desired was infinite and optional. He started subtracting desires instead of adding income. The hum got quieter.
 
-**The lesson:** Twenty cheat codes, one equation — stay in the index fund, build skills like a portfolio, chase equity not salary, get a mentor before 40, fund the emergency bucket first, go analog to think deeply, and above all: H = O/D. Manage your desires and your happiness manages itself.', '2026-04-06 08:15:05.376363') ON CONFLICT DO NOTHING;
+**The lesson:** Twenty cheat codes, one equation — stay in the index fund, build skills like a portfolio, chase equity not salary, get a mentor before 40, fund the emergency bucket first, go analog to think deeply, and above all: H = O/D. Manage your desires and your happiness manages itself.', '2026-04-06 08:37:37.817868') ON CONFLICT DO NOTHING;

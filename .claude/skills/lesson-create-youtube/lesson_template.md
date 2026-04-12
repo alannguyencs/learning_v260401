@@ -1,10 +1,10 @@
-# 3C Compress Lesson Template
+# Lesson Template
 
 Save to: `data/lesson/{channel_slug}/{yymmdd}_{slug}.md`
 
 See SKILL.md for the `{channel_slug}/{yymmdd}_{slug}` naming convention. Must match the metadata file.
 
-Generate a document with sections separated by `---` horizontal rules. All channels have 6 sections.
+Generate a document with sections separated by `---` horizontal rules.
 
 Use the Write tool (not Bash) to create the lesson file directly.
 
@@ -24,198 +24,106 @@ Use the Write tool (not Bash) to create the lesson file directly.
 
 ---
 
-## Section 1: ## Summary
+## Sections 1-3: Three Major Sections
 
-Structure — answer three questions, each as bullet points:
-1. **What** — 2-4 bullets describing the main topic, claim, or situation
-2. **Why** — 2-4 bullets on why it matters, with specific numbers/stats from transcript
-3. **How** — 2-4 bullets on what to do or how to apply the insight
+Read the full transcript carefully, identify all key points, then group them into **at most 3 major sections** by theme. Each section covers a coherent cluster of ideas from the transcript.
 
 ### Guidelines
-- Pull specific numbers, percentages, and quotes from the transcript
-- Bold the most important phrases for scannability
-- Each bullet should be self-contained — understandable without reading the rest
+
+- **Group by theme, not by order** — rearrange transcript points so related ideas sit together
+- **Section headings** use `## I. Title`, `## II. Title`, `## III. Title` — titles should be short and descriptive
+- **Bullet points** — each section uses bullet points to cover its key insights
+- **~100 words per section** — keep each section concise but include specific stories, numbers, and examples from the transcript
+- **ASCII diagram per section** — each section ends with an ASCII diagram that visually illustrates its key points
+- **Full coverage** — every key point from the transcript must appear in one of the three sections. Re-read the transcript after drafting to verify nothing is missing.
+
+### ASCII Diagram Guidelines
+
+- Use simple box-drawing characters (`+`, `-`, `|`, `v`, `>`) and arrows
+- Show relationships: flow, hierarchy, convergence, or comparison
+- Keep it readable — no more than ~25 lines
+- Include key terms, names, and numbers from the transcript
 
 ### Example
 
 ```markdown
-## Summary
+## I. Find the Right Product
 
-**What:**
-- Hong Kong's 2025 graduate job market hit a **5-year low** with vacancies dropping **55%**
-- A "jobless recovery" — GDP grows but entry-level jobs don't follow
-- Corporate structure shifting from pyramid to diamond: **fewer junior roles, wider management band, small AI-powered base**
+- Skip the grand mission — solve a real problem first. Microsoft started as two guys writing software; Facebook started as FaceMash. Theranos and FTX had inspiring missions and the founders are in prison.
+- Chase problems, not passion — Airbnb was born from two broke founders who couldn't afford a hotel. Sandeep's search engine company got crushed by Google, so they pivoted: sold search to Yahoo, rebuilt as B2B information retrieval, and Microsoft bought them for $1.2B. Passions don't last, but problems do.
+- Subtract ruthlessly — Southwest built a giant business by removing fancy meals, reserved seats, and big airport reps. Steve Jobs saved Apple by cutting almost all product lines to focus on iMac. The most important subtraction is internal: focus on the essential, subtract the noise — that's what preserves your sanity.
+- Find founder-market fit — Melanie Perkins was a design instructor who saw people struggle daily. That pain became Canva.
+- Find product-market fit — Burbn pivoted to photo sharing and became Instagram. Track activation rate, retention rate, and churn rate.
 
-**Why:**
-- Youth unemployment (ages 20-24) reached **12.3%** — second highest on record
-- Only ~30,000 full-time graduate jobs available, lowest in 5 years
-- Employers now demand "job-ready" graduates — no bandwidth for training from scratch
-
-**How:**
-- Build **AI literacy** — tools like ChatGPT, automation scripting, prompt engineering
-- Get internship experience before graduating — 85% of hires come via referrals, not portals
-- Adopt an **"AI Plus" mindset** — augment your output with AI rather than compete against it
-```
+\```
+  REAL PROBLEM
+       |
+       v
+  +-----------+    +-----------+    +-----------+
+  | Mission?  |    | Passion?  |    | Too much? |
+  | Skip it.  |    | Skip it.  |    | Cut it.   |
+  +-----------+    +-----------+    +-----------+
+       |                |                |
+       v                v                v
+  Solve first,    Chase the pain,  Subtract to
+  mission follows problems last    focus
+       |                |                |
+       +--------+-------+--------+-------+
+                |                |
+                v                v
+        FOUNDER-MARKET FIT  PRODUCT-MARKET FIT
+        You ARE the market  Users show you what
+        (Perkins -> Canva)  they want
+                |           (Burbn -> Instagram)
+                |                |
+                +-------+--------+
+                        |
+                        v
+                  RIGHT PRODUCT
+\```
 
 ---
 
-## Section 2: ## Recommendation (ASCII flowchart)
+## II. Understand Your Customers
 
-An ASCII-style flowchart showing the recommended action plan based on the lesson content. This makes the advice concrete and sequential.
-
-### Guidelines
-- Start with `START HERE` at the top
-- Use box-drawing characters (`┌ ─ ┐ │ └ ┘ ▼ ▶`) for clean boxes and arrows
-- Show a clear step-by-step flow from top to bottom
-- Branch into parallel paths when the content has distinct tracks (e.g., job vs freelance vs founder)
-- Each box should have a numbered step name and 2-3 lines of actionable detail
-- Include specific numbers, thresholds, or rules from the lesson (e.g., "< 5%", "3-6 months", "90%")
-- Side boxes can show details or options (connected with `────>`)
-- End with a memorable closing box (e.g., "REPEAT. COMPOUND. WAIT." or "STAY IN THE RACE.")
-- Place this section between Connect to Known and Create Chunk
-
-### Example
-
-```markdown
-## Recommendation
+- Run experiments instead of trusting your ego — Sandeep's company discovered a winning pricing model (volume-based) they'd never considered through A/B testing.
+- Sell promises, not products: Nike beat Adidas not with better shoes but by selling a dream.
+- Watch what customers do, not what they say — Sandeep's AI fraud company heard endless praise from prospects who never bought, then retargeted high-urgency customers for explosive growth.
+- Test willingness to pay early: startups that charged found 90% retention dropped to 10%, revealing they never had real product-market fit.
 
 \```
-+─────────────────────────────────────────────────────────────────────+
-│              ACTION FLOWCHART: FROM $0 TO INVESTING                 │
-+─────────────────────────────────────────────────────────────────────+
-
-  START HERE
-      │
-      ▼
-┌───────────────────────────┐
-│ 1. SHIFT YOUR MINDSET     │
-│    Read "Psychology of     │
-│    Money". Investing is    │
-│    systematic, not gambling│
-└─────────────┬─────────────┘
-              │
-              ▼
-┌───────────────────────────┐     ┌──────────────────────────────┐
-│ 2. BUILD EMERGENCY FUND   │     │  HIGH-YIELD SAVINGS ACCOUNT  │
-│    3-6 months of living   │────>│  Do NOT invest until this    │
-│    expenses. Non-negotiable│     │  is fully funded.            │
-└─────────────┬─────────────┘     └──────────────────────────────┘
-              │
-              ▼
-┌───────────────────────────┐
-│ 3. DESIGN ASSET ALLOCATION│
-│    This drives 90% of     │
-│    your returns.           │
-└─────────────┬─────────────┘
-              │
-       ┌──────┴──────────────────────────┐
-       │                                  │
-       ▼                                  ▼
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  YOUNG       │  │  MID-CAREER  │  │  NEAR        │
-│  (20s-30s)   │  │  (40s)       │  │  RETIREMENT  │
-│ Stocks: 80%  │  │ Stocks: 60%  │  │ Stocks: 40%  │
-│ Bonds:  15%  │  │ Bonds:  30%  │  │ Bonds:  50%  │
-└──────┬───────┘  └──────┬───────┘  └──────┬───────┘
-       └──────────┬───────┘                 │
-                  └─────────┬───────────────┘
-                            │
-                            ▼
-               ┌──────────────┐
-               │   REPEAT.    │
-               │  COMPOUND.   │
-               │   WAIT.      │
-               └──────────────┘
+          YOUR CUSTOMERS
+                |
+    +-----------+-----------+
+    |           |           |
+    v           v           v
+  THINK       FEEL        DO
+  (ego)     (dreams)    (behavior)
+    |           |           |
+    v           v           v
+  Run A/B     Sell the    Watch what
+  experiments promise,    they do, not
+  not gut     not the     what they say
+  feelings    product     (Ford: "faster
+    |         (Nike:       horses")
+    |          dream >         |
+    |          shoes)          |
+    +--------+---------+-------+
+             |
+             v
+      TEST WILLINGNESS TO PAY
+      Free = hobby, not business
+      90% retention -> 10% when
+      you charge = no real PMF
+             |
+             v
+       EXPLOSIVE GROWTH
 \```
 ```
 
 ---
 
-## Section 3: ## One-Liners
-
-- **Quotable one-liners** (5) — pithy, memorable phrases that compress the main insights
-- Use italics for each line
-- Draw directly from the transcript — exact quotes or tightly compressed versions
-
-### Example (from "20 Quantum Cheat Codes")
-
-```markdown
-## One-Liners
-
-*"Saving is not investing."*
-
-*"Salary buys you furniture. Equity buys your future."*
-
-*"Failure is not your tormentor — it's your teacher."*
-
-*"Wealth isn't about what you buy. It's about what you keep."*
-
-*"When your desires approach zero, your happiness goes to infinity."*
-```
-
-### Example (from "From Homeless to MIT Grad")
-
-```markdown
-## One-Liners
-
-*"Solve a problem, nail a product, and the mission will follow."*
-
-*"Passions don't last, but problems do."*
-
-*"Everybody lies — watch what customers do, not what they say."*
-
-*"Revenue is not cash. Profit is not cash. Only cash is real. The rest is accounting."*
-
-*"Lead with love: people → product → profits, in that order."*
-```
-
----
-
-## Section 4: ## Visual Chunk (ASCII workflow)
-
-A single ASCII diagram that captures the main process/framework. Guidelines:
-- Title the workflow clearly
-- Show cause-and-effect or flow relationships
-- Include 2-3 columns or lanes if comparing dimensions (e.g. Economy | Structure | Impact)
-- Use arrows (`-->`, `v`, `|`) to show direction
-- End with a `KEY:` line summarizing the core insight
-
-```
-+-----------------------------------------------------------------------------+
-|                    THE GRADUATE JOB SQUEEZE (2025)                           |
-+-----------------------------------------------------------------------------+
-|                                                                             |
-|   ECONOMY          CORPORATE STRUCTURE         GRADUATE REALITY             |
-|                                                                             |
-|   GDP Growth       Few Executives                                           |
-|     +2.5%             /\                  400 applications                  |
-|       |              /  \                     0 offers                      |
-|       v             / Mgr \                     |                           |
-|   But hiring       / Wide  \                    v                           |
-|   is FLAT    +--->/ Band    \        "Entry level: 2 yrs exp"              |
-|              |   /___________\               |                              |
-|   "Jobless   |   |  AI Base  |               v                              |
-|    Recovery" |   |  (small)  |        Salary: HK$21K/mo                    |
-|              |   +-----+-----+        (0.5% growth YoY)                    |
-|              |         |                                                    |
-|              |         v                                                    |
-|              |   Automates:                                                 |
-|              |   - Data cleaning        WHAT GRADUATES NEED:               |
-|              |   - Basic analysis       +--------------------------+       |
-|              |   - Admin tasks     ---->| 1. AI literacy (tools)   |       |
-|              |   - Creative work        | 2. Internship experience |       |
-|              |                          | 3. "AI Plus" mindset     |       |
-|              |   = Fewer junior         | 4. Soft skills + adapt   |       |
-|              |     roles needed         +--------------------------+       |
-|                                                                             |
-+-----------------------------------------------------------------------------+
-|  KEY: The bottom of the ladder is gone. Build skills above the AI line.     |
-+-----------------------------------------------------------------------------+
-```
-
----
-
-## Section 5: ## Story
+## Section 4: ## Story
 
 Write a simple, engaging story that a high school student can read to understand the main content of the article. Guidelines:
 

@@ -75,6 +75,13 @@ function BookCard({ book }) {
     <div className="rounded-lg border border-gray-600 bg-gray-800 p-5">
       <h2 className="text-lg font-bold text-white mb-4">{book.book_title}</h2>
 
+      {hasAnswers && book.accuracy_trend.length >= 2 && (
+        <div className="mb-4">
+          <p className="text-xs text-gray-500 mb-1">Accuracy trend (recent)</p>
+          <AccuracyTrendline points={book.accuracy_trend} />
+        </div>
+      )}
+
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -122,12 +129,6 @@ function BookCard({ book }) {
         </table>
       </div>
 
-      {hasAnswers && book.accuracy_trend.length >= 2 && (
-        <div className="mt-4">
-          <p className="text-xs text-gray-500 mb-1">Accuracy trend (recent)</p>
-          <AccuracyTrendline points={book.accuracy_trend} />
-        </div>
-      )}
     </div>
   );
 }

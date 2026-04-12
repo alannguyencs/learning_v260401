@@ -175,25 +175,49 @@ def main():
     # Reset sequences so next INSERT gets the right ID
     reset_sequences(config)
 
-    # Verify row counts
+    # Verify row counts against expected from SQL file headers
     print("\nVerifying row counts...")
     total = 0
+    mismatches = []
     for table in TABLES:
-        sql = f"SELECT COUNT(*) FROM {table};"
-        ok, err = run_sql(config, sql)
-        # Parse count from psql output
+        # Get actual count from database
         cmd = ["psql", "-h", config["host"], "-U", config["user"],
-               "-d", config["dbname"], "-t", "-c", sql]
+               "-d", config["dbname"], "-t", "-c", f"SELECT COUNT(*) FROM {table};"]
         env = os.environ.copy()
         if config.get("password"):
             env["PGPASSWORD"] = config["password"]
         result = subprocess.run(cmd, capture_output=True, text=True, env=env)
-        count = int(result.stdout.strip()) if result.stdout.strip().isdigit() else 0
-        total += count
-        print(f"  {table:<28} {count:>6}")
+        actual = int(result.stdout.strip()) if result.stdout.strip().isdigit() else 0
+        total += actual
+
+        # Get expected count from SQL file header (-- Rows: N)
+        sql_file = os.path.join(data_dir, f"{table}.sql")
+        expected = None
+        if os.path.exists(sql_file):
+            with open(sql_file) as f:
+                for line in f:
+                    if line.startswith("-- Rows:"):
+                        try:
+                            expected = int(line.split(":")[1].strip())
+                        except ValueError:
+                            pass
+                        break
+
+        if expected is not None and actual != expected:
+            mismatches.append((table, expected, actual))
+            print(f"  {table:<28} {actual:>6}  MISMATCH (expected {expected})")
+        else:
+            print(f"  {table:<28} {actual:>6}")
+
     print(f"  {'Total':<28} {total:>6}")
 
-    print(f"\nRestore complete.")
+    if mismatches:
+        print(f"\nERROR: {len(mismatches)} table(s) have row count mismatches!")
+        print("The SQL files may be corrupted (multi-line content stripped).")
+        print("Fix: re-export on the source machine with the latest db-compress,")
+        print("     then commit and pull the updated data/db/ files.")
+    else:
+        print("\nRestore complete — all row counts match.")
 
 
 if __name__ == "__main__":

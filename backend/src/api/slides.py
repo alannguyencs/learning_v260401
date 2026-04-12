@@ -101,9 +101,14 @@ def respond_to_quiz(
             is_correct=None, good_points=None, bad_points=None, round_done=result.round_done
         )
 
-    if quiz.quiz_type == "multiple_choice":
+    if body.pre_evaluated:
+        is_correct = body.is_correct
+        good_points = body.good_points
+        bad_points = body.bad_points
+    elif quiz.quiz_type == "multiple_choice":
         correct_options = quiz.correct_options or []
-        is_correct = len(correct_options) == 1 and body.user_answer in correct_options
+        user_selections = sorted(body.user_answer.split(","))
+        is_correct = user_selections == sorted(correct_options)
         good_points = None
         bad_points = None
     else:

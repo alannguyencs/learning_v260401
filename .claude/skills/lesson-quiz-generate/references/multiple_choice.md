@@ -7,7 +7,7 @@ A question with **4 options (A, B, C, D)** where one or more options are correct
 ## Rules
 
 1. Always generate exactly **4 options (A, B, C, D)**.
-2. Alternate between **single-answer** (`["B"]`) and **multiple-answer** (`["A", "C"]`) questions across the 5 questions in a section.
+2. Alternate between **single-answer** (`["B"]`) and **multiple-answer** (`["A", "C"]`) questions across the 5 questions in a section. For multiple-answer questions, append **"Select all options that apply."** to the end of the question text so the user knows more than one answer may be correct.
 3. Test **deep understanding**, not surface-level keyword matching. Distractors must be plausible — wrong for a specific, explainable reason.
 4. Each `response_to_user_option_*` must explain **WHY** that option is correct or incorrect — not just restate it.
 5. **Every question must be self-contained.** The user may take the quiz weeks after reading the lesson. Embed any necessary context (character names, specific examples, story details) directly in the question stem or options.

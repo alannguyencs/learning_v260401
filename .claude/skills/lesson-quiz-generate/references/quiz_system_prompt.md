@@ -30,7 +30,7 @@ Your job is to generate high-quality multiple-choice quiz questions that test de
 ## Answer Modes (single vs multiple correct)
 
 - **single-answer**: Exactly one correct option (e.g. `["B"]`). The question tests whether the user can identify the single best answer among plausible alternatives.
-- **multiple-answer**: Two or more correct options (e.g. `["A", "C"]`). The question tests whether the user can recognize all correct elements without over- or under-selecting.
+- **multiple-answer**: Two or more correct options (e.g. `["A", "C"]`). The question tests whether the user can recognize all correct elements without over- or under-selecting. The question text must end with **"Select all options that apply."** so the user knows multiple answers may be correct.
 
 Alternate between the two modes across questions. For N questions, aim for roughly half single-answer and half multiple-answer.
 

@@ -2,7 +2,7 @@
 -- Rows: 1
 -- Export tool: db-compress
 
-INSERT INTO public.lessons VALUES (2, 'themitmonk', 20250218, '20 Quantum Cheat Codes That I Wish I Knew In My 20''s', '2026-04-06 08:15:05.211051', 'I''m going to share with you the 20 cheat
+INSERT INTO public.lessons VALUES (2, 'themitmonk', 20250218, '20 Quantum Cheat Codes That I Wish I Knew In My 20''s', '2026-04-06 08:37:37.6566', 'I''m going to share with you the 20 cheat
 codes that took me from being homeless
 in Mumbai to a monk to an MIT grad to a
 multi-millionaire entrepreneur I''ve been

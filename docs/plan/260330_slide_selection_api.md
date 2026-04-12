@@ -440,3 +440,15 @@ No browser tests for this backend-only plan. Browser tests run in Plan 5.
 ## Open Questions
 
 None.
+
+## Change Request — 2026-04-06
+
+**Remove Tier 3, add skip queue within Tier 1.** The 3-tier algorithm is reduced to 2 tiers: due revision quizzes → new chapters. Within tier 1, eligible quizzes are split into two groups: Group A (non-skipped, served first by weakest recall) and Group B (skipped, served after Group A is exhausted, ordered by oldest skip). Re-skipping a quiz updates its timestamp, pushing it to the back of Group B.
+
+**Why:** Tier 3 caused skipped quizzes to loop indefinitely when tiers 1 and 2 were empty. The new approach lets users skip quizzes without getting stuck — skipped quizzes cycle back only after all non-skipped ones are done, and the round still completes when >50% are answered.
+
+**Changes:**
+- `slide_selector.py`: removed tier 3; tier 1 now uses Group A/B split from `get_eligible_quiz_ids_for_round`
+- `crud_slides.py`: `get_eligible_quiz_ids_for_round` returns `(non_skipped, skipped)` tuple; `log_quiz_skip` updates timestamp on re-skip
+- `slides.py` (API): restored `log_quiz_skip` on skip
+- Abstract/technical/chrome test docs updated

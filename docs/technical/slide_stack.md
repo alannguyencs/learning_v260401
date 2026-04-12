@@ -37,7 +37,7 @@ Index: `(username, slide_identifier, created_at)`
 |--------|------|-------------|
 | `raw_content` | Text | nullable — full paper text or YouTube transcript |
 
-**`quiz_skip_log`**
+**`quiz_skip_log`** — tracks skipped quizzes for back-of-queue ordering within tier 1
 
 | Column | Type | Constraints |
 |--------|------|-------------|
@@ -46,11 +46,11 @@ Index: `(username, slide_identifier, created_at)`
 | `quiz_id` | Integer | FK → chapter_quizzes.id, NOT NULL |
 | `lesson_id` | Integer | FK → lessons.id, NOT NULL |
 | `round_num` | Integer | NOT NULL |
-| `skipped_at` | Timestamp | NOT NULL, DEFAULT NOW() |
+| `skipped_at` | Timestamp | NOT NULL, DEFAULT NOW() — updated on re-skip to push to back of queue |
 
 ## Pipeline
 
-### GET /api/slides/next — 3-Tier Algorithm
+### GET /api/slides/next — 2-Tier Algorithm
 
 ```
 SlideSelector.get_next_slide(db, username, book_id)
@@ -59,18 +59,20 @@ SlideSelector.get_next_slide(db, username, book_id)
   │
   ├── TIER 1: due_rounds = get_due_rounds(db, username, lesson_count)
   │   ├── For each round: get_eligible_quiz_ids_for_round(db, username, lesson_id, round_num)
-  │   ├── For each quiz: compute m(t) using UserQuizRecall.forgetting_rate
-  │   ├── Sort ascending by m(t) (weakest first, lowest m(t) = worst recall)
-  │   └── Return first quiz as QuizSlide → done
+  │   │   └── Returns (non_skipped, skipped) — two groups of quiz IDs
+  │   │
+  │   ├── Group A (non-skipped): compute m(t), sort weakest first
+  │   │   └── If any → return first as QuizSlide → done
+  │   │
+  │   └── Group B (skipped): ordered by skipped_at ASC (oldest skip first)
+  │       └── If any → return first as QuizSlide → done
   │
   ├── TIER 2: no due revisions
   │   ├── If book_id: get_next_chapter_in_book(db, username, book_id)
   │   ├── Else: get_next_chapters_all_books(db, username) → random pick
   │   └── Return chapter as ChapterSlide → done
   │
-  └── TIER 3: no unlearnt chapters
-      ├── get_skipped_quizzes(db, username) → ordered by skipped_at ASC
-      └── Return first as QuizSlide or 'none'
+  └── Both tiers empty → return 'none'
 ```
 
 ### POST /api/slides/chapters/{chapter_id}/learnt
@@ -98,7 +100,8 @@ Body: { round_num, lesson_id, user_answer, is_skip }
   │     Return { is_correct: null, good_points: null, bad_points: null, round_done }
   │
   ├── If quiz_type == 'multiple_choice':
-  │     is_correct = (len(correct_options)==1 AND user_answer in correct_options)
+  │     user_selections = sorted(user_answer.split(","))
+  │     is_correct = (user_selections == sorted(correct_options))
   │     feedback = null
   │
   └── Else (open-ended):
@@ -155,7 +158,7 @@ Return { response }
 
 | Method | Description |
 |--------|-------------|
-| `get_next_slide(db, username, book_id)` | Returns `SlideResult` using 3-tier algorithm |
+| `get_next_slide(db, username, book_id)` | Returns `SlideResult` using 2-tier algorithm |
 
 **`SlideResult`** dataclass:
 
@@ -244,9 +247,9 @@ class GradingOutput(BaseModel):
 | `get_next_chapter_in_book(username, book_id)` | First unlearnt chapter in book order |
 | `get_next_chapters_all_books(username)` | One unlearnt chapter per book |
 | `get_eligible_quiz_ids_for_round(username, lesson_id, round_num)` | Not-answered, not-skipped quiz IDs |
-| `log_quiz_skip(username, quiz_id, lesson_id, round_num)` | Insert skip log row (idempotent) |
-| `remove_quiz_skip(username, quiz_id)` | Delete skip log row on answer |
-| `get_skipped_quizzes(username)` | Skipped quizzes ordered by skipped_at ASC |
+| `get_eligible_quiz_ids_for_round(username, lesson_id, round_num)` | Returns (non_skipped, skipped) quiz IDs not yet answered |
+| `log_quiz_skip(username, quiz_id, lesson_id, round_num)` | Insert or refresh skip (updates skipped_at to push to back of queue) |
+| `remove_quiz_skip(username, quiz_id)` | Delete skip log row when quiz is answered |
 
 **`crud_slide_chat.py`:**
 
@@ -269,7 +272,7 @@ class GradingOutput(BaseModel):
 | `SlidePage` | `frontend/src/pages/SlidePage.jsx` | Orchestrates `useSlide`, renders correct sub-component |
 | `BookSelector` | `frontend/src/components/BookSelector.jsx` | Fetches book list, dropdown to filter slides by book |
 | `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt / Skip buttons |
-| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC (feedback shows only user pick + correct option: wrong pick = red, correct = green); shows section_name badge and quiz_take_away in feedback |
+| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC single-correct (radio buttons) / MC multi-correct (checkboxes + "Select all that apply"); feedback shows all options: wrong pick = red, correct = green; shows section_name badge and quiz_take_away in feedback |
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 | `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
 | `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
@@ -282,7 +285,7 @@ class GradingOutput(BaseModel):
 |--------|-------------|
 | `fetchNextSlide(bookId)` | GET `/api/slides/next`; updates `slide` state |
 | `markLearnt(chapterId)` | POST mark-learnt; calls `fetchNextSlide` after |
-| `submitAnswer(quizId, body)` | POST respond; stores `feedback` state (no advance) |
+| `submitAnswer(quizId, body)` | POST respond; sets `submitting=true` during request, stores `feedback` state (no advance) |
 | `skipItem(quizId, body)` | POST respond with `is_skip=true`; calls `fetchNextSlide` after |
 | `selectBook(bookId)` | Sets `bookId`; calls `fetchNextSlide` |
 

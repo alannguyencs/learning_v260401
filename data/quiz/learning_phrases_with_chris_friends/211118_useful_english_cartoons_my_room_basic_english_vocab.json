@@ -1,0 +1,782 @@
+[
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "window sill",
+    "sentence": "My alarm clock is on the ___.",
+    "blanks": [
+      "window sill"
+    ],
+    "context_hint": "the flat shelf at the bottom of a window",
+    "quiz_take_away": "A window sill is the flat ledge at the bottom of a window where you can place small objects"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "curtains",
+    "sentence": "The window has white ___ to block the sunlight.",
+    "blanks": [
+      "curtains"
+    ],
+    "context_hint": "",
+    "quiz_take_away": "Curtains are fabric panels that hang over a window to block light or provide privacy"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "wastebasket",
+    "sentence": "Throw that used paper in the ___.",
+    "blanks": [
+      "wastebasket"
+    ],
+    "context_hint": "a small bin for trash",
+    "quiz_take_away": "A wastebasket is a small bin for throwing away trash, usually found next to a desk"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "ceiling",
+    "sentence": "A lamp hangs from the ___ of the room.",
+    "blanks": [
+      "ceiling"
+    ],
+    "context_hint": "the top surface of a room",
+    "quiz_take_away": "The ceiling is the top interior surface of a room — opposite of the floor"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "rings",
+    "sentence": "The alarm clock ___ every day at 7 o'clock to wake me up.",
+    "blanks": [
+      "rings"
+    ],
+    "context_hint": "",
+    "quiz_take_away": "To ring means to make a sound — used for alarms, bells, and phones"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "hangs",
+    "sentence": "A beautiful painting ___ on the wall above the sofa.",
+    "blanks": [
+      "hangs"
+    ],
+    "context_hint": "",
+    "quiz_take_away": "To hang means to be attached from above and suspended — used for lamps, pictures, and curtains"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "remote control",
+    "sentence": "I can't find the ___. How do I change the TV channel?",
+    "blanks": [
+      "remote control"
+    ],
+    "context_hint": "a device to operate electronics from a distance",
+    "quiz_take_away": "A remote control lets you operate a TV or other electronics without getting up"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "in the middle of",
+    "sentence": "There is a large rug ___ my room.",
+    "blanks": [
+      "in the middle of"
+    ],
+    "context_hint": "at the center of",
+    "quiz_take_away": "'In the middle of' means at the center of a space or area"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "recall",
+    "vocabulary_word": "alarm clock",
+    "question": "Which word means 'a device that makes a sound to wake you up'?",
+    "quiz_learnt": "The definition of alarm clock",
+    "option_a": "Light switch",
+    "option_b": "Remote control",
+    "option_c": "Alarm clock",
+    "option_d": "Globe",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A light switch is a button on the wall to turn lights on or off.",
+    "response_to_user_option_b": "Incorrect. A remote control is a device to operate TV/electronics from a distance.",
+    "response_to_user_option_c": "Correct. An alarm clock is a device that makes a sound at a set time to wake you up.",
+    "response_to_user_option_d": "Incorrect. A globe is a round model of the Earth.",
+    "quiz_take_away": "An alarm clock rings to wake you up in the morning"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "recall",
+    "vocabulary_word": "pillow",
+    "question": "What is a 'pillow'?",
+    "quiz_learnt": "The definition of pillow",
+    "option_a": "A thick fabric covering part of the floor",
+    "option_b": "A soft cushion for resting your head on",
+    "option_c": "A tall cabinet for storing clothes",
+    "option_d": "A container for holding flowers",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. That describes a rug.",
+    "response_to_user_option_b": "Correct. A pillow is a soft cushion you put your head on when sleeping.",
+    "response_to_user_option_c": "Incorrect. That describes a wardrobe.",
+    "response_to_user_option_d": "Incorrect. That describes a vase.",
+    "quiz_take_away": "A pillow is the soft cushion on your bed where you rest your head"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "recall",
+    "vocabulary_word": "wardrobe",
+    "question": "Which word means 'a tall cabinet for storing clothes'?",
+    "quiz_learnt": "The definition of wardrobe",
+    "option_a": "Dresser",
+    "option_b": "Wardrobe",
+    "option_c": "Drawer",
+    "option_d": "Wastebasket",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. A dresser is shorter furniture with drawers — not a tall cabinet.",
+    "response_to_user_option_b": "Correct. A wardrobe is a tall cabinet for storing clothes, often with a hanging rail.",
+    "response_to_user_option_c": "Incorrect. A drawer is a sliding box inside a dresser or desk.",
+    "response_to_user_option_d": "Incorrect. A wastebasket is a small bin for trash.",
+    "quiz_take_away": "A wardrobe is a tall standing cabinet for clothes — different from a dresser"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "rug",
+    "question": "Which word best completes: 'There is a large ___ in the middle of my room, covering part of the floor.'",
+    "quiz_learnt": "A rug is a thick fabric covering part of the floor",
+    "option_a": "Poster",
+    "option_b": "Curtains",
+    "option_c": "Rug",
+    "option_d": "Pillow",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A poster is a large printed picture for the wall, not the floor.",
+    "response_to_user_option_b": "Incorrect. Curtains hang over a window, not on the floor.",
+    "response_to_user_option_c": "Correct. A rug is a thick fabric that covers part of the floor.",
+    "response_to_user_option_d": "Incorrect. A pillow is a soft cushion for your head on the bed.",
+    "quiz_take_away": "A rug covers part of the floor — unlike carpet which covers the entire floor"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "light switch",
+    "question": "You walk into a dark room and want to turn on the light. What do you look for on the wall?",
+    "quiz_learnt": "The practical use of a light switch",
+    "option_a": "A remote control",
+    "option_b": "A poster",
+    "option_c": "A light switch",
+    "option_d": "A window sill",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A remote control operates a TV — it's not mounted on the wall.",
+    "response_to_user_option_b": "Incorrect. A poster is a decorative picture — it doesn't control lighting.",
+    "response_to_user_option_c": "Correct. A light switch is a button or lever on the wall that turns lights on or off.",
+    "response_to_user_option_d": "Incorrect. A window sill is the flat shelf at the bottom of a window.",
+    "quiz_take_away": "A light switch is the wall-mounted control for room lighting"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "poster",
+    "question": "What is a 'poster' typically used for in a room?",
+    "quiz_learnt": "Understanding the purpose of a poster",
+    "option_a": "To block light from a window",
+    "option_b": "To store clothes",
+    "option_c": "To decorate a wall with a large printed picture",
+    "option_d": "To hold flowers",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. Curtains block light, not posters.",
+    "response_to_user_option_b": "Incorrect. A wardrobe or dresser stores clothes.",
+    "response_to_user_option_c": "Correct. A poster is a large printed picture hung on a wall for decoration.",
+    "response_to_user_option_d": "Incorrect. A vase holds flowers.",
+    "quiz_take_away": "A poster is a large printed picture for wall decoration"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "recall",
+    "vocabulary_word": "dresser",
+    "question": "A piece of furniture with drawers for storing clothes is called a ___.",
+    "quiz_learnt": "The definition of dresser",
+    "option_a": "Wardrobe",
+    "option_b": "Armchair",
+    "option_c": "Dresser",
+    "option_d": "Globe",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A wardrobe is a tall cabinet with a hanging rail — a dresser is shorter with drawers.",
+    "response_to_user_option_b": "Incorrect. An armchair is a comfortable chair with arm supports.",
+    "response_to_user_option_c": "Correct. A dresser is furniture with multiple drawers for storing clothes.",
+    "response_to_user_option_d": "Incorrect. A globe is a round model of the Earth.",
+    "quiz_take_away": "A dresser is shorter than a wardrobe and stores clothes in horizontal drawers"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "drawer",
+    "question": "What is a 'drawer'?",
+    "quiz_learnt": "The definition of drawer as a furniture component",
+    "option_a": "A large printed picture for decoration",
+    "option_b": "A sliding box inside a dresser or desk",
+    "option_c": "The flat shelf at the bottom of a window",
+    "option_d": "A device that makes a sound to wake you up",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. That describes a poster.",
+    "response_to_user_option_b": "Correct. A drawer is a sliding box inside furniture, used for storage.",
+    "response_to_user_option_c": "Incorrect. That describes a window sill.",
+    "response_to_user_option_d": "Incorrect. That describes an alarm clock.",
+    "quiz_take_away": "A drawer is a sliding box inside furniture — you pull it out to store things"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "globe",
+    "question": "Wei wants to show his daughter where Hong Kong is on a round model of the Earth. Which object does he use?",
+    "quiz_learnt": "Understanding what a globe is",
+    "option_a": "A poster",
+    "option_b": "A vase",
+    "option_c": "A remote control",
+    "option_d": "A globe",
+    "correct_options": [
+      "D"
+    ],
+    "response_to_user_option_a": "Incorrect. A poster is a flat printed picture — not a model of the Earth.",
+    "response_to_user_option_b": "Incorrect. A vase is a container for flowers.",
+    "response_to_user_option_c": "Incorrect. A remote control is for operating electronics.",
+    "response_to_user_option_d": "Correct. A globe is a round model of the Earth — you can spin it and point to countries.",
+    "quiz_take_away": "A globe is a spherical model of the Earth for learning geography"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "recall",
+    "vocabulary_word": "armchair",
+    "question": "Which word describes 'a comfortable chair with side supports for arms'?",
+    "quiz_learnt": "The definition of armchair",
+    "option_a": "Dresser",
+    "option_b": "Armchair",
+    "option_c": "Wastebasket",
+    "option_d": "Rug",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. A dresser is furniture with drawers — not something you sit in.",
+    "response_to_user_option_b": "Correct. An armchair is a comfortable chair with padded arm supports.",
+    "response_to_user_option_c": "Incorrect. A wastebasket is a small bin for trash.",
+    "response_to_user_option_d": "Incorrect. A rug is a thick fabric covering part of the floor.",
+    "quiz_take_away": "An armchair is a comfortable chair with arm rests — typically in living rooms"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "vase",
+    "question": "Your wife bought fresh flowers and needs something to put them in with water. Which item does she need?",
+    "quiz_learnt": "The practical use of a vase",
+    "option_a": "A wastebasket",
+    "option_b": "A drawer",
+    "option_c": "A vase",
+    "option_d": "A globe",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A wastebasket is a bin for trash — not for flowers.",
+    "response_to_user_option_b": "Incorrect. A drawer is a sliding box inside furniture — you can't put water in it.",
+    "response_to_user_option_c": "Correct. A vase is a container designed to hold flowers with water.",
+    "response_to_user_option_d": "Incorrect. A globe is a round model of the Earth.",
+    "quiz_take_away": "A vase is a decorative container for holding flowers"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "comfortable",
+    "question": "If a bed is very 'comfortable', what does that mean?",
+    "quiz_learnt": "Understanding the adjective comfortable",
+    "option_a": "It is very large and takes up a lot of space",
+    "option_b": "It gives physical ease and relaxation — nice to lie on",
+    "option_c": "It is very expensive and made of rare materials",
+    "option_d": "It is colourful and looks attractive",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. Size doesn't determine comfort.",
+    "response_to_user_option_b": "Correct. Comfortable means giving physical ease and relaxation.",
+    "response_to_user_option_c": "Incorrect. Price doesn't define comfort.",
+    "response_to_user_option_d": "Incorrect. Appearance relates to style, not comfort.",
+    "quiz_take_away": "Comfortable means physically pleasant and relaxing — used for beds, chairs, shoes"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "1",
+    "section_name": "Vocabulary",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "above",
+    "question": "Which sentence uses 'above' correctly?",
+    "quiz_learnt": "The preposition above means higher than",
+    "option_a": "The rug is above the floor in the middle of the room.",
+    "option_b": "There's a poster above the light switch on the wall.",
+    "option_c": "My pillow is above the wardrobe every night.",
+    "option_d": "The drawer is above the dresser for storing clothes.",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. A rug lies ON the floor, not above it.",
+    "response_to_user_option_b": "Correct. The poster is higher than the light switch on the wall — 'above' means higher than.",
+    "response_to_user_option_c": "Incorrect. A pillow rests ON a bed, not above a wardrobe.",
+    "response_to_user_option_d": "Incorrect. A drawer is INSIDE a dresser, not above it.",
+    "quiz_take_away": "'Above' means higher than — the poster is above the light switch on the wall"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "alarm clock",
+    "sentence": "That's where we keep your ___ — the one that rings every morning at 7.",
+    "blanks": [
+      "alarm clock"
+    ],
+    "context_hint": "",
+    "quiz_take_away": "An alarm clock is the device that wakes you up by making a sound at a set time"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "pillow",
+    "sentence": "She jumped onto the bed and hugged both ___.",
+    "blanks": [
+      "pillows"
+    ],
+    "context_hint": "soft cushions on the bed",
+    "quiz_take_away": "Pillows are the soft cushions on a bed — you hug them or rest your head on them"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "wardrobe",
+    "sentence": "Wei opened the ___ next to the bed. 'This is where all your school uniforms go.'",
+    "blanks": [
+      "wardrobe"
+    ],
+    "context_hint": "tall cabinet for clothes",
+    "quiz_take_away": "A wardrobe is where you hang and store your clothes — school uniforms go inside"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "dresser",
+    "sentence": "Across from the wardrobe stood a small ___ with four drawers.",
+    "blanks": [
+      "dresser"
+    ],
+    "context_hint": "furniture with drawers",
+    "quiz_take_away": "A dresser is shorter than a wardrobe and has horizontal drawers for storage"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "globe",
+    "sentence": "On top of the dresser sat a ___ — Wei spun it and asked, 'Can you find Hong Kong?'",
+    "blanks": [
+      "globe"
+    ],
+    "context_hint": "round model of the Earth",
+    "quiz_take_away": "A globe is a spherical model of the Earth that you can spin to find countries"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "light switch",
+    "sentence": "'And this?' 'The ___!' She flipped it on and off three times.",
+    "blanks": [
+      "light switch"
+    ],
+    "context_hint": "",
+    "quiz_take_away": "A light switch is the button on the wall you flip to turn lights on or off"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "vase",
+    "sentence": "His wife had placed a ___ with yellow flowers on the side table.",
+    "blanks": [
+      "vase"
+    ],
+    "context_hint": "container for flowers",
+    "quiz_take_away": "A vase holds flowers — often placed on tables as decoration"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "cloze_deletion",
+    "vocabulary_word": "comfortable",
+    "sentence": "'My bed is very ___,' she said, jumping onto it.",
+    "blanks": [
+      "comfortable"
+    ],
+    "context_hint": "feels good to lie on",
+    "quiz_take_away": "Comfortable means giving physical ease — a comfortable bed makes you want to stay in it"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "window sill",
+    "question": "In the story, Wei points to the flat ledge at the bottom of the window where they keep the alarm clock. What is this ledge called?",
+    "quiz_learnt": "Identifying a window sill in context",
+    "option_a": "Ceiling",
+    "option_b": "Window sill",
+    "option_c": "Drawer",
+    "option_d": "Rug",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. The ceiling is the top surface of the room, not a window ledge.",
+    "response_to_user_option_b": "Correct. A window sill is the flat shelf at the bottom of a window — perfect for placing small objects.",
+    "response_to_user_option_c": "Incorrect. A drawer is a sliding box inside furniture.",
+    "response_to_user_option_d": "Incorrect. A rug is a thick fabric on the floor.",
+    "quiz_take_away": "A window sill is the flat ledge at the bottom of a window — you can place things on it"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "curtains",
+    "question": "Wei's daughter pulled them open to let the sunlight in. What did she open?",
+    "quiz_learnt": "Recognising curtains from their function in context",
+    "option_a": "Drawers",
+    "option_b": "Curtains",
+    "option_c": "Wardrobe",
+    "option_d": "Light switch",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. Drawers are inside furniture — you don't open them for sunlight.",
+    "response_to_user_option_b": "Correct. Curtains are fabric over windows — you pull them open to let sunlight in.",
+    "response_to_user_option_c": "Incorrect. A wardrobe is a clothes cabinet — not related to sunlight.",
+    "response_to_user_option_d": "Incorrect. A light switch controls electric lights, not sunlight.",
+    "quiz_take_away": "You open curtains to let natural light in and close them to block it"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "wastebasket",
+    "question": "In the story, Wei tells his daughter: 'This is for used paper, not candy wrappers on the floor.' What is he pointing at?",
+    "quiz_learnt": "Identifying a wastebasket from its function",
+    "option_a": "A dresser",
+    "option_b": "A wastebasket",
+    "option_c": "A vase",
+    "option_d": "A drawer",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. A dresser stores clothes, not paper waste.",
+    "response_to_user_option_b": "Correct. A wastebasket is a small bin for throwing away trash like used paper.",
+    "response_to_user_option_c": "Incorrect. A vase holds flowers, not trash.",
+    "response_to_user_option_d": "Incorrect. A drawer is for storing items, not throwing away trash.",
+    "quiz_take_away": "A wastebasket is a small trash bin — Wei reminds his daughter to use it instead of the floor"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "rug",
+    "question": "In the story, the daughter sits on a large ___ in the middle of the room while drawing. What is she sitting on?",
+    "quiz_learnt": "Using rug in a real situation",
+    "option_a": "A pillow",
+    "option_b": "A poster",
+    "option_c": "A rug",
+    "option_d": "A ceiling",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A pillow is a cushion for the bed, not the floor.",
+    "response_to_user_option_b": "Incorrect. A poster is a picture on the wall — you can't sit on it.",
+    "response_to_user_option_c": "Correct. A rug is a thick fabric on the floor — soft enough to sit on.",
+    "response_to_user_option_d": "Incorrect. The ceiling is the top of the room — you can't sit on it.",
+    "quiz_take_away": "A rug is thick enough to sit on — it covers part of the floor and makes it comfortable"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "ceiling",
+    "question": "Wei looked up and asked 'What's that called?' pointing at the top of the room. His daughter answered correctly. What did she say?",
+    "quiz_learnt": "Identifying the ceiling in context",
+    "option_a": "The poster",
+    "option_b": "The light switch",
+    "option_c": "The ceiling",
+    "option_d": "The curtains",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A poster is on the wall, not the top of the room.",
+    "response_to_user_option_b": "Incorrect. A light switch is on the wall, not the top of the room.",
+    "response_to_user_option_c": "Correct. The ceiling is the top interior surface of a room — Wei looked UP at it.",
+    "response_to_user_option_d": "Incorrect. Curtains hang over windows, not at the top of the room.",
+    "quiz_take_away": "The ceiling is the surface you see when you look straight up inside a room"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "rings",
+    "question": "In the story, Wei says the alarm clock does this every morning at 7. What does the alarm clock do?",
+    "quiz_learnt": "Understanding the verb 'rings' in context",
+    "option_a": "It hangs from the ceiling",
+    "option_b": "It rings — makes a sound",
+    "option_c": "It falls off the window sill",
+    "option_d": "It opens the curtains",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. Lamps hang from the ceiling, not alarm clocks.",
+    "response_to_user_option_b": "Correct. The alarm clock rings — it makes a sound to wake you up at the set time.",
+    "response_to_user_option_c": "Incorrect. The alarm clock stays on the window sill; it doesn't fall.",
+    "response_to_user_option_d": "Incorrect. Curtains are opened by hand, not by alarm clocks.",
+    "quiz_take_away": "When an alarm clock 'rings', it makes a sound — the same verb applies to bells and phones"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "hangs",
+    "question": "In the story, 'A lamp ___ from the ceiling.' Which verb fits?",
+    "quiz_learnt": "Using 'hangs' to describe something suspended from above",
+    "option_a": "rings",
+    "option_b": "hangs",
+    "option_c": "above",
+    "option_d": "comfortable",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. 'Rings' means to make a sound — lamps don't ring.",
+    "response_to_user_option_b": "Correct. 'Hangs' means to be suspended from above — a lamp hangs from the ceiling.",
+    "response_to_user_option_c": "Incorrect. 'Above' is a preposition, not a verb.",
+    "response_to_user_option_d": "Incorrect. 'Comfortable' is an adjective, not a verb.",
+    "quiz_take_away": "To hang means to be suspended from above — lamps, pictures, and curtains all hang"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "poster",
+    "question": "In the story, Wei's daughter taped something of her favourite cartoon above the light switch. What did she tape?",
+    "quiz_learnt": "Identifying a poster in a story context",
+    "option_a": "A globe",
+    "option_b": "A rug",
+    "option_c": "A poster",
+    "option_d": "A pillow",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A globe is a round model of the Earth — you don't tape it to a wall.",
+    "response_to_user_option_b": "Incorrect. A rug goes on the floor, not taped to a wall.",
+    "response_to_user_option_c": "Correct. A poster is a large printed picture — children often tape their favourite cartoon posters on walls.",
+    "response_to_user_option_d": "Incorrect. A pillow is for the bed — you don't tape it to a wall.",
+    "quiz_take_away": "A poster is a large printed picture that can be hung or taped on a wall for decoration"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "drawer",
+    "question": "Wei placed his daughter's things inside the dresser. She pulls out a sliding box to get her socks. What did she pull out?",
+    "quiz_learnt": "Understanding drawer as part of a dresser",
+    "option_a": "A wardrobe",
+    "option_b": "A wastebasket",
+    "option_c": "A drawer",
+    "option_d": "A remote control",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. A wardrobe is a full standing cabinet — you don't pull it out of a dresser.",
+    "response_to_user_option_b": "Incorrect. A wastebasket is a trash bin, not part of a dresser.",
+    "response_to_user_option_c": "Correct. A drawer is a sliding box inside a dresser — you pull it out to access what's stored inside.",
+    "response_to_user_option_d": "Incorrect. A remote control operates electronics — it's not part of furniture.",
+    "quiz_take_away": "A drawer slides in and out of a dresser — each dresser can have multiple drawers"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "armchair",
+    "question": "In the story, Wei sat in this in the living room corner and picked up the remote control. What did he sit in?",
+    "quiz_learnt": "Recognising an armchair from its use in context",
+    "option_a": "A rug",
+    "option_b": "An armchair",
+    "option_c": "A dresser",
+    "option_d": "A wastebasket",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. A rug is on the floor — you sit ON it, but it's not a chair.",
+    "response_to_user_option_b": "Correct. An armchair is a comfortable chair with arm supports — perfect for watching TV.",
+    "response_to_user_option_c": "Incorrect. A dresser is furniture with drawers — you don't sit in it.",
+    "response_to_user_option_d": "Incorrect. A wastebasket is a trash bin.",
+    "quiz_take_away": "An armchair is a comfortable chair for relaxing — often placed near the TV in the living room"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "application",
+    "vocabulary_word": "remote control",
+    "question": "Wei sat in his armchair and picked up a device to change the TV channel. What did he pick up?",
+    "quiz_learnt": "Identifying a remote control from its use",
+    "option_a": "A globe",
+    "option_b": "An alarm clock",
+    "option_c": "A light switch",
+    "option_d": "A remote control",
+    "correct_options": [
+      "D"
+    ],
+    "response_to_user_option_a": "Incorrect. A globe is a model of the Earth — it doesn't control a TV.",
+    "response_to_user_option_b": "Incorrect. An alarm clock wakes you up — it doesn't change TV channels.",
+    "response_to_user_option_c": "Incorrect. A light switch controls room lights, not a TV.",
+    "response_to_user_option_d": "Correct. A remote control is the device you use to change channels and control your TV.",
+    "quiz_take_away": "A remote control lets you operate the TV from your armchair without getting up"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "above",
+    "question": "In the story, Wei's daughter taped a poster ___ the light switch. Where is the poster relative to the switch?",
+    "quiz_learnt": "Understanding 'above' as a spatial relationship",
+    "option_a": "Below the switch — closer to the floor",
+    "option_b": "Inside the switch — behind the wall plate",
+    "option_c": "Higher than the switch — further up the wall",
+    "option_d": "Next to the switch — at the same height",
+    "correct_options": [
+      "C"
+    ],
+    "response_to_user_option_a": "Incorrect. 'Above' means higher, not lower. 'Below' would mean closer to the floor.",
+    "response_to_user_option_b": "Incorrect. 'Above' describes a position on the wall surface, not inside the wall.",
+    "response_to_user_option_c": "Correct. 'Above' means higher than — the poster is further up the wall than the light switch.",
+    "response_to_user_option_d": "Incorrect. 'Next to' means at the same height beside it. 'Above' means higher.",
+    "quiz_take_away": "'Above' means positioned higher than something — the poster is above the switch on the wall"
+  },
+  {
+    "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+    "section": "2",
+    "section_name": "Story",
+    "quiz_format": "multiple_choice",
+    "quiz_type": "understanding",
+    "vocabulary_word": "in the middle of",
+    "question": "In the story, a large rug lay ___ the room. Where exactly was it?",
+    "quiz_learnt": "Understanding 'in the middle of' as at the center",
+    "option_a": "Against the wall on one side",
+    "option_b": "At the center of the room",
+    "option_c": "Under the bed",
+    "option_d": "On top of the dresser",
+    "correct_options": [
+      "B"
+    ],
+    "response_to_user_option_a": "Incorrect. Against the wall would be 'next to the wall' or 'by the wall'.",
+    "response_to_user_option_b": "Correct. 'In the middle of' means at the center — the rug was in the center of the room.",
+    "response_to_user_option_c": "Incorrect. Under the bed would be 'under' or 'beneath', not 'in the middle of'.",
+    "response_to_user_option_d": "Incorrect. On top of the dresser would be 'on' — and rugs go on floors, not dressers.",
+    "quiz_take_away": "'In the middle of' means at the center of an area — the rug was centrally placed in the room"
+  }
+]

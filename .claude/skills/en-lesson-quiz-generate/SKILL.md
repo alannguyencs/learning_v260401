@@ -25,18 +25,26 @@ Only two quiz formats are used:
 
 ---
 
-## Quiz Count — Flexible, Based on Vocabulary
+## Quiz Count — 2x Vocabulary, One Set Per Chapter
 
-The number of quizzes is determined by the vocabulary words in the lesson, **not a fixed count**.
+The lesson has multiple chapters (sections after Material). Generate **one set of N quizzes per chapter**, where N is the number of vocabulary words.
 
 **Formula:**
 - Count the total vocabulary words/phrases (N) from the Vocabulary section tables
-- Generate **N quizzes total** (one per vocabulary word)
-- Split roughly: **40% cloze deletion, 60% multiple choice** (round as needed)
-- Cloze deletions test **word recall** — can the user fill in the vocabulary word given a context sentence?
-- Multiple choice questions test **word meaning** — can the user pick the correct definition, usage, or identify the word from a description?
+- Count the chapters in the lesson (sections after Material, e.g. Vocabulary, Story = 2 chapters)
+- Generate **N quizzes per chapter** → total = **N x number_of_chapters**
+- Each set: split roughly **40% cloze deletion, 60% multiple choice** (round as needed)
 
-**Example:** 21 vocabulary words → 8 cloze + 13 multiple choice = 21 quizzes
+**Example:** 21 vocabulary words, 2 chapters (Vocabulary + Story) → 21 + 21 = 42 quizzes total
+
+### Per-chapter quiz design
+
+Each chapter's quiz set tests the **same vocabulary words** but from a **different angle**:
+
+- **Chapter 1 (Vocabulary)**: quizzes focus on **definition recall** — can the user remember what the word means? Use transcript sentences and definition-based questions.
+- **Chapter 2 (Story)**: quizzes focus on **contextual usage** — can the user use the word in a new situation? Use story-derived sentences and application scenarios.
+
+The two sets must NOT duplicate questions. Each vocabulary word appears once per chapter, tested differently.
 
 ---
 
@@ -49,12 +57,13 @@ The number of quizzes is determined by the vocabulary words in the lesson, **not
    - Both quiz type guides:
      - `.claude/skills/en-lesson-quiz-generate/references/cloze_deletion.md`
      - `.claude/skills/en-lesson-quiz-generate/references/multiple_choice.md`
-3. Parse the **Vocabulary** section to extract all words/phrases with their definitions and sentences.
-4. Assign each vocabulary word to either cloze or multiple choice (40/60 split). Ensure variety — don't put all nouns in one format.
-5. Generate quizzes:
-   - **Cloze deletion**: Use the sentence from the vocabulary table (or a new sentence) with the vocabulary word blanked out.
-   - **Multiple choice**: Test definition knowledge, correct usage in context, or identifying the word from a description. Spread across cognitive levels (recall, understanding, application).
-6. Collect all questions into a single flat JSON array.
+3. Identify the **chapters** in the lesson (sections separated by `---`, skipping Material). Number them starting at 1.
+4. Parse the **Vocabulary** section to extract all words/phrases with their definitions and sentences.
+5. For **each chapter**, generate N quizzes (one per vocabulary word):
+   - Assign each word to either cloze or multiple choice (40/60 split per chapter)
+   - Set `section` and `section_name` to match the chapter index and title
+   - Ensure each chapter's quizzes test the same words but with different questions
+6. Collect all questions into a single flat JSON array (all chapters combined, ordered chapter by chapter).
 7. Save to `data/quiz/{channel_slug}/{lesson_filename}.json`. Create directories if needed.
 
 ---
@@ -66,8 +75,8 @@ Every quiz object must include:
 | Field | Type | Description |
 |-------|------|-------------|
 | `lesson_title` | str | Video title from the Material section |
-| `section` | str | Always `"1"` (Vocabulary section) |
-| `section_name` | str | Always `"Vocabulary"` |
+| `section` | str | Chapter number as string, e.g. `"1"`, `"2"` |
+| `section_name` | str | Chapter heading, e.g. `"Vocabulary"`, `"Story"` |
 | `quiz_format` | str | One of: `cloze_deletion`, `multiple_choice` |
 | `vocabulary_word` | str | The vocabulary word/phrase being tested |
 
@@ -83,23 +92,25 @@ Write all questions as a JSON array to `data/quiz/{channel_slug}/{lesson_filenam
 
 ## Output
 
-After saving, print the file path and a summary:
+After saving, print the file path and a summary table:
 
 ```
 Quiz saved: data/quiz/{channel_slug}/{filename}.json
 
-Vocabulary words: {N}
-Cloze deletion:   {count}
-Multiple choice:  {count}
-Total quizzes:    {total}
+| Chapter | Section Name | Cloze | MC | Total |
+|---------|-------------|-------|----|-------|
+| 1       | Vocabulary  | 8     | 13 | 21    |
+| 2       | Story       | 8     | 13 | 21    |
+| Total   |             | 16    | 26 | 42    |
 ```
 
 ---
 
 ## Rules
 
-- Every vocabulary word gets exactly **one** quiz question
-- Do NOT generate duplicate or near-duplicate questions
+- Every vocabulary word gets exactly **one** quiz per chapter
+- Each chapter's quizzes must be **distinct** — no duplicate questions across chapters
+- Chapter 1 quizzes focus on **definition recall**, Chapter 2 on **contextual usage**
 - Cloze sentences should provide enough context to recall the word
 - Multiple choice distractors must be plausible — other vocabulary words from the same lesson make good distractors
 - Every multiple choice explanation must say **WHY** an option is correct or incorrect

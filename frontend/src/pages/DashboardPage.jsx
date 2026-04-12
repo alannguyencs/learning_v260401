@@ -132,7 +132,7 @@ function ActivityLogTable({ log }) {
 }
 
 const DashboardPage = () => {
-  const [activeTab, setActiveTab] = useState("activity");
+  const [activeTab, setActiveTab] = useState("progress");
   const [log, setLog] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
