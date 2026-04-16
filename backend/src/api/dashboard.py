@@ -1,4 +1,4 @@
-"""Dashboard API endpoints: activity log."""
+"""Dashboard API endpoints: activity log and learning progress."""
 
 from datetime import datetime
 from typing import List, Optional
@@ -24,12 +24,31 @@ class ActivityLogEntry(BaseModel):
     lesson_title: Optional[str]
     chapter_id: Optional[int]
     answer_result: Optional[str]
-    recall_rate: Optional[float]
+    forgetting_rate: Optional[float]
 
     class Config:
         """Pydantic configuration."""
 
         from_attributes = True
+
+
+class LessonProgress(BaseModel):
+    """Per-lesson metrics within a book progress card."""
+
+    lesson_title: str
+    round_num: Optional[int]
+    round_status: Optional[str]
+    total_answers: int
+    correct_answers: int
+
+
+class BookProgressEntry(BaseModel):
+    """Per-book progress card with lesson table and accuracy trendline."""
+
+    book_id: str
+    book_title: str
+    lessons: List[LessonProgress]
+    accuracy_trend: List[int]
 
 
 def require_session_user(request: Request, db: Session = Depends(get_db)):
@@ -48,3 +67,15 @@ def get_activity_log(
     """Return the full chronological activity log for the authenticated user."""
     rows = crud_dashboard.get_activity_log(db, user.username)
     return [ActivityLogEntry(**row) for row in rows]
+
+
+@router.get(
+    "/dashboard/learning-progress",
+    response_model=List[BookProgressEntry],
+)
+def get_learning_progress(
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Return per-book progress with lesson table and accuracy trend."""
+    return crud_dashboard.get_learning_progress(db, user.username)

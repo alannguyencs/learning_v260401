@@ -6,6 +6,7 @@ const useSlide = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const [bookId, setBookId] = useState(null);
 
   const fetchNextSlide = useCallback(async (currentBookId) => {
@@ -36,11 +37,14 @@ const useSlide = () => {
   };
 
   const submitAnswer = async (quizId, body) => {
+    setSubmitting(true);
     try {
       const data = await apiService.respondToQuiz(quizId, body);
       setFeedback(data);
     } catch {
       setError("Failed to submit answer.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -66,6 +70,7 @@ const useSlide = () => {
     loading,
     error,
     feedback,
+    submitting,
     bookId,
     fetchNextSlide,
     markLearnt,

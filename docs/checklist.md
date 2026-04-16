@@ -14,6 +14,8 @@
 - [x] docs/plan/260402_slide_chat.md
 - [ ] docs/plan/260402_mc_feedback_highlight.md
 - [x] docs/plan/260402_quiz_pass_fail_grading.md
+- [~] docs/plan/260406_activity_log_sync.md (cancelled — no new table needed)
+- [x] docs/plan/260406_learning_progress.md
 
 ## DB Cloud Migration
 

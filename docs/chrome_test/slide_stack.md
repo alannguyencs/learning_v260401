@@ -39,13 +39,22 @@ VALUES (
   2, 'Chapter 2', '# Chapter 2\n\nThis is the second chapter content.'
 ) ON CONFLICT DO NOTHING;
 
--- Seed: one MC quiz on Chapter 1
+-- Seed: one single-correct MC quiz on Chapter 1
 INSERT INTO chapter_quizzes (chapter_id, quiz_type, question, expected_answer, option_a, option_b, option_c, option_d, correct_options)
 VALUES (
   (SELECT id FROM chapters WHERE lesson_id=(SELECT id FROM lessons WHERE book_id='test_book' AND lesson_index=1) AND chapter_index=1),
   'multiple_choice', 'What is the topic of Chapter 1?', NULL,
   'Chapter 1 topic', 'Chapter 2 topic', 'Chapter 3 topic', 'None of the above',
   '["A"]'
+) ON CONFLICT DO NOTHING;
+
+-- Seed: one multi-correct MC quiz on Chapter 1
+INSERT INTO chapter_quizzes (chapter_id, quiz_type, question, expected_answer, option_a, option_b, option_c, option_d, correct_options)
+VALUES (
+  (SELECT id FROM chapters WHERE lesson_id=(SELECT id FROM lessons WHERE book_id='test_book' AND lesson_index=1) AND chapter_index=1),
+  'multiple_choice', 'Which topics are covered in Chapter 1? (select all)', NULL,
+  'Topic A', 'Topic B', 'Topic C', 'Topic D',
+  '["A","B"]'
 ) ON CONFLICT DO NOTHING;
 
 -- Seed: one free_recall quiz on Chapter 2
@@ -102,7 +111,7 @@ Sign in as the test user before running any test. Navigate to `http://localhost:
 - [ ] On the Chapter 1 slide, click "Mark as Learnt"
 - [ ] Verify the slide transitions to a quiz slide
 - [ ] Verify the quiz is from the MC quiz on Chapter 1 (round label shows "R0")
-- [ ] Verify MC radio buttons A/B/C/D are displayed
+- [ ] Verify MC radio buttons A/B/C/D are displayed (single-correct quiz)
 - [ ] Select option A (correct answer)
 - [ ] Click "Submit Answer"
 - [ ] Verify result shows "Correct" (green indicator)
@@ -154,10 +163,11 @@ Sign in as the test user before running any test. Navigate to `http://localhost:
 - [ ] On the R0 quiz slide, click "Skip"
 - [ ] Verify the slide transitions without showing feedback panel
 - [ ] If more chapters remain: verify a chapter slide appears next
-- [ ] If no more chapters: verify the skipped quiz resurfaces (Tier 3)
+- [ ] If more quizzes remain in the round: verify the next unskipped quiz appears (not the one just skipped)
+- [ ] If all non-skipped quizzes are exhausted: verify skipped quizzes resurface (oldest skip first)
 
-**Expected UI state**: Skipped quiz deferred to Tier 3; no feedback shown on skip.
-**Error handling**: If skipped quiz immediately reappears (Tier 1 order), flag — skip logic broken.
+**Expected UI state**: Skipped quiz goes to back of queue; next unskipped quiz shown. No feedback shown on skip.
+**Error handling**: If the same skipped quiz reappears immediately, flag — skip queue ordering broken.
 **Report**: IN QUEUE
 - Improvement Proposals:
   + good to have - skip counter - show "(3 skipped)" label somewhere in the UI
@@ -182,3 +192,25 @@ Sign in as the test user before running any test. Navigate to `http://localhost:
 - Improvement Proposals:
   + good to have - next due date - show when the next R1 revision will become due
   + good to have - session summary - show a summary of quizzes answered and accuracy
+
+---
+
+## Test 6 — Multi-correct MC quiz uses checkboxes
+
+**Test name**: Multi-correct MC quiz renders checkboxes and allows multiple selections
+**User**: test user (fresh state)
+**Steps**:
+- [ ] Seed the multi-correct MC quiz (see Database Pre-Interaction)
+- [ ] Mark Chapter 1 as learnt
+- [ ] Navigate to the multi-correct MC quiz slide
+- [ ] Verify "Select all that apply" hint is displayed
+- [ ] Verify checkboxes are displayed instead of radio buttons
+- [ ] Click option A checkbox — verify it becomes checked
+- [ ] Click option B checkbox — verify it becomes checked AND option A remains checked
+- [ ] Click "Submit Answer"
+- [ ] Verify result shows "PASSED" (both correct options selected)
+- [ ] Verify feedback shows option A and B highlighted green
+
+**Expected UI state**: Both options remain selected; correct result shown.
+**Error handling**: If selecting B deselects A, the multi-select toggle logic is broken.
+**Report**: IN QUEUE

@@ -101,9 +101,14 @@ def respond_to_quiz(
             is_correct=None, good_points=None, bad_points=None, round_done=result.round_done
         )
 
-    if quiz.quiz_type == "multiple_choice":
+    if body.pre_evaluated:
+        is_correct = body.is_correct
+        good_points = body.good_points
+        bad_points = body.bad_points
+    elif quiz.quiz_type == "multiple_choice":
         correct_options = quiz.correct_options or []
-        is_correct = len(correct_options) == 1 and body.user_answer in correct_options
+        user_selections = sorted(body.user_answer.split(","))
+        is_correct = user_selections == sorted(correct_options)
         good_points = None
         bad_points = None
     else:
@@ -161,7 +166,7 @@ def _build_slide_context(db: Session, slide_type: str, chapter_id, quiz_id):
             context_parts.append(f"Expected answer: {quiz.expected_answer}")
         if chapter:
             context_parts.append(f"Chapter content:\n{chapter.content}")
-        return f"quiz:{quiz_id}", "\n\n".join(context_parts), lesson
+        return f"quiz:{quiz_id}", "\n".join(context_parts), lesson
 
     raise HTTPException(status_code=400, detail="slide_type must be 'chapter' or 'quiz'")
 

@@ -1,13 +1,13 @@
 ---
 name: lesson-create-youtube
-description: Fetch a YouTube video's metadata and transcript, save metadata as JSON, and generate a 3C Compress lesson note. Use when the user provides a YouTube video URL.
+description: Fetch a YouTube video's metadata and transcript, save metadata as JSON, and generate a lesson note with 3 major sections + story. Use when the user provides a YouTube video URL.
 argument-hint: "[youtube-video-url]"
 allowed-tools: Bash, WebFetch, Write, Read
 ---
 
 # YouTube Video to Lesson
 
-Given a YouTube video URL, fetch its metadata and transcript, save the metadata as JSON, and generate a 3C Compress lesson markdown file.
+Given a YouTube video URL, fetch its metadata and transcript, save the metadata as JSON, and generate a lesson markdown file with 3 major themed sections and a story.
 
 ## Input
 
@@ -43,11 +43,9 @@ Ensure the channel subdirectories exist first: `mkdir -p data/metadata/{channel_
 
 ### Phase 4: Generate lesson file
 
-Read the user's background at `.claude/skills/personal_background.md` — use it to personalize:
-- **Connect to Known**: Draw analogies from the user's real experience (computer vision, trademark detection, startup R&D, FastAPI/React stack, Hong Kong life)
-- **Story**: The story does NOT need to be about the user. Use the user's background as a **reference point** so the characters, scenarios, and stakes feel relatable — e.g. characters in similar life stages, facing decisions familiar to someone in a startup, managing a family budget, or balancing stable employment with entrepreneurial ambitions. The story should serve the lesson content first; the background just makes it land closer to home.
+Read the user's background at `.claude/skills/personal_background.md` — use it to personalize the **Story** section. The story does NOT need to be about the user. Use the user's background as a **reference point** so the characters, scenarios, and stakes feel relatable — e.g. characters in similar life stages, facing decisions familiar to someone in a startup, managing a family budget, or balancing stable employment with entrepreneurial ambitions. The story should serve the lesson content first; the background just makes it land closer to home.
 
-Use the **Write tool** (not Bash) to create the lesson markdown. Read `.claude/skills/lesson-create-youtube/lesson_template.md` for the 4-section structure with examples.
+Use the **Write tool** (not Bash) to create the lesson markdown. Read `.claude/skills/lesson-create-youtube/lesson_template.md` for the full structure with examples.
 
 ### Phase 5: Display summary
 
@@ -87,12 +85,11 @@ Published: 2026-02-27
 
 1. Use the **transcript** as the primary source of content — it has the full detail
 2. Use the **description** for metadata, links, and chapter structure
-3. Extract 3-5 key concepts for "Connect to Known" and find relatable analogies from software engineering, daily life, or well-known frameworks
-4. Create memorable chunks: metaphors, one-liners
-5. Design an ASCII workflow that captures the main process visually
-6. Keep Summary concise — this is the compressed 20% that gives 80% value
-7. ASCII boxes should be properly aligned and visually clean
-8. Separate sections with `---` horizontal rules
-9. The transcript field in the JSON should contain the full unabridged transcript
-10. Always `mkdir -p data/metadata/{channel_slug} data/lesson/{channel_slug}` before writing files
-11. Use Python via Bash for JSON operations to avoid shell escaping issues with quotes and special characters
+3. Group all key points into **at most 3 major sections** by theme — rearrange transcript order as needed so related ideas sit together
+4. Each section: bullet points (~100 words) + ASCII diagram at the end
+5. **Full coverage** — every key point from the transcript must appear. Re-read the transcript after drafting to verify nothing is missing
+6. ASCII diagrams should be properly aligned, visually clean, and under ~25 lines each
+7. Separate sections with `---` horizontal rules
+8. The transcript field in the JSON should contain the full unabridged transcript
+9. Always `mkdir -p data/metadata/{channel_slug} data/lesson/{channel_slug}` before writing files
+10. Use Python via Bash for JSON operations to avoid shell escaping issues with quotes and special characters

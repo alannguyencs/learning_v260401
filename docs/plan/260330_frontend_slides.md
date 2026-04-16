@@ -297,3 +297,24 @@ After implementation is complete, execute the Chrome Claude Extension E2E tests 
 ## Open Questions
 
 None.
+
+---
+
+## Change Request — 2026-04-06
+
+**What changed:** Multi-correct MC quizzes now use checkboxes instead of radio buttons so users can select multiple options.
+
+**Why:** Radio buttons are inherently single-select. When a quiz has multiple correct options (e.g., B and C), selecting C would deselect B — making it impossible to answer correctly.
+
+**Files changed:**
+- `frontend/src/components/QuizSlide.jsx` — detect multi-correct via `correct_options.length > 1`; render checkboxes with toggle logic; update feedback to highlight all user picks
+- `backend/src/api/slides.py` — parse comma-separated `user_answer` (e.g., "B,C") and compare set equality with `correct_options`
+- `docs/abstract/slide_stack.md` — updated user flow and acceptance criteria
+- `docs/technical/slide_stack.md` — updated pipeline and component description
+- `docs/chrome_test/slide_stack.md` — added multi-correct MC seed data and Test 6
+
+### Change 2 — Disable Submit button while awaiting response
+
+- `frontend/src/hooks/useSlide.js` — added `submitting` state, set true during `submitAnswer` API call
+- `frontend/src/pages/SlidePage.jsx` — pass `submitting` prop to `QuizSlide`
+- `frontend/src/components/QuizSlide.jsx` — accept `submitting` prop, show "Submitting..." text and disable button while waiting

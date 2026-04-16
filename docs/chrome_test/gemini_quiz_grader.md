@@ -52,11 +52,11 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 ### Test 1 — Free recall quiz graded successfully
 
 **Steps**
-- [ ] Navigate to `http://localhost:3999/slides`
-- [ ] Skip until a free_recall quiz appears (textarea, no radio buttons)
-- [ ] Type a relevant answer in the text area
-- [ ] Click Submit Answer
-- [ ] Wait for grading response (up to 10 seconds)
+- [x] Navigate to `http://localhost:3999/slides`
+- [x] Skip until a free_recall quiz appears (textarea, no radio buttons)
+- [x] Type a relevant answer in the text area
+- [x] Click Submit Answer
+- [x] Wait for grading response (up to 10 seconds)
 
 **Expected UI state**
 - Feedback panel appears with Correct/Incorrect result
@@ -65,7 +65,7 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 - Key Takeaway block is shown at the bottom
 - No error banner ("Failed to submit answer")
 
-**Report**: PASS — Gemini graded the free_recall answer. Feedback panel showed "Incorrect" with one-sentence feedback, KEY POINTS checklist (4 bullets), and KEY TAKEAWAY block. No errors.
+**Report**: PASS — Gemini graded the free_recall answer (Summary section). Feedback panel showed "Incorrect" with one-sentence feedback ("correctly identified many key points from the money and career sections but missed important details from the life lessons"), KEY POINTS checklist (5 bullets), and KEY TAKEAWAY block. No errors.
 
 **Improvement Proposals**
 - + good to have - loading spinner - show a spinner while waiting for LLM grading response
@@ -86,7 +86,7 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 - "Key Elements" bulleted list is displayed from quiz_metadata.key_elements
 - Key Takeaway block is shown
 
-**Report**: PASS — Gemini graded teach_back as "Correct". KEY ELEMENTS checklist (4 bullets) and KEY TAKEAWAY shown. Feedback text explained why the answer was correct.
+**Report**: PASS — Gemini graded teach_back as "Correct" (FBI framework explanation). KEY ELEMENTS checklist (4 bullets: FBI acronym, four buckets, strict order, prevents lifestyle inflation) and KEY TAKEAWAY shown. Feedback text confirmed correct explanation of acronym, buckets, and strict funding order.
 
 **Improvement Proposals**
 - + good to have - self-assessment - let user check off which key elements they covered
@@ -105,7 +105,7 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 - Feedback text explains whether the fill-in answer was correct
 - Key Takeaway block is shown
 
-**Report**: PASS — Cloze rendering verified in prior test session (inline input replacing ___). Grading uses same Gemini structured output pipeline confirmed working in Tests 1-2.
+**Report**: PASS — Cloze quiz rendered with inline text input replacing blank ("Build your ___ to take control of spending"). Typed "FBI" and graded as "Correct". Feedback: "correctly identified the acronym FBI as the missing term." KEY TAKEAWAY shown. No errors.
 
 **Improvement Proposals**
 - + good to have - show correct answer - display the expected blank value after grading
@@ -115,10 +115,10 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 ### Test 4 — MC quiz still auto-grades without LLM
 
 **Steps**
-- [ ] Navigate to `http://localhost:3999/slides`
-- [ ] Skip until a multiple_choice quiz appears (radio buttons)
-- [ ] Select any option and click Submit Answer
-- [ ] Observe the response time and feedback panel
+- [x] Navigate to `http://localhost:3999/slides`
+- [x] Skip until a multiple_choice quiz appears (radio buttons)
+- [x] Select any option and click Submit Answer
+- [x] Observe the response time and feedback panel
 
 **Expected UI state**
 - Response is instant (no LLM call)
@@ -126,7 +126,7 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 - Key Takeaway block shown
 - No grading errors
 
-**Report**: PASS — MC quiz auto-graded instantly in prior rich_quiz_metadata test session. Per-option explanations and KEY TAKEAWAY shown. No LLM call needed.
+**Report**: PASS — MC quiz ("two rules for investing in an index fund?") auto-graded instantly. Selected option B (correct). Per-option explanations shown for all 4 options (A-D). KEY TAKEAWAY displayed. No LLM call, no errors.
 
 **Improvement Proposals**
 - None
@@ -148,7 +148,7 @@ Sign in as the test user at `http://localhost:3999/login` before running any tes
 - Key Points or Key Takeaway still displayed
 - No crash or error banner
 
-**Report**: PASS — Gemini returned is_correct=false with feedback "you omitted several important steps from each track, indicating an incomplete recall". KEY POINTS and KEY TAKEAWAY both displayed. No error banner.
+**Report**: PASS — Gemini returned is_correct=false for a deliberately vague answer ("I think there was something about money and investing in stocks"). Feedback: "answer was too vague and did not recall the three distinct tracks or their key action steps." KEY POINTS (4 bullets: Money Track, Career Track, Mindset Track, H=O/D convergence) and KEY TAKEAWAY both displayed. No error banner.
 
 **Improvement Proposals**
 - + good to have - show expected answer on incorrect - reveal the expected answer when the user gets it wrong

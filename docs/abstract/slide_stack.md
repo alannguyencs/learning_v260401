@@ -13,7 +13,7 @@ After authentication, users land on a blank page. There is no learning interface
 
 ## Solution
 
-A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 3-tier priority algorithm (due revisions → new chapters → skipped items). Open-ended quiz answers are graded by AI. A floating chat icon on each slide lets the user ask contextual questions, answered by AI using the lesson source material, slide content, and conversation history.
+A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 2-tier priority algorithm (due revisions → new chapters). Within revision quizzes, unskipped quizzes are served first (weakest recall); skipped quizzes form a back-of-queue and resurface only after all unskipped quizzes are exhausted. Open-ended quiz answers are graded by AI. A floating chat icon on each slide lets the user ask contextual questions, answered by AI using the lesson source material, slide content, and conversation history.
 
 ## User Flow
 
@@ -32,11 +32,13 @@ SlidePage fetches GET /api/slides/next
   │     [Skip Chapter]   → moves to next slide
   │
   ├── Quiz slide (revision round):
-  │     User answers MC (radio buttons) or open-ended (textarea)
+  │     User answers MC or open-ended (textarea)
+  │     Single-correct MC → radio buttons (pick one)
+  │     Multi-correct MC  → checkboxes ("Select all that apply")
   │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
   │     MC feedback: all options shown (wrong pick red, correct green, others gray)
   │     [Next Slide]   → advances to next slide
-  │     [Skip]         → logs skip, advances to next slide
+  │     [Skip]         → quiz goes to back of queue, next unskipped quiz shown
   │
   ├── Chat (on any chapter or quiz slide):
   │     [Chat icon] → opens chat panel
@@ -69,7 +71,9 @@ SlidePage fetches GET /api/slides/next
 - [ ] BookSelector dropdown shows all available books and allows filtering
 - [ ] Chapter slides display markdown content with book/lesson breadcrumb
 - [ ] Clicking "Mark as Learnt" advances to the next slide
-- [ ] Quiz slides show MC options as radio buttons or a textarea for open-ended types
+- [ ] Single-correct MC quizzes show radio buttons; multi-correct MC quizzes show checkboxes with "Select all that apply" hint
+
+- [ ] Submit button shows "Submitting..." and is disabled while waiting for the backend response
 - [ ] Submitting an answer shows the correct/incorrect badge and AI feedback
 - [ ] Clicking "Next Slide" after feedback advances to the next slide
 - [ ] Skipping a quiz or chapter advances to the next slide

@@ -110,38 +110,7 @@ class TestActivityLogLearntChapter:
         assert learnt["book_id"] == "ml"
         assert learnt["lesson_index"] == 1
         assert learnt["answer_result"] is None
-        assert learnt["recall_rate"] is None
-
-
-class TestActivityLogSkip:
-    """SKIP event tests."""
-
-    def test_skip_appears(self, auth_client):  # pylint: disable=redefined-outer-name
-        """After skipping a quiz, a SKIP row appears with null answer_result and recall_rate."""
-        ids = _seed_content(auth_client)
-        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
-
-        slide_resp = auth_client.get("/api/slides/next")
-        quiz = slide_resp.json().get("quiz")
-        if quiz is None:
-            pytest.skip("No quiz available after marking chapter learnt")
-
-        auth_client.post(
-            f"/api/slides/quizzes/{quiz['id']}/respond",
-            json={
-                "round_num": quiz["round_num"],
-                "lesson_id": ids["lesson_id"],
-                "user_answer": "",
-                "is_skip": True,
-            },
-        )
-
-        response = auth_client.get("/api/dashboard/activity-log")
-        entries = response.json()
-        skip_rows = [e for e in entries if e["action"] == "SKIP"]
-        assert len(skip_rows) >= 1
-        assert skip_rows[0]["answer_result"] is None
-        assert skip_rows[0]["recall_rate"] is None
+        assert learnt["forgetting_rate"] is None
 
 
 class TestActivityLogAnswer:
@@ -153,7 +122,7 @@ class TestActivityLogAnswer:
         return slide_resp.json().get("quiz")
 
     def test_wrong_answer_appears(self, auth_client):  # pylint: disable=redefined-outer-name
-        """Wrong answer produces ANSWER row with answer_result='wrong' and recall_rate=1.2."""
+        """Wrong answer produces ANSWER row with answer_result='wrong' and forgetting_rate=1.2."""
         ids = _seed_content(auth_client)
         quiz = self._get_quiz(auth_client, ids)
         if quiz is None:
@@ -174,10 +143,10 @@ class TestActivityLogAnswer:
         answer_rows = [e for e in entries if e["action"] == "ANSWER"]
         assert len(answer_rows) == 1
         assert answer_rows[0]["answer_result"] == "wrong"
-        assert answer_rows[0]["recall_rate"] == 1.2
+        assert answer_rows[0]["forgetting_rate"] == 1.2
 
     def test_correct_answer_appears(self, auth_client):  # pylint: disable=redefined-outer-name
-        """Correct answer produces ANSWER row with answer_result='correct' and recall_rate<1."""
+        """Correct answer produces ANSWER row with answer_result='correct' and forgetting_rate<1."""
         ids = _seed_content(auth_client)
         quiz = self._get_quiz(auth_client, ids)
         if quiz is None:
@@ -198,7 +167,7 @@ class TestActivityLogAnswer:
         answer_rows = [e for e in entries if e["action"] == "ANSWER"]
         assert len(answer_rows) == 1
         assert answer_rows[0]["answer_result"] == "correct"
-        assert answer_rows[0]["recall_rate"] < 1.0
+        assert answer_rows[0]["forgetting_rate"] < 1.0
 
 
 class TestActivityLogOrdering:

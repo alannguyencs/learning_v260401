@@ -63,6 +63,10 @@ class QuizRespondRequest(BaseModel):
     lesson_id: int
     user_answer: str
     is_skip: bool
+    pre_evaluated: bool = False
+    is_correct: Optional[bool] = None
+    good_points: Optional[List[str]] = None
+    bad_points: Optional[List[str]] = None
 
 
 class QuizRespondResponse(BaseModel):

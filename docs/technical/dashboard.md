@@ -9,9 +9,15 @@ GET /api/dashboard/activity-log
     → crud_dashboard.get_activity_log(db, username)
          UNION user_chapter_progress   → LEARNT CHAPTER rows
          UNION quiz_skip_log           → SKIP rows
-         UNION quiz_answer_log         → ANSWER rows (+ recall_rate from user_quiz_recall)
+         UNION quiz_answer_log         → ANSWER rows (+ forgetting_rate from user_quiz_recall)
          UNION lesson_revision_rounds  → ROUND CREATED rows
     → List[ActivityLogEntry] sorted by event_time ASC
+
+GET /api/dashboard/learning-progress
+    → crud_dashboard.get_learning_progress(db, username)
+         per-lesson: lesson_title, latest round, accuracy
+         per-book: sliding-window accuracy trendline (20 points from 119 answers)
+    → List[BookProgressEntry] ordered by book_id
 ```
 
 Quiz answers are also written to `quiz_answer_log` from the slides respond endpoint:
@@ -19,7 +25,7 @@ Quiz answers are also written to `quiz_answer_log` from the slides respond endpo
 ```
 POST /api/slides/quizzes/{id}/respond
     → ... (grading + revision unchanged)
-    → crud_dashboard.log_quiz_answer()   ← NEW write path
+    → crud_dashboard.log_quiz_answer()   ← write path
 ```
 
 ## Data Model
@@ -51,12 +57,45 @@ Migration: `scripts/sql/005_quiz_answer_log.sql`
   "lesson_title": "20 Quantum Cheat Codes...",
   "chapter_id": 1,
   "answer_result": "correct | wrong | null",
-  "recall_rate": 1.2
+  "forgetting_rate": 1.2
 }
 ```
 
-`chapter_id`, `answer_result`, and `recall_rate` are `null` for ROUND CREATED rows.
-`answer_result` and `recall_rate` are `null` for LEARNT CHAPTER and SKIP rows.
+### `BookProgressEntry` response schema
+
+```json
+{
+  "book_id": "themitmonk",
+  "book_title": "theMITmonk",
+  "lessons": [
+    {
+      "lesson_title": "20 Quantum Cheat Codes...",
+      "round_num": 1,
+      "round_status": "open",
+      "total_answers": 29,
+      "correct_answers": 13
+    }
+  ],
+  "accuracy_trend": [65, 63, 62, 60, 58, ...]
+}
+```
+
+`accuracy_trend` is a list of exactly 20 integers (0–100), each representing accuracy percentage in a sliding window. Empty list if fewer than 20 answers exist for the book. Window size adapts: `window_size = min(n, 119) - 19`.
+
+## Algorithms
+
+### Accuracy Trendline (adaptive sliding window)
+
+1. Fetch quiz_answer_log rows for the book, cap at 119 most recent.
+2. Reverse to chronological order. Let `n = len(answers)`.
+3. If `n < 20`, return empty list (not enough data).
+4. Compute `window_size = n - 19` (ranges from 1 when n=20, to 100 when n=119).
+5. Create exactly 20 sliding windows of `window_size` each:
+   - Window 1: answers[0..window_size-1]
+   - Window 2: answers[1..window_size]
+   - ...
+   - Window 20: answers[19..n-1]
+6. For each window, compute `round(correct / window_size * 100)` → percentage data point.
 
 ## API Layer
 
@@ -64,8 +103,13 @@ Migration: `scripts/sql/005_quiz_answer_log.sql`
 
 ```
 GET /api/dashboard/activity-log
-Auth: session cookie (same as slides endpoints)
+Auth: session cookie
 Response 200: List[ActivityLogEntry]
+Response 401: not authenticated
+
+GET /api/dashboard/learning-progress
+Auth: session cookie
+Response 200: List[BookProgressEntry]
 Response 401: not authenticated
 ```
 
@@ -81,41 +125,45 @@ Inserts one row into `quiz_answer_log`. Called from `slides.py` after every non-
 
 ### `get_activity_log(db, username) -> list[dict]`
 
-Executes a UNION of four queries across:
-- `user_chapter_progress` — LEARNT CHAPTER events
-- `quiz_skip_log` — SKIP events
-- `quiz_answer_log` — ANSWER events, LEFT JOINed with `user_quiz_recall` for `forgetting_rate`
-- `lesson_revision_rounds` — ROUND CREATED events
+Executes a UNION of four queries. Returns rows sorted by `event_time ASC`.
 
-Returns rows sorted by `event_time ASC`. `recall_rate` is rounded to 2 decimal places.
+### `get_learning_progress(db, username) -> list[dict]`
+
+Returns per-book data with nested lessons and accuracy trendline:
+1. Query per-lesson metrics (latest round, accuracy) grouped by book
+2. Query 119 most recent answers per book for trendline computation
+3. Compute sliding window trendline in Python
+4. Group into book-level dicts with `lessons` list and `accuracy_trend` list
 
 ## Frontend
 
 **`frontend/src/pages/DashboardPage.jsx`**
-- Fetches `GET /api/dashboard/activity-log` on mount
-- Renders scrollable table with columns: `#`, `Date`, `Time`, `Action`, `book_id`, `lesson_index`, `lesson_title`, `chapter_id`, `answer_result`, `recall_rate`
-- Action column colour-coded: LEARNT CHAPTER (green bold), SKIP (grey), ANSWER (blue), ROUND CREATED (italic muted)
-- `answer_result`: "correct" green, "wrong" red, "—" grey
-- Empty state: message + link to `/slides`
-- Loading and error states handled
+- Tab switcher with "Activity Log" and "Learning Progress" tabs
+- `activeTab` state defaults to `"activity"`
+- Activity Log tab: unchanged behaviour
+- Learning Progress tab: renders `LearningProgressView` component
 
-**`frontend/src/App.js`** — `/dashboard` added as a `ProtectedRoute`.
+**`frontend/src/components/LearningProgressView.jsx`**
+- Fetches `GET /api/dashboard/learning-progress` on mount
+- Renders one card per book
+- Each card contains:
+  - Book title header
+  - Lesson table with columns: Lesson, Revision, Accuracy
+  - SVG trendline chart below the table (pure SVG, no charting library)
+- Empty state with link to `/slides`
 
-**`frontend/src/services/api.js`** — `getActivityLog()` calls `GET /api/dashboard/activity-log`.
-
-**`frontend/src/pages/SlidePage.jsx`** — "Activity Log" link in top-right corner.
+**`frontend/src/services/api.js`** — `getLearningProgress()` calls `GET /api/dashboard/learning-progress`.
 
 ## Testing
 
-**File**: `backend/tests/test_dashboard_api.py`
+**File**: `backend/tests/test_learning_progress_api.py`
 
 | Test | Description |
 |------|-------------|
-| `test_activity_log_unauthenticated` | Returns 401 without session |
-| `test_activity_log_empty` | Returns `[]` when no activity exists |
-| `test_learnt_chapter_appears` | LEARNT CHAPTER row present after marking chapter |
-| `test_skip_appears` | SKIP row with null answer_result and recall_rate |
-| `test_wrong_answer_appears` | ANSWER row with answer_result=wrong, recall_rate=1.2 |
-| `test_correct_answer_appears` | ANSWER row with answer_result=correct, recall_rate<1 |
-| `test_rows_ordered_by_time` | All event_times in ascending order |
-| `test_round_created_appears` | ROUND CREATED row with null chapter_id |
+| `test_learning_progress_unauthenticated` | Returns 401 without session |
+| `test_learning_progress_empty` | Returns books with empty lessons when no activity |
+| `test_learning_progress_with_lesson_data` | Lesson row has round_num, accuracy |
+| `test_learning_progress_accuracy_trend_empty` | accuracy_trend is [] when < 100 answers |
+| `test_learning_progress_grouped_by_book` | One entry per book |
+
+**File**: `backend/tests/test_dashboard_api.py` — existing activity log tests unchanged.

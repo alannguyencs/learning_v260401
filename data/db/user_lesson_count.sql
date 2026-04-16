@@ -1,4 +1,3 @@
 -- Table: user_lesson_count
 -- Rows: 0
 -- Export tool: db-compress
-

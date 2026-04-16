@@ -2,18 +2,6 @@ import React, { useState } from "react";
 
 const MC_OPTIONS = ["A", "B", "C", "D"];
 
-const TakeawayBlock = ({ text }) => {
-  if (!text) return null;
-  return (
-    <div className="mt-3 p-3 bg-gray-900 border-l-4 border-blue-500 rounded">
-      <p className="text-xs text-blue-400 font-semibold uppercase tracking-wide mb-1">
-        Key Takeaway
-      </p>
-      <p className="text-gray-300 text-sm">{text}</p>
-    </div>
-  );
-};
-
 const COLOR_MAP = {
   yellow: { label: "text-yellow-400", bullet: "text-yellow-500" },
   green: { label: "text-green-400", bullet: "text-green-500" },
@@ -56,32 +44,25 @@ const McOptionExplanations = ({
     D: metadata.response_to_user_option_d,
   };
   const correct = correctOptions || [];
+  const userPicks = userAnswer ? userAnswer.split(",") : [];
   return (
     <div className="mt-3 space-y-2">
       {MC_OPTIONS.filter((opt) => optionMap[opt]).map((opt) => {
         const isCorrect = correct.includes(opt);
-        const isUserPick = opt === userAnswer;
-        const isWrongPick = isUserPick && !isCorrect;
+        const isWrongPick = userPicks.includes(opt) && !isCorrect;
+        const border = isCorrect
+          ? "border-green-600 bg-green-900/20"
+          : isWrongPick
+            ? "border-red-600 bg-red-900/20"
+            : "border-gray-600 bg-gray-800/40";
+        const text = isCorrect
+          ? "text-green-400"
+          : isWrongPick
+            ? "text-red-400"
+            : "text-gray-400";
         return (
-          <div
-            key={opt}
-            className={`p-2 rounded text-sm border ${
-              isCorrect
-                ? "border-green-600 bg-green-900/20"
-                : isWrongPick
-                  ? "border-red-600 bg-red-900/20"
-                  : "border-gray-600 bg-gray-800/40"
-            }`}
-          >
-            <span
-              className={`font-semibold ${
-                isCorrect
-                  ? "text-green-400"
-                  : isWrongPick
-                    ? "text-red-400"
-                    : "text-gray-400"
-              }`}
-            >
+          <div key={opt} className={`p-2 rounded text-sm border ${border}`}>
+            <span className={`font-semibold ${text}`}>
               {opt}. {optionMap[opt]}
             </span>
             {explMap[opt] && (
@@ -102,7 +83,6 @@ const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
     C: quiz.option_c,
     D: quiz.option_d,
   };
-
   const goodCount = feedback.good_points?.length || 0;
   const badCount = feedback.bad_points?.length || 0;
   const totalPoints = goodCount + badCount;
@@ -137,6 +117,19 @@ const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
         />
       )}
 
+      {quiz.quiz_type === "cloze" &&
+        !feedback.is_correct &&
+        quiz.expected_answer && (
+          <div className="mt-3 p-3 bg-gray-900 border-l-4 border-yellow-500 rounded">
+            <p className="text-xs text-yellow-400 font-semibold uppercase tracking-wide mb-1">
+              Correct Answer
+            </p>
+            <p className="text-gray-200 text-sm font-medium">
+              {quiz.expected_answer}
+            </p>
+          </div>
+        )}
+
       {quiz.quiz_type === "multiple_choice" && (
         <McOptionExplanations
           optionMap={optionMap}
@@ -154,7 +147,14 @@ const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
         <KeyPointsList points={meta.key_elements} label="Key Elements" />
       )}
 
-      <TakeawayBlock text={quiz.quiz_take_away} />
+      {quiz.quiz_take_away && (
+        <div className="mt-3 p-3 bg-gray-900 border-l-4 border-blue-500 rounded">
+          <p className="text-xs text-blue-400 font-semibold uppercase tracking-wide mb-1">
+            Key Takeaway
+          </p>
+          <p className="text-gray-300 text-sm">{quiz.quiz_take_away}</p>
+        </div>
+      )}
 
       <button
         onClick={onNext}
@@ -166,32 +166,18 @@ const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
   );
 };
 
-const ClozeQuestion = ({ sentence, answer, onChange }) => {
-  const parts = sentence.split("___");
-  return (
-    <p className="text-lg text-white font-medium mb-4 leading-relaxed">
-      {parts.map((part, i) => (
-        <React.Fragment key={i}>
-          {part}
-          {i < parts.length - 1 && (
-            <input
-              type="text"
-              value={answer}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="..."
-              className="inline-block mx-1 px-2 py-0.5 w-32 bg-gray-800 text-gray-200 border-b-2 border-blue-400 focus:outline-none focus:border-blue-300 text-base"
-            />
-          )}
-        </React.Fragment>
-      ))}
-    </p>
-  );
-};
-
-const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
+const QuizSlide = ({
+  quiz,
+  feedback,
+  submitting,
+  onSubmit,
+  onSkip,
+  onNext,
+}) => {
   const [answer, setAnswer] = useState("");
   const isMC = quiz.quiz_type === "multiple_choice";
   const isCloze = quiz.quiz_type === "cloze";
+  const isMultiMC = isMC && (quiz.correct_options?.length || 0) > 1;
   const optionMap = {
     A: quiz.option_a,
     B: quiz.option_b,
@@ -199,10 +185,15 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
     D: quiz.option_d,
   };
 
-  const handleSubmit = () => {
-    if (!answer.trim()) return;
-    onSubmit(answer);
+  const toggleOption = (opt) => {
+    const current = answer ? answer.split(",") : [];
+    const next = current.includes(opt)
+      ? current.filter((o) => o !== opt)
+      : [...current, opt];
+    setAnswer(next.sort().join(","));
   };
+
+  const handleSubmit = () => answer.trim() && !submitting && onSubmit(answer);
 
   return (
     <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
@@ -219,11 +210,25 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
       </div>
 
       {isCloze ? (
-        <ClozeQuestion
-          sentence={quiz.question}
-          answer={answer}
-          onChange={setAnswer}
-        />
+        <p className="text-lg text-white font-medium mb-4 leading-relaxed">
+          {quiz.question.split("___").map((part, i, arr) => (
+            <React.Fragment key={i}>
+              {part}
+              {i < arr.length - 1 && (
+                <input
+                  type="text"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmit();
+                  }}
+                  placeholder="..."
+                  className="inline-block mx-1 px-2 py-0.5 w-32 bg-gray-800 text-gray-200 border-b-2 border-blue-400 focus:outline-none focus:border-blue-300 text-base"
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </p>
       ) : (
         <p className="text-lg text-white font-medium mb-4">{quiz.question}</p>
       )}
@@ -232,17 +237,28 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
         <>
           {isMC && (
             <div className="space-y-2 mb-4">
+              {isMultiMC && (
+                <p className="text-xs text-gray-400 mb-1">
+                  Select all that apply
+                </p>
+              )}
               {MC_OPTIONS.filter((opt) => optionMap[opt]).map((opt) => (
                 <label
                   key={opt}
                   className="flex items-center gap-3 text-gray-200 cursor-pointer"
                 >
                   <input
-                    type="radio"
+                    type={isMultiMC ? "checkbox" : "radio"}
                     name="mc-answer"
                     value={opt}
-                    checked={answer === opt}
-                    onChange={() => setAnswer(opt)}
+                    checked={
+                      isMultiMC
+                        ? answer.split(",").includes(opt)
+                        : answer === opt
+                    }
+                    onChange={() =>
+                      isMultiMC ? toggleOption(opt) : setAnswer(opt)
+                    }
                     className="accent-blue-500"
                   />
                   <span>
@@ -272,9 +288,10 @@ const QuizSlide = ({ quiz, feedback, onSubmit, onSkip, onNext }) => {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              disabled={submitting}
+              className={`px-4 py-2 text-white rounded transition-colors ${submitting ? "bg-blue-800 cursor-not-allowed opacity-60" : "bg-blue-600 hover:bg-blue-700"}`}
             >
-              Submit Answer
+              {submitting ? "Submitting..." : "Submit Answer"}
             </button>
           </div>
         </>
