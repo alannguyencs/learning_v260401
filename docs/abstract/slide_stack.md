@@ -2,7 +2,7 @@
 
 [Parent](./index.md)
 
-**Status:** Plan
+**Status:** Implemented
 
 ## Related Docs
 - Technical: [technical/slide_stack.md](../technical/slide_stack.md)
@@ -15,6 +15,8 @@ After authentication, users land on a blank page. There is no learning interface
 
 A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 2-tier priority algorithm (due revisions → new chapters). Within revision quizzes, unskipped quizzes are served first (weakest recall); skipped quizzes form a back-of-queue and resurface only after all unskipped quizzes are exhausted. Open-ended quiz answers are graded by AI. A floating chat icon on each slide lets the user ask contextual questions, answered by AI using the lesson source material, slide content, and conversation history.
 
+Navigation arrows allow the user to move backward through their slide history (up arrow) or forward again (down arrow). Each user's current position and full history are stored server-side so the state survives page refreshes. Quiz answers viewed while replaying history show the original feedback.
+
 ## User Flow
 
 ```
@@ -24,12 +26,17 @@ User logs in → redirected to /slides
 BookSelector: All Books | select a specific book
   │
   ▼
-SlidePage fetches GET /api/slides/next
+SlidePage loads GET /api/slides/current (saved position or fresh pick)
+  │
+  ├── Navigation arrows (shown on all slides except "none"):
+  │     [↑] Up arrow (only if has_previous=true) → POST /api/slides/back
+  │     [↓] Down arrow (always shown) → POST /api/slides/forward
   │
   ├── Chapter slide:
   │     User reads markdown content
-  │     [Mark as Learnt] → records progress, triggers revision round setup
-  │     [Skip Chapter]   → moves to next slide
+  │     [Mark as Learnt] → POST /api/slides/forward with mark_chapter_id
+  │                      → records progress, triggers revision round setup, advances
+  │     [Skip Chapter]   → POST /api/slides/forward without mark → advances
   │
   ├── Quiz slide (revision round):
   │     User answers MC or open-ended (textarea)
@@ -59,6 +66,7 @@ SlidePage fetches GET /api/slides/next
 - Spaced-repetition round display (Revision R0, R1, …)
 - All-caught-up state
 - Contextual AI Q&A chat on chapter and quiz slides
+- Back/forward navigation through slide history (up/down arrows)
 
 **Not included:**
 - User progress dashboard (separate feature)
@@ -78,6 +86,9 @@ SlidePage fetches GET /api/slides/next
 - [ ] Clicking "Next Slide" after feedback advances to the next slide
 - [ ] Skipping a quiz or chapter advances to the next slide
 - [ ] When no slides remain, the "All caught up" message is shown
+- [ ] Down arrow is always visible on chapter and quiz slides; clicking it advances to next slide
+- [ ] Up arrow is visible only when there is previous history; clicking it returns to the previous slide
+- [ ] Navigating back to a quiz that was answered shows the original feedback
 - [ ] Floating chat icon is visible on chapter and quiz slides
 - [ ] Clicking chat icon opens a chat panel
 - [ ] User can type a question and receive a contextual AI response

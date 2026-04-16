@@ -16,6 +16,7 @@
 - [x] docs/plan/260402_quiz_pass_fail_grading.md
 - [~] docs/plan/260406_activity_log_sync.md (cancelled — no new table needed)
 - [x] docs/plan/260406_learning_progress.md
+- [x] docs/plan/260416_slide_navigation.md
 
 ## DB Cloud Migration
 

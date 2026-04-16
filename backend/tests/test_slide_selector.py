@@ -10,7 +10,8 @@ from src.crud.crud_content import (
     create_lesson,
 )
 from src.crud.crud_learning_progress import increment_lesson_count
-from src.crud.crud_revision import complete_round, get_open_round
+from src.crud.crud_revision import complete_round, create_round, get_open_round
+from src.crud.crud_slides import log_quiz_skip
 from src.crud.crud_user import create_user
 from src.service.learning_progress_service import LearningProgressService
 from src.service.revision_service import RevisionService
@@ -149,8 +150,6 @@ class TestSkipQueue:
         LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
 
         # Skip q1
-        from src.crud.crud_slides import log_quiz_skip
-
         log_quiz_skip(db, "testuser", q1.id, lesson1.id, 0)
 
         result = SlideSelector.get_next_slide(db, "testuser")
@@ -180,14 +179,10 @@ class TestSkipQueue:
             complete_round(db, r0.id, completed_at_lesson_count=0)
 
         # Create R1 due now with lesson_count=0
-        from src.crud.crud_revision import create_round
-
         increment_lesson_count(db, "testuser")
         create_round(db, "testuser", lesson1.id, 1, due_at_lesson_count=1, quizzes_in_round=2)
 
         # Skip q1 in R1 — only q1 belongs to chapter1
-        from src.crud.crud_slides import log_quiz_skip
-
         log_quiz_skip(db, "testuser", q1.id, lesson1.id, 1)
 
         # Answer q2 (the other quiz on chapter1) via record_quiz_response

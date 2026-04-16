@@ -42,11 +42,20 @@ class QuizSlide(BaseModel):
 
 
 class SlideResponse(BaseModel):
-    """Response from GET /api/slides/next."""
+    """Response from GET /api/slides/current and POST /api/slides/forward|back."""
 
     slide_type: str
     chapter: Optional[ChapterSlide] = None
     quiz: Optional[QuizSlide] = None
+    has_previous: bool = False
+    feedback: Optional[dict] = None
+
+
+class SlideForwardRequest(BaseModel):
+    """Request body for POST /api/slides/forward."""
+
+    book_id: Optional[str] = None
+    mark_chapter_id: Optional[int] = None
 
 
 class ChapterLearntResponse(BaseModel):

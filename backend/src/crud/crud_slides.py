@@ -1,5 +1,6 @@
 """CRUD operations for slide selection: chapter navigation and skip log."""
 
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
@@ -76,9 +77,7 @@ def get_eligible_quiz_ids_for_round(
 def log_quiz_skip(
     db: Session, username: str, quiz_id: int, lesson_id: int, round_num: int
 ) -> None:
-    """Record or refresh a quiz skip. Re-skipping updates the timestamp to push to back of queue."""
-    from datetime import datetime, timezone
-
+    """Record or refresh a quiz skip. Re-skipping resets timestamp to push to back of queue."""
     existing = (
         db.query(QuizSkipLog)
         .filter(QuizSkipLog.username == username, QuizSkipLog.quiz_id == quiz_id)

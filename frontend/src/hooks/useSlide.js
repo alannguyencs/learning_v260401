@@ -8,14 +8,39 @@ const useSlide = () => {
   const [feedback, setFeedback] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [bookId, setBookId] = useState(null);
+  const [hasPrevious, setHasPrevious] = useState(false);
+
+  const _applySlideData = (data) => {
+    setSlide(data);
+    setHasPrevious(data.has_previous || false);
+    setFeedback(data.feedback || null);
+  };
+
+  const loadCurrent = useCallback(async (currentBookId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await apiService.getCurrentSlide(currentBookId);
+      _applySlideData(data);
+    } catch {
+      setError("Failed to load slide.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCurrent(null);
+  }, [loadCurrent]);
 
   const fetchNextSlide = useCallback(async (currentBookId) => {
     setLoading(true);
     setError(null);
-    setFeedback(null);
     try {
-      const data = await apiService.getNextSlide(currentBookId);
-      setSlide(data);
+      const data = await apiService.slideForward({
+        book_id: currentBookId || null,
+      });
+      _applySlideData(data);
     } catch {
       setError("Failed to load next slide.");
     } finally {
@@ -23,16 +48,32 @@ const useSlide = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchNextSlide(null);
-  }, [fetchNextSlide]);
-
   const markLearnt = async (chapterId) => {
+    setLoading(true);
+    setError(null);
     try {
-      await apiService.markChapterLearnt(chapterId);
-      await fetchNextSlide(bookId);
+      const data = await apiService.slideForward({
+        book_id: bookId || null,
+        mark_chapter_id: chapterId,
+      });
+      _applySlideData(data);
     } catch {
       setError("Failed to mark chapter as learnt.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const goPrevious = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await apiService.slideBack();
+      _applySlideData(data);
+    } catch {
+      setError("Failed to go to previous slide.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,9 +101,9 @@ const useSlide = () => {
   const selectBook = useCallback(
     (newBookId) => {
       setBookId(newBookId);
-      fetchNextSlide(newBookId);
+      loadCurrent(newBookId);
     },
-    [fetchNextSlide],
+    [loadCurrent],
   );
 
   return {
@@ -72,8 +113,10 @@ const useSlide = () => {
     feedback,
     submitting,
     bookId,
+    hasPrevious,
     fetchNextSlide,
     markLearnt,
+    goPrevious,
     submitAnswer,
     skipItem,
     selectBook,

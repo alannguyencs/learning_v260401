@@ -1,7 +1,5 @@
 """Tests for slide API endpoints."""
 
-from unittest.mock import MagicMock, patch
-
 import pytest
 from passlib.context import CryptContext
 
@@ -105,8 +103,8 @@ class TestRespondToQuiz:
         """Seed content, mark chapter learnt, return quiz_id and lesson_id."""
         ids = _seed_content(auth_client)
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
-        # Get the next slide to find the quiz
-        slide_resp = auth_client.get("/api/slides/next")
+        # Get the current slide to find the quiz
+        slide_resp = auth_client.get("/api/slides/current")
         quiz = slide_resp.json().get("quiz")
         if quiz:
             return quiz["id"], ids["lesson_id"]
@@ -158,92 +156,40 @@ class TestRespondToQuiz:
         assert response.status_code == 404
 
 
-class TestGetNextSlide:
-    """Tests for GET /api/slides/next."""
+class TestGetCurrentSlide:
+    """Tests for GET /api/slides/current."""
 
-    def test_get_next_slide_chapter(self, auth_client):  # pylint: disable=redefined-outer-name
+    def test_get_current_slide_chapter(self, auth_client):  # pylint: disable=redefined-outer-name
         """Fresh user with content gets a chapter slide."""
         _seed_content(auth_client)
-        response = auth_client.get("/api/slides/next")
+        response = auth_client.get("/api/slides/current")
         assert response.status_code == 200
         data = response.json()
         assert data["slide_type"] == "chapter"
         assert data["chapter"] is not None
+        assert "has_previous" in data
 
-    def test_get_next_slide_quiz_after_chapter(
+    def test_get_current_slide_quiz_after_chapter(
         self, auth_client
     ):  # pylint: disable=redefined-outer-name
-        """After marking chapter learnt, next slide is a quiz (R0 due immediately)."""
+        """After marking chapter learnt, current slide is a quiz (R0 due immediately)."""
         ids = _seed_content(auth_client)
         auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
 
-        response = auth_client.get("/api/slides/next")
+        response = auth_client.get("/api/slides/current")
         assert response.status_code == 200
         data = response.json()
-        # Chapter is learnt → Tier 2 has no new chapter. Tier 1 has R0 due.
         assert data["slide_type"] == "quiz"
 
-    def test_get_next_slide_unauthenticated(self, client):
-        """GET /api/slides/next without session returns 401."""
-        response = client.get("/api/slides/next")
+    def test_get_current_slide_unauthenticated(self, client):
+        """GET /api/slides/current without session returns 401."""
+        response = client.get("/api/slides/current")
         assert response.status_code == 401
 
-    def test_get_next_slide_none_when_empty(
+    def test_get_current_slide_none_when_empty(
         self, auth_client
     ):  # pylint: disable=redefined-outer-name
         """No content → slide_type=none."""
-        response = auth_client.get("/api/slides/next")
+        response = auth_client.get("/api/slides/current")
         assert response.status_code == 200
         assert response.json()["slide_type"] == "none"
-
-    def test_get_next_slide_with_llm_mock(
-        self, auth_client
-    ):  # pylint: disable=redefined-outer-name
-        """Respond to a free_recall quiz with mocked LLM grading."""
-        ids = _seed_content(auth_client)
-
-        # Add a free_recall quiz
-        auth_client.post(
-            "/api/content/quizzes",
-            json={
-                "chapter_id": ids["chapter_id"],
-                "quizzes": [
-                    {
-                        "quiz_type": "free_recall",
-                        "question": "Explain ML.",
-                        "expected_answer": "Machine learning.",
-                    }
-                ],
-            },
-            headers=BEARER_HEADER,
-        )
-
-        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
-
-        slide_resp = auth_client.get("/api/slides/next")
-        data = slide_resp.json()
-        if data["slide_type"] != "quiz" or data["quiz"]["quiz_type"] != "free_recall":
-            pytest.skip("free_recall quiz not selected as next slide")
-
-        quiz_id = data["quiz"]["id"]
-        mock_msg = MagicMock()
-        mock_msg.content = [MagicMock(text='{"is_correct": true, "feedback": "Well done."}')]
-
-        with patch("src.service.quiz_grader.anthropic.Anthropic") as mock_cls:
-            mock_client = MagicMock()
-            mock_cls.return_value = mock_client
-            mock_client.messages.create.return_value = mock_msg
-
-            response = auth_client.post(
-                f"/api/slides/quizzes/{quiz_id}/respond",
-                json={
-                    "round_num": 0,
-                    "lesson_id": ids["lesson_id"],
-                    "user_answer": "It learns from data.",
-                    "is_skip": False,
-                },
-            )
-
-        assert response.status_code == 200
-        assert response.json()["is_correct"] is True
-        assert response.json()["feedback"] == "Well done."

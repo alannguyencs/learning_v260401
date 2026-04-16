@@ -128,7 +128,6 @@ function BookCard({ book }) {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

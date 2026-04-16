@@ -1,4 +1,4 @@
-"""Slide API endpoints: next slide, mark chapter learnt, quiz respond, chat."""
+"""Slide API endpoints: current slide, forward/back navigation, quiz respond, chat."""
 
 from typing import List, Optional
 
@@ -14,6 +14,7 @@ from src.crud.crud_content import (
     get_lesson_by_chapter_id,
 )
 from src.crud.crud_slide_chat import get_chat_messages, get_recent_chat_messages, save_chat_message
+from src.crud.crud_slide_position import save_feedback
 from src.crud.crud_slides import log_quiz_skip, remove_quiz_skip
 from src.database import get_db
 from src.schemas.slides import (
@@ -23,13 +24,14 @@ from src.schemas.slides import (
     QuizRespondResponse,
     SlideChatRequest,
     SlideChatResponse,
+    SlideForwardRequest,
     SlideResponse,
 )
 from src.service.learning_progress_service import LearningProgressService
 from src.service.quiz_grader import QuizGrader
 from src.service.revision_service import RevisionService
 from src.service.slide_chat_service import SlideChatService
-from src.service.slide_selector import SlideSelector
+from src.service.slide_navigation import get_current_slide, go_next, go_previous
 
 router = APIRouter()
 
@@ -42,18 +44,53 @@ def require_session_user(request: Request, db: Session = Depends(get_db)):
     return user
 
 
-@router.get("/slides/next", response_model=SlideResponse)
-def get_next_slide(
+@router.get("/slides/current", response_model=SlideResponse)
+def slide_current(
     book_id: Optional[str] = None,
     user=Depends(require_session_user),
     db: Session = Depends(get_db),
 ):
-    """Return the next slide for the authenticated user (3-tier priority)."""
-    result = SlideSelector.get_next_slide(db, user.username, book_id)
+    """Return the user's current slide (saved position or fresh next)."""
+    result = get_current_slide(db, user.username, book_id)
     return SlideResponse(
         slide_type=result.slide_type,
         chapter=result.chapter,
         quiz=result.quiz,
+        has_previous=result.has_previous,
+        feedback=result.feedback,
+    )
+
+
+@router.post("/slides/forward", response_model=SlideResponse)
+def slide_forward(
+    body: SlideForwardRequest,
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Advance to the next slide, optionally marking a chapter as learnt."""
+    result = go_next(db, user.username, body.book_id, body.mark_chapter_id)
+    return SlideResponse(
+        slide_type=result.slide_type,
+        chapter=result.chapter,
+        quiz=result.quiz,
+        has_previous=result.has_previous,
+        feedback=result.feedback,
+    )
+
+
+@router.post("/slides/back", response_model=SlideResponse)
+def slide_back(
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Go to the previous slide."""
+    result = go_previous(db, user.username)
+    return SlideResponse(
+        slide_type=result.slide_type,
+        chapter=result.chapter,
+        quiz=result.quiz,
+        has_previous=result.has_previous,
+        feedback=result.feedback,
     )
 
 
@@ -133,6 +170,11 @@ def respond_to_quiz(
         lesson_id=body.lesson_id,
         round_num=body.round_num,
         is_correct=is_correct,
+    )
+    save_feedback(
+        db,
+        user.username,
+        {"is_correct": is_correct, "good_points": good_points, "bad_points": bad_points},
     )
     return QuizRespondResponse(
         is_correct=is_correct,

@@ -5,18 +5,50 @@
 ## Architecture
 
 ```
-GET  /api/slides/next           → SlideSelector.get_next_slide(db, username, book_id)
+GET  /api/slides/current        → slide_navigation.get_current_slide(db, username, book_id)
+POST /api/slides/forward        → slide_navigation.go_next(db, username, book_id, mark_chapter_id?)
+POST /api/slides/back           → slide_navigation.go_previous(db, username)
 POST /api/slides/chapters/{id}/learnt
                                 → LearningProgressService.mark_chapter_learnt
                                 → RevisionService.on_chapter_learnt
 POST /api/slides/quizzes/{id}/respond
                                 → auto-grade (MC) or QuizGrader.grade (open-ended)
                                 → RevisionService.record_quiz_response
+                                → crud_slide_position.save_feedback (persists feedback for history replay)
 POST /api/slides/chat           → SlideChatService.answer (Gemini 2.5 Flash)
 GET  /api/slides/chat           → get_chat_messages(username, slide_identifier)
 ```
 
 ## Data Model
+
+**`UserSlidePosition`** (`slide_position`) — one row per user, stores current slide
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `username` | String | PK, FK → users.username |
+| `slide_type` | String | NOT NULL — `'chapter'` or `'quiz'` |
+| `slide_id` | Integer | NOT NULL |
+| `lesson_id` | Integer | nullable |
+| `round_num` | Integer | nullable |
+| `feedback_json` | JSON | nullable — stored quiz feedback for history replay |
+| `updated_at` | Timestamp | NOT NULL, DEFAULT NOW() |
+
+**`SlideHistory`** (`slide_history`) — ordered stack of back/forward history
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | Integer | PK |
+| `username` | String | FK → users.username, NOT NULL |
+| `position` | Integer | NOT NULL — ordering index |
+| `slide_type` | String | NOT NULL |
+| `slide_id` | Integer | NOT NULL |
+| `lesson_id` | Integer | nullable |
+| `round_num` | Integer | nullable |
+| `feedback_json` | JSON | nullable |
+| `direction` | String | NOT NULL, DEFAULT `'back'` — `'back'` or `'forward'` |
+| `created_at` | Timestamp | NOT NULL, DEFAULT NOW() |
+
+Index: `(username, position)`
 
 **`SlideChatMessage`** (`slide_chat_messages`)
 
@@ -50,7 +82,54 @@ Index: `(username, slide_identifier, created_at)`
 
 ## Pipeline
 
-### GET /api/slides/next — 2-Tier Algorithm
+### GET /api/slides/current
+
+```
+slide_navigation.get_current_slide(db, username, book_id)
+  │
+  ├── get_position(db, username) → saved UserSlidePosition?
+  │   └── If exists: rebuild SlideResult from saved position → return
+  │
+  └── No saved position: SlideSelector.get_next_slide(db, username, book_id)
+        → save_position(db, username, ...) → return SlideResult
+```
+
+`SlideResult` now carries `has_previous` (depth of back-stack > 0) and `feedback` (from `feedback_json` when replaying history).
+
+### POST /api/slides/forward — Advance
+
+```
+slide_navigation.go_next(db, username, book_id, mark_chapter_id?)
+  │
+  ├── is_new_action = mark_chapter_id provided and chapter not already learnt
+  │
+  ├── If is_new_action:
+  │     clear_forward(db, username)   ← discard any forward stack
+  │     mark_chapter_learnt + revision setup
+  │     SlideSelector.get_next_slide → save_position → return
+  │
+  └── Not new action:
+        fwd = pop_from_forward(db, username)
+        If fwd: rebuild from fwd → update position → return (replay)
+        Else: SlideSelector.get_next_slide → save_position → return (fresh)
+```
+
+### POST /api/slides/back — Go Back
+
+```
+slide_navigation.go_previous(db, username)
+  │
+  ├── crud_slide_position.go_back(db, username)
+  │     ├── Check back-history exists (direction='back')
+  │     ├── push current position → forward stack (direction='forward')
+  │     ├── pop top of back-history (highest position)
+  │     └── Update UserSlidePosition to prev_row (single commit)
+  │
+  └── Rebuild SlideResult from prev_row (including feedback_json)
+        → has_previous = get_history_depth(db, username) > 0
+```
+
+### GET /api/slides/next — 2-Tier Algorithm (used internally)
 
 ```
 SlideSelector.get_next_slide(db, username, book_id)
@@ -146,13 +225,23 @@ Return { response }
 
 | Method | Path | Auth | Handler |
 |--------|------|------|---------|
-| GET | `/api/slides/next` | Session | `get_next_slide` |
+| GET | `/api/slides/current` | Session | `slide_current` |
+| POST | `/api/slides/forward` | Session | `slide_forward` — body: `{ book_id, mark_chapter_id? }` |
+| POST | `/api/slides/back` | Session | `slide_back` |
 | POST | `/api/slides/chapters/{chapter_id}/learnt` | Session | `mark_chapter_learnt` |
 | POST | `/api/slides/quizzes/{quiz_id}/respond` | Session | `respond_to_quiz` |
 | POST | `/api/slides/chat` | Session | `slide_chat` |
 | GET | `/api/slides/chat` | Session | `get_slide_chat_history` |
 
 ## Service Layer
+
+**`slide_navigation`** (`backend/src/service/slide_navigation.py`):
+
+| Method | Description |
+|--------|-------------|
+| `get_current_slide(db, username, book_id)` | Returns saved position or computes fresh; never recomputes if saved |
+| `go_next(db, username, book_id, mark_chapter_id)` | Clears forward on new action; replays forward stack or computes fresh |
+| `go_previous(db, username)` | Pops back-history, pushes current to forward, rebuilds slide with saved feedback |
 
 **`SlideSelector`** (`backend/src/service/slide_selector.py`):
 
@@ -167,6 +256,8 @@ Return { response }
 | `slide_type` | str | `'chapter'`, `'quiz'`, or `'none'` |
 | `chapter` | dict \| None | Chapter data enriched with book/lesson info |
 | `quiz` | dict \| None | Quiz data enriched with round/lesson/book info, including `section_name`, `quiz_take_away`, `quiz_metadata` |
+| `has_previous` | bool | Whether back navigation is available (history depth > 0) |
+| `feedback` | dict \| None | Stored quiz feedback when replaying history |
 
 **`QuizGrader`** (`backend/src/service/quiz_grader.py`):
 
@@ -240,6 +331,20 @@ class GradingOutput(BaseModel):
 
 ## CRUD Layer
 
+**`crud_slide_position.py`:**
+
+| Function | Description |
+|----------|-------------|
+| `get_position(db, username)` | Current `UserSlidePosition` row or None |
+| `save_position(db, username, slide_type, slide_id, lesson_id, round_num)` | Upsert current; pushes old position to back-history first |
+| `save_feedback(db, username, feedback_json)` | Update `feedback_json` on current position |
+| `push_to_history(db, username, ..., direction)` | Insert a `SlideHistory` row |
+| `get_history_depth(db, username)` | Count of `direction='back'` rows |
+| `go_back(db, username)` | Atomic: push current to forward, pop prev from back, update position |
+| `push_to_forward(db, username, ...)` | Insert a `direction='forward'` history row |
+| `pop_from_forward(db, username)` | Remove and return highest-position forward row |
+| `clear_forward(db, username)` | Delete all `direction='forward'` rows for user |
+
 **`crud_slides.py`:**
 
 | Function | Description |
@@ -281,20 +386,25 @@ class GradingOutput(BaseModel):
 
 **`useSlide`** (`frontend/src/hooks/useSlide.js`):
 
-| Method | Description |
-|--------|-------------|
-| `fetchNextSlide(bookId)` | GET `/api/slides/next`; updates `slide` state |
-| `markLearnt(chapterId)` | POST mark-learnt; calls `fetchNextSlide` after |
+| Method / State | Description |
+|----------------|-------------|
+| `hasPrevious` | Boolean state — true when back navigation is available |
+| `loadCurrent(bookId)` | GET `/api/slides/current`; called on mount |
+| `fetchNextSlide(bookId)` | POST `/api/slides/forward`; called by skip/next actions |
+| `markLearnt(chapterId)` | POST `/api/slides/forward` with `mark_chapter_id`; records progress and advances |
+| `goPrevious()` | POST `/api/slides/back`; restores previous slide with saved feedback |
 | `submitAnswer(quizId, body)` | POST respond; sets `submitting=true` during request, stores `feedback` state (no advance) |
 | `skipItem(quizId, body)` | POST respond with `is_skip=true`; calls `fetchNextSlide` after |
-| `selectBook(bookId)` | Sets `bookId`; calls `fetchNextSlide` |
+| `selectBook(bookId)` | Sets `bookId`; calls `loadCurrent` |
 
 **`api.js`** additions (`frontend/src/services/api.js`):
 
 | Method | Endpoint |
 |--------|----------|
 | `listBooks()` | GET `/api/content/books` |
-| `getNextSlide(bookId)` | GET `/api/slides/next?book_id=bookId` |
+| `getCurrentSlide(bookId)` | GET `/api/slides/current?book_id=bookId` |
+| `slideForward(body)` | POST `/api/slides/forward` — body: `{ book_id, mark_chapter_id? }` |
+| `slideBack()` | POST `/api/slides/back` |
 | `markChapterLearnt(chapterId)` | POST `/api/slides/chapters/{id}/learnt` |
 | `respondToQuiz(quizId, body)` | POST `/api/slides/quizzes/{id}/respond` |
 | `sendChatMessage(body)` | POST `/api/slides/chat` |
@@ -310,6 +420,19 @@ class GradingOutput(BaseModel):
 
 ## Component Checklist
 
+- [x] Migration — `scripts/sql/008_slide_position.sql`
+- [x] Migration — `scripts/sql/009_slide_history.sql`
+- [x] Models — `backend/src/models/slide_position.py` (`UserSlidePosition`, `SlideHistory`)
+- [x] CRUD — `backend/src/crud/crud_slide_position.py`
+- [x] Service — `backend/src/service/slide_navigation.py`
+- [x] API endpoints — `backend/src/api/slides.py` (GET /current, POST /forward, POST /back)
+- [x] Schemas — `backend/src/schemas/slides.py` (`SlideResponse.has_previous`, `SlideResponse.feedback`, `SlideForwardRequest`)
+- [x] Tests — `backend/tests/test_crud_slide_position.py`
+- [x] Tests — `backend/tests/test_slide_navigation.py`
+- [x] Hook — `frontend/src/hooks/useSlide.js` (`hasPrevious`, `loadCurrent`, `goPrevious`)
+- [x] Page — `frontend/src/pages/SlidePage.jsx` (up/down navigation arrows)
+- [x] API methods — `frontend/src/services/api.js` (`getCurrentSlide`, `slideForward`, `slideBack`)
+- [x] Tests — `frontend/src/__tests__/hooks/useSlide.test.js`
 - [x] Migration — `scripts/sql/004_slide_skips.sql`
 - [x] Models — `backend/src/models/slide_management.py` (`QuizSkipLog`)
 - [x] CRUD — `backend/src/crud/crud_slides.py`

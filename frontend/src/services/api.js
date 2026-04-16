@@ -38,9 +38,19 @@ const apiService = {
     return response.data;
   },
 
-  getNextSlide: async (bookId) => {
+  getCurrentSlide: async (bookId) => {
     const params = bookId ? { book_id: bookId } : {};
-    const response = await api.get("/api/slides/next", { params });
+    const response = await api.get("/api/slides/current", { params });
+    return response.data;
+  },
+
+  slideForward: async (body) => {
+    const response = await api.post("/api/slides/forward", body);
+    return response.data;
+  },
+
+  slideBack: async () => {
+    const response = await api.post("/api/slides/back");
     return response.data;
   },
 

@@ -25,6 +25,8 @@ class SlideResult:
     slide_type: str  # 'chapter', 'quiz', or 'none'
     chapter: Optional[dict]
     quiz: Optional[dict]
+    has_previous: bool = False
+    feedback: Optional[dict] = None
 
 
 def _build_chapter_dict(db: Session, chapter: Chapter) -> dict:

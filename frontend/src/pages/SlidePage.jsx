@@ -15,12 +15,17 @@ const SlidePage = () => {
     feedback,
     submitting,
     bookId,
+    hasPrevious,
     markLearnt,
     submitAnswer,
     skipItem,
     selectBook,
     fetchNextSlide,
+    goPrevious,
   } = useSlide();
+
+  const showNavArrows =
+    !loading && !error && slide && slide.slide_type !== "none";
 
   return (
     <div className="min-h-screen bg-gray-800">
@@ -34,6 +39,31 @@ const SlidePage = () => {
           </Link>
         </div>
         <BookSelector bookId={bookId} onSelect={selectBook} />
+
+        {showNavArrows && (
+          <div className="flex justify-between items-center mb-4">
+            {hasPrevious ? (
+              <button
+                onClick={goPrevious}
+                disabled={loading || submitting}
+                className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-200 disabled:opacity-40"
+                aria-label="Previous slide"
+              >
+                ↑
+              </button>
+            ) : (
+              <div className="w-10" />
+            )}
+            <button
+              onClick={() => fetchNextSlide(bookId)}
+              disabled={loading || submitting}
+              className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-200 disabled:opacity-40"
+              aria-label="Next slide"
+            >
+              ↓
+            </button>
+          </div>
+        )}
 
         {loading && (
           <div className="text-center text-gray-400 py-12">Loading...</div>

@@ -146,7 +146,7 @@ class TestActivityLogAnswer:
         assert answer_rows[0]["forgetting_rate"] == 1.2
 
     def test_correct_answer_appears(self, auth_client):  # pylint: disable=redefined-outer-name
-        """Correct answer produces ANSWER row with answer_result='correct' and forgetting_rate<1."""
+        """Correct answer produces ANSWER row with answer_result='correct'."""
         ids = _seed_content(auth_client)
         quiz = self._get_quiz(auth_client, ids)
         if quiz is None:
