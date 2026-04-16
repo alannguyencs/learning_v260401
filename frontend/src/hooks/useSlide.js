@@ -33,20 +33,23 @@ const useSlide = () => {
     loadCurrent(null);
   }, [loadCurrent]);
 
-  const fetchNextSlide = useCallback(async (currentBookId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiService.slideForward({
-        book_id: currentBookId || null,
-      });
-      _applySlideData(data);
-    } catch {
-      setError("Failed to load next slide.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const fetchNextSlide = useCallback(
+    async (markChapterId) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const body = { book_id: bookId };
+        if (markChapterId) body.mark_chapter_id = markChapterId;
+        const data = await apiService.slideForward(body);
+        _applySlideData(data);
+      } catch {
+        setError("Failed to load next slide.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [bookId],
+  );
 
   const markLearnt = async (chapterId) => {
     setLoading(true);
@@ -92,7 +95,7 @@ const useSlide = () => {
   const skipItem = async (quizId, body) => {
     try {
       await apiService.respondToQuiz(quizId, body);
-      await fetchNextSlide(bookId);
+      await fetchNextSlide();
     } catch {
       setError("Failed to skip item.");
     }

@@ -62,9 +62,7 @@ def _extract_position_fields(result: SlideResult):
     return None, None, None
 
 
-def get_current_slide(
-    db: Session, username: str, book_id: Optional[str] = None
-) -> SlideResult:
+def get_current_slide(db: Session, username: str, book_id: Optional[str] = None) -> SlideResult:
     """Return the saved current slide, or compute fresh if none exists."""
     pos = get_position(db, username)
     if not pos:
@@ -96,9 +94,8 @@ def go_next(
     mark_chapter_id: Optional[int] = None,
 ) -> SlideResult:
     """Advance to the next slide, optionally marking a chapter as learnt first."""
-    is_new_action = (
-        mark_chapter_id is not None
-        and not crud_learning_progress.is_chapter_learnt(db, username, mark_chapter_id)
+    is_new_action = mark_chapter_id is not None and not crud_learning_progress.is_chapter_learnt(
+        db, username, mark_chapter_id
     )
 
     if is_new_action:
@@ -121,7 +118,13 @@ def go_next(
             if rebuilt is not None:
                 slide_id, lesson_id, round_num = _extract_position_fields(rebuilt)
                 save_position(
-                    db, username, rebuilt.slide_type, slide_id, lesson_id, round_num, fwd.feedback_json
+                    db,
+                    username,
+                    rebuilt.slide_type,
+                    slide_id,
+                    lesson_id,
+                    round_num,
+                    fwd.feedback_json,
                 )
                 rebuilt.has_previous = get_history_depth(db, username) > 0
                 rebuilt.feedback = fwd.feedback_json
@@ -143,7 +146,9 @@ def go_previous(db: Session, username: str) -> SlideResult:
     if not prev_row:
         pos = get_position(db, username)
         if pos:
-            rebuilt = _rebuild_slide(db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num)
+            rebuilt = _rebuild_slide(
+                db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num
+            )
             if rebuilt:
                 rebuilt.has_previous = False
                 rebuilt.feedback = pos.feedback_json

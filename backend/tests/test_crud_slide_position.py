@@ -59,7 +59,9 @@ class TestSaveAndGetPosition:
         pos = get_position(db_session, user.username)
         assert pos.feedback_json == feedback
 
-    def test_save_feedback_no_position(self, db_session, user):  # pylint: disable=redefined-outer-name
+    def test_save_feedback_no_position(
+        self, db_session, user
+    ):  # pylint: disable=redefined-outer-name
         """save_feedback is a no-op when no position exists."""
         save_feedback(db_session, user.username, {"is_correct": True})
 
@@ -67,7 +69,9 @@ class TestSaveAndGetPosition:
 class TestHistoryStack:
     """Tests for back-history stack operations."""
 
-    def test_get_history_depth_empty(self, db_session, user):  # pylint: disable=redefined-outer-name
+    def test_get_history_depth_empty(
+        self, db_session, user
+    ):  # pylint: disable=redefined-outer-name
         """History depth is 0 for a new user."""
         assert get_history_depth(db_session, user.username) == 0
 
@@ -107,7 +111,9 @@ class TestHistoryStack:
 class TestForwardStack:
     """Tests for forward stack operations."""
 
-    def test_push_pop_forward_stack(self, db_session, user):  # pylint: disable=redefined-outer-name
+    def test_push_pop_forward_stack(
+        self, db_session, user
+    ):  # pylint: disable=redefined-outer-name
         """push_to_forward and pop_from_forward work correctly."""
         push_to_forward(db_session, user.username, "chapter", 5, None, None, None)
         fwd = pop_from_forward(db_session, user.username)

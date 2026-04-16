@@ -7,6 +7,42 @@ import ChapterSlide from "../components/ChapterSlide";
 import QuizSlide from "../components/QuizSlide";
 import AllCaughtUp from "../components/AllCaughtUp";
 
+const ArrowUp = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full flex justify-center py-1 text-gray-400 hover:text-blue-600 transition-colors"
+    aria-label="Previous slide"
+  >
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+);
+
+const ArrowDown = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center gap-1 px-3 py-1 text-gray-400 hover:text-blue-600 transition-colors"
+    aria-label="Next slide"
+  >
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+);
+
 const SlidePage = () => {
   const {
     slide,
@@ -24,8 +60,23 @@ const SlidePage = () => {
     goPrevious,
   } = useSlide();
 
-  const showNavArrows =
-    !loading && !error && slide && slide.slide_type !== "none";
+  const isActive = !loading && !error && slide && slide.slide_type !== "none";
+
+  const handleDownArrow = () => {
+    if (!slide) return;
+    if (slide.slide_type === "chapter") {
+      fetchNextSlide(slide.chapter.id);
+    } else if (slide.slide_type === "quiz" && !feedback) {
+      skipItem(slide.quiz.id, {
+        round_num: slide.quiz.round_num,
+        lesson_id: slide.quiz.lesson_id,
+        user_answer: "",
+        is_skip: true,
+      });
+    } else {
+      fetchNextSlide();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-800">
@@ -38,32 +89,10 @@ const SlidePage = () => {
             Dashboard
           </Link>
         </div>
-        <BookSelector bookId={bookId} onSelect={selectBook} />
 
-        {showNavArrows && (
-          <div className="flex justify-between items-center mb-4">
-            {hasPrevious ? (
-              <button
-                onClick={goPrevious}
-                disabled={loading || submitting}
-                className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-200 disabled:opacity-40"
-                aria-label="Previous slide"
-              >
-                ↑
-              </button>
-            ) : (
-              <div className="w-10" />
-            )}
-            <button
-              onClick={() => fetchNextSlide(bookId)}
-              disabled={loading || submitting}
-              className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-200 disabled:opacity-40"
-              aria-label="Next slide"
-            >
-              ↓
-            </button>
-          </div>
-        )}
+        {isActive && hasPrevious && <ArrowUp onClick={goPrevious} />}
+
+        <BookSelector bookId={bookId} onSelect={selectBook} />
 
         {loading && (
           <div className="text-center text-gray-400 py-12">Loading...</div>
@@ -79,7 +108,6 @@ const SlidePage = () => {
           <ChapterSlide
             chapter={slide.chapter}
             onMarkLearnt={() => markLearnt(slide.chapter.id)}
-            onSkip={() => fetchNextSlide(bookId)}
           />
         )}
 
@@ -96,20 +124,17 @@ const SlidePage = () => {
                 is_skip: false,
               })
             }
-            onSkip={() =>
-              skipItem(slide.quiz.id, {
-                round_num: slide.quiz.round_num,
-                lesson_id: slide.quiz.lesson_id,
-                user_answer: "",
-                is_skip: true,
-              })
-            }
-            onNext={() => fetchNextSlide(bookId)}
           />
         )}
 
         {!loading && !error && slide?.slide_type === "none" && <AllCaughtUp />}
       </div>
+
+      {isActive && (
+        <div className="fixed bottom-[76px] left-1/2 -translate-x-1/2 z-40">
+          <ArrowDown onClick={handleDownArrow} />
+        </div>
+      )}
 
       {!loading && !error && slide && slide.slide_type !== "none" && (
         <ChatButton

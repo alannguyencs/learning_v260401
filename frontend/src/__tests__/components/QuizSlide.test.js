@@ -30,28 +30,14 @@ const recallQuiz = {
 
 describe("QuizSlide", () => {
   it("renders MC options as radio buttons", () => {
-    render(
-      <QuizSlide
-        quiz={mcQuiz}
-        feedback={null}
-        onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
-      />,
-    );
+    render(<QuizSlide quiz={mcQuiz} feedback={null} onSubmit={jest.fn()} />);
     const radios = screen.getAllByRole("radio");
     expect(radios).toHaveLength(4);
   });
 
   it("renders text area for free_recall type", () => {
     render(
-      <QuizSlide
-        quiz={recallQuiz}
-        feedback={null}
-        onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
-      />,
+      <QuizSlide quiz={recallQuiz} feedback={null} onSubmit={jest.fn()} />,
     );
     expect(
       screen.getByPlaceholderText("Type your answer..."),
@@ -69,8 +55,6 @@ describe("QuizSlide", () => {
           round_done: false,
         }}
         onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
       />,
     );
     expect(screen.getByTestId("feedback-panel")).toBeInTheDocument();
@@ -88,8 +72,6 @@ describe("QuizSlide", () => {
           round_done: false,
         }}
         onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
       />,
     );
     expect(screen.getByText(/FAILED/)).toBeInTheDocument();
@@ -106,8 +88,6 @@ describe("QuizSlide", () => {
           round_done: false,
         }}
         onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
       />,
     );
     expect(screen.getByText("Explained gradients")).toBeInTheDocument();
@@ -116,7 +96,7 @@ describe("QuizSlide", () => {
     expect(screen.getByText("2/3 points")).toBeInTheDocument();
   });
 
-  it("Next Slide button appears after feedback shown", () => {
+  it("no Skip button and no Next Slide button are rendered", () => {
     render(
       <QuizSlide
         quiz={recallQuiz}
@@ -127,26 +107,10 @@ describe("QuizSlide", () => {
           round_done: false,
         }}
         onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
       />,
     );
-    expect(screen.getByText("Next Slide")).toBeInTheDocument();
-  });
-
-  it("skip triggers onSkip callback", () => {
-    const onSkip = jest.fn();
-    render(
-      <QuizSlide
-        quiz={mcQuiz}
-        feedback={null}
-        onSubmit={jest.fn()}
-        onSkip={onSkip}
-        onNext={jest.fn()}
-      />,
-    );
-    fireEvent.click(screen.getByText("Skip"));
-    expect(onSkip).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Skip")).not.toBeInTheDocument();
+    expect(screen.queryByText("Next Slide")).not.toBeInTheDocument();
   });
 
   it("MC wrong answer: shows user pick red and correct green", () => {
@@ -161,13 +125,7 @@ describe("QuizSlide", () => {
       },
     };
     render(
-      <QuizSlide
-        quiz={mcWithMeta}
-        feedback={null}
-        onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
-      />,
+      <QuizSlide quiz={mcWithMeta} feedback={null} onSubmit={jest.fn()} />,
     );
     fireEvent.click(screen.getByText("A. Machine Learning"));
     render(
@@ -180,8 +138,6 @@ describe("QuizSlide", () => {
           round_done: false,
         }}
         onSubmit={jest.fn()}
-        onSkip={jest.fn()}
-        onNext={jest.fn()}
       />,
     );
     expect(screen.getAllByTestId("feedback-panel").length).toBeGreaterThan(0);

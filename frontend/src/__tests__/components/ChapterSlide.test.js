@@ -15,51 +15,21 @@ const mockChapter = {
 
 describe("ChapterSlide", () => {
   it("renders chapter title and content", () => {
-    render(
-      <ChapterSlide
-        chapter={mockChapter}
-        onMarkLearnt={jest.fn()}
-        onSkip={jest.fn()}
-      />,
-    );
+    render(<ChapterSlide chapter={mockChapter} onMarkLearnt={jest.fn()} />);
     expect(screen.getByText("What is ML")).toBeInTheDocument();
     expect(screen.getByText(/Machine learning is/)).toBeInTheDocument();
   });
 
   it("calls onMarkLearnt when Mark as Learnt is clicked", () => {
     const onMarkLearnt = jest.fn();
-    render(
-      <ChapterSlide
-        chapter={mockChapter}
-        onMarkLearnt={onMarkLearnt}
-        onSkip={jest.fn()}
-      />,
-    );
+    render(<ChapterSlide chapter={mockChapter} onMarkLearnt={onMarkLearnt} />);
     fireEvent.click(screen.getByText("Mark as Learnt"));
     expect(onMarkLearnt).toHaveBeenCalledTimes(1);
   });
 
-  it("shows skip button", () => {
-    render(
-      <ChapterSlide
-        chapter={mockChapter}
-        onMarkLearnt={jest.fn()}
-        onSkip={jest.fn()}
-      />,
-    );
-    expect(screen.getByText("Skip Chapter")).toBeInTheDocument();
-  });
-
-  it("calls onSkip when Skip Chapter is clicked", () => {
-    const onSkip = jest.fn();
-    render(
-      <ChapterSlide
-        chapter={mockChapter}
-        onMarkLearnt={jest.fn()}
-        onSkip={onSkip}
-      />,
-    );
-    fireEvent.click(screen.getByText("Skip Chapter"));
-    expect(onSkip).toHaveBeenCalledTimes(1);
+  it("renders only Mark as Learnt button (no Skip Chapter)", () => {
+    render(<ChapterSlide chapter={mockChapter} onMarkLearnt={jest.fn()} />);
+    expect(screen.getByText("Mark as Learnt")).toBeInTheDocument();
+    expect(screen.queryByText("Skip Chapter")).not.toBeInTheDocument();
   });
 });

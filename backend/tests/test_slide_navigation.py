@@ -4,7 +4,6 @@ import pytest
 from passlib.context import CryptContext
 
 from src.configs import settings
-from src.crud.crud_slide_position import get_history_depth, get_position, push_to_forward
 from src.crud.crud_user import create_user
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -71,9 +70,7 @@ def _seed_content(client):
 class TestGetCurrentSlide:
     """Tests for GET /api/slides/current."""
 
-    def test_first_call_returns_chapter(
-        self, auth_client
-    ):  # pylint: disable=redefined-outer-name
+    def test_first_call_returns_chapter(self, auth_client):  # pylint: disable=redefined-outer-name
         """First call with no history returns a chapter and has_previous=false."""
         _seed_content(auth_client)
         resp = auth_client.get("/api/slides/current")
@@ -125,8 +122,8 @@ class TestSlideForward:
         assert resp.status_code == 200
 
     def test_forward_replays_forward_stack(
-        self, auth_client, db_session
-    ):  # pylint: disable=redefined-outer-name
+        self, auth_client, db_session  # noqa: ARG002
+    ):  # pylint: disable=redefined-outer-name,unused-argument
         """After going back, going forward replays the forward stack."""
         _seed_content(auth_client)
         auth_client.get("/api/slides/current")
@@ -199,9 +196,7 @@ class TestSlideBack:
 class TestFeedbackPersistence:
     """Tests for feedback stored and returned on history replay."""
 
-    def test_feedback_persisted_on_back(
-        self, auth_client
-    ):  # pylint: disable=redefined-outer-name
+    def test_feedback_persisted_on_back(self, auth_client):  # pylint: disable=redefined-outer-name
         """After answering a quiz, going back then forward returns feedback."""
         ids = _seed_content(auth_client)
         auth_client.get("/api/slides/current")

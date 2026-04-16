@@ -138,7 +138,9 @@ def push_to_forward(
     feedback_json: Optional[dict],
 ) -> None:
     """Push a slide onto the forward stack."""
-    push_to_history(db, username, slide_type, slide_id, lesson_id, round_num, feedback_json, "forward")
+    push_to_history(
+        db, username, slide_type, slide_id, lesson_id, round_num, feedback_json, "forward"
+    )
 
 
 def pop_from_forward(db: Session, username: str) -> Optional[SlideHistory]:

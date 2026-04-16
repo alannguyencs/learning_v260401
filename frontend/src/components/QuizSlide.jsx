@@ -32,7 +32,7 @@ const KeyPointsList = ({ points, label, color = "yellow" }) => {
   );
 };
 
-const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
+const FeedbackPanel = ({ feedback, quiz, userAnswer }) => {
   const meta = quiz.quiz_metadata;
   const optionMap = {
     A: quiz.option_a,
@@ -112,25 +112,11 @@ const FeedbackPanel = ({ feedback, quiz, onNext, userAnswer }) => {
           <p className="text-gray-300 text-sm">{quiz.quiz_take_away}</p>
         </div>
       )}
-
-      <button
-        onClick={onNext}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-      >
-        Next Slide
-      </button>
     </div>
   );
 };
 
-const QuizSlide = ({
-  quiz,
-  feedback,
-  submitting,
-  onSubmit,
-  onSkip,
-  onNext,
-}) => {
+const QuizSlide = ({ quiz, feedback, submitting, onSubmit }) => {
   const [answer, setAnswer] = useState("");
   const isMC = quiz.quiz_type === "multiple_choice";
   const isCloze = quiz.quiz_type === "cloze";
@@ -238,12 +224,6 @@ const QuizSlide = ({
 
           <div className="flex gap-3 justify-end mt-4">
             <button
-              onClick={onSkip}
-              className="px-4 py-2 text-gray-300 border border-gray-500 rounded hover:bg-gray-600 transition-colors"
-            >
-              Skip
-            </button>
-            <button
               onClick={handleSubmit}
               disabled={submitting}
               className={`px-4 py-2 text-white rounded transition-colors ${submitting ? "bg-blue-800 cursor-not-allowed opacity-60" : "bg-blue-600 hover:bg-blue-700"}`}
@@ -255,12 +235,7 @@ const QuizSlide = ({
       )}
 
       {feedback && (
-        <FeedbackPanel
-          feedback={feedback}
-          quiz={quiz}
-          onNext={onNext}
-          userAnswer={answer}
-        />
+        <FeedbackPanel feedback={feedback} quiz={quiz} userAnswer={answer} />
       )}
     </div>
   );

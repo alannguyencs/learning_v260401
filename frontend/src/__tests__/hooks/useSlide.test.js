@@ -130,6 +130,71 @@ describe("useSlide", () => {
     expect(result.current.hasPrevious).toBe(false);
   });
 
+  it("fetchNextSlide without arg sends book_id from state", async () => {
+    const mockSlide = {
+      slide_type: "chapter",
+      chapter: { id: 1, title: "Ch1" },
+      quiz: null,
+      has_previous: false,
+      feedback: null,
+    };
+    const nextSlide = {
+      slide_type: "quiz",
+      chapter: null,
+      quiz: { id: 5, question: "Q?" },
+      has_previous: true,
+      feedback: null,
+    };
+    apiService.getCurrentSlide.mockResolvedValue(mockSlide);
+    apiService.slideForward.mockResolvedValue(nextSlide);
+
+    const { result } = renderHook(() => useSlide());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.fetchNextSlide();
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(apiService.slideForward).toHaveBeenCalledWith({ book_id: null });
+  });
+
+  it("fetchNextSlide with chapterId sends mark_chapter_id", async () => {
+    const mockSlide = {
+      slide_type: "chapter",
+      chapter: { id: 1, title: "Ch1" },
+      quiz: null,
+      has_previous: false,
+      feedback: null,
+    };
+    const nextSlide = {
+      slide_type: "quiz",
+      chapter: null,
+      quiz: { id: 5, question: "Q?" },
+      has_previous: true,
+      feedback: null,
+    };
+    apiService.getCurrentSlide.mockResolvedValue(mockSlide);
+    apiService.slideForward.mockResolvedValue(nextSlide);
+
+    const { result } = renderHook(() => useSlide());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.fetchNextSlide(42);
+    });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(apiService.slideForward).toHaveBeenCalledWith({
+      book_id: null,
+      mark_chapter_id: 42,
+    });
+  });
+
   it("submitAnswer stores feedback without advancing slide", async () => {
     const mockSlide = {
       slide_type: "quiz",

@@ -376,8 +376,8 @@ class GradingOutput(BaseModel):
 |-----------|------|----------------|
 | `SlidePage` | `frontend/src/pages/SlidePage.jsx` | Orchestrates `useSlide`, renders correct sub-component |
 | `BookSelector` | `frontend/src/components/BookSelector.jsx` | Fetches book list, dropdown to filter slides by book |
-| `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt / Skip buttons |
-| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC single-correct (radio buttons) / MC multi-correct (checkboxes + "Select all that apply"); feedback shows all options: wrong pick = red, correct = green; shows section_name badge and quiz_take_away in feedback |
+| `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt button |
+| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC single-correct (radio buttons) / MC multi-correct (checkboxes + "Select all that apply"); feedback shows all options: wrong pick = red, correct = green; shows section_name badge and quiz_take_away in feedback; no Skip or Next Slide buttons (navigation handled by down arrow) |
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 | `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
 | `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
@@ -390,7 +390,7 @@ class GradingOutput(BaseModel):
 |----------------|-------------|
 | `hasPrevious` | Boolean state — true when back navigation is available |
 | `loadCurrent(bookId)` | GET `/api/slides/current`; called on mount |
-| `fetchNextSlide(bookId)` | POST `/api/slides/forward`; called by skip/next actions |
+| `fetchNextSlide(markChapterId?)` | POST `/api/slides/forward`; uses internal `bookId` state; optional `mark_chapter_id` when chapter id passed |
 | `markLearnt(chapterId)` | POST `/api/slides/forward` with `mark_chapter_id`; records progress and advances |
 | `goPrevious()` | POST `/api/slides/back`; restores previous slide with saved feedback |
 | `submitAnswer(quizId, body)` | POST respond; sets `submitting=true` during request, stores `feedback` state (no advance) |

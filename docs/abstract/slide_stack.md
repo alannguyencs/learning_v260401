@@ -29,14 +29,17 @@ BookSelector: All Books | select a specific book
 SlidePage loads GET /api/slides/current (saved position or fresh pick)
   │
   ├── Navigation arrows (shown on all slides except "none"):
-  │     [↑] Up arrow (only if has_previous=true) → POST /api/slides/back
-  │     [↓] Down arrow (always shown) → POST /api/slides/forward
+  │     [↑] ArrowUp — full-width row above BookSelector, only shown when has_previous=true
+  │                 → POST /api/slides/back
+  │     [↓] ArrowDown — fixed at viewport bottom, always shown on active slides
+  │                   → chapter: marks learnt + advances
+  │                   → quiz (no feedback): skips quiz to back of queue
+  │                   → quiz (with feedback): advances to next slide
   │
   ├── Chapter slide:
   │     User reads markdown content
   │     [Mark as Learnt] → POST /api/slides/forward with mark_chapter_id
   │                      → records progress, triggers revision round setup, advances
-  │     [Skip Chapter]   → POST /api/slides/forward without mark → advances
   │
   ├── Quiz slide (revision round):
   │     User answers MC or open-ended (textarea)
@@ -44,8 +47,6 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
   │     Multi-correct MC  → checkboxes ("Select all that apply")
   │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
   │     MC feedback: all options shown (wrong pick red, correct green, others gray)
-  │     [Next Slide]   → advances to next slide
-  │     [Skip]         → quiz goes to back of queue, next unskipped quiz shown
   │
   ├── Chat (on any chapter or quiz slide):
   │     [Chat icon] → opens chat panel
@@ -83,10 +84,11 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
 
 - [ ] Submit button shows "Submitting..." and is disabled while waiting for the backend response
 - [ ] Submitting an answer shows the correct/incorrect badge and AI feedback
-- [ ] Clicking "Next Slide" after feedback advances to the next slide
-- [ ] Skipping a quiz or chapter advances to the next slide
 - [ ] When no slides remain, the "All caught up" message is shown
-- [ ] Down arrow is always visible on chapter and quiz slides; clicking it advances to next slide
+- [ ] Down arrow on a chapter slide marks the chapter as learnt and advances
+- [ ] Down arrow on a quiz slide (before submitting) skips the quiz to the back of the queue
+- [ ] Down arrow on a quiz slide (after feedback) advances to the next slide
+- [ ] Skipping a quiz via the down arrow puts it at the back of the queue
 - [ ] Up arrow is visible only when there is previous history; clicking it returns to the previous slide
 - [ ] Navigating back to a quiz that was answered shows the original feedback
 - [ ] Floating chat icon is visible on chapter and quiz slides
