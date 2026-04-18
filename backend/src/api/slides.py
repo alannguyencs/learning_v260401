@@ -21,6 +21,8 @@ from src.database import get_db
 from src.schemas.slides import (
     ChatMessageResponse,
     ChapterLearntResponse,
+    FavoriteListResponse,
+    FavoriteQuiz,
     LikeListResponse,
     LikeResponse,
     QuizRespondRequest,
@@ -271,6 +273,39 @@ def list_likes(
     """Return the user's liked quiz IDs, newest first."""
     ids = crud_slide_like.get_liked_quiz_ids(db, user.username)
     return LikeListResponse(quiz_ids=ids)
+
+
+@router.get("/slides/liked-quizzes", response_model=FavoriteListResponse)
+def list_liked_quizzes(
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Return full quiz detail for each liked quiz, newest like first."""
+    rows = crud_slide_like.get_liked_quizzes_with_context(db, user.username)
+    quizzes = [
+        FavoriteQuiz(
+            id=quiz.id,
+            chapter_id=quiz.chapter_id,
+            quiz_type=quiz.quiz_type,
+            question=quiz.question,
+            option_a=quiz.option_a,
+            option_b=quiz.option_b,
+            option_c=quiz.option_c,
+            option_d=quiz.option_d,
+            expected_answer=quiz.expected_answer,
+            lesson_id=lesson.id,
+            lesson_title=lesson.title,
+            book_id=book.book_id,
+            book_title=book.title,
+            section_name=quiz.section_name,
+            quiz_take_away=quiz.quiz_take_away,
+            quiz_metadata=quiz.quiz_metadata,
+            correct_options=quiz.correct_options,
+            liked_at=like.liked_at.isoformat(),
+        )
+        for like, quiz, lesson, book in rows
+    ]
+    return FavoriteListResponse(quizzes=quizzes)
 
 
 @router.get("/slides/chat", response_model=List[ChatMessageResponse])

@@ -1,10 +1,11 @@
 """CRUD operations for user_slide_like."""
 
-from typing import List
+from typing import List, Tuple
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from src.models.content import Book, Chapter, ChapterQuiz, Lesson
 from src.models.slide_like import UserSlideLike
 
 
@@ -59,3 +60,19 @@ def get_liked_quiz_ids(db: Session, username: str) -> List[int]:
         .all()
     )
     return [row.quiz_id for row in rows]
+
+
+def get_liked_quizzes_with_context(
+    db: Session, username: str
+) -> List[Tuple[ChapterQuiz, Lesson, Book, "UserSlideLike"]]:
+    """Return (quiz, lesson, book, like) rows for all quizzes the user liked, newest first."""
+    return (
+        db.query(UserSlideLike, ChapterQuiz, Lesson, Book)
+        .join(ChapterQuiz, ChapterQuiz.id == UserSlideLike.quiz_id)
+        .join(Chapter, Chapter.id == ChapterQuiz.chapter_id)
+        .join(Lesson, Lesson.id == Chapter.lesson_id)
+        .join(Book, Book.book_id == Lesson.book_id)
+        .filter(UserSlideLike.username == username)
+        .order_by(UserSlideLike.liked_at.desc(), UserSlideLike.id.desc())
+        .all()
+    )

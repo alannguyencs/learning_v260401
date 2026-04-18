@@ -29,8 +29,8 @@ SEEDS = [
         "lesson_index": 20260324,
         "lesson_title": "Frequent Time-Framed Learning & Coaching: Science-Backed Strategies for Efficient Knowledge Acquisition and Long-Term Retention",
         "lesson_path": PROJECT_ROOT / "data/lesson/coach/260324_time_framed_learning.md",
-        "quiz_path": None,
-        "section_separator": r"\n\*\*\*\n",
+        "quiz_path": PROJECT_ROOT / "data/quiz/260324_time_framed_learning.json",
+        "section_separator": r"\n(?=## )",
     },
     {
         "book_id": "themitmonk",
@@ -39,6 +39,24 @@ SEEDS = [
         "lesson_title": "20 Quantum Cheat Codes That I Wish I Knew In My 20's",
         "lesson_path": PROJECT_ROOT / "data/lesson/themitmonk/250218_20_quantum_cheat_codes_that_i_wish_i_knew_in_my_2.md",
         "quiz_path": PROJECT_ROOT / "data/quiz/themitmonk/250218_20_quantum_cheat_codes_that_i_wish_i_knew_in_my_2.json",
+        "section_separator": r"\n---\n",
+    },
+    {
+        "book_id": "themitmonk",
+        "book_title": "theMITmonk",
+        "lesson_index": 20250228,
+        "lesson_title": "From Homeless to MIT Grad: How I Started from $0 and Created Billions",
+        "lesson_path": PROJECT_ROOT / "data/lesson/themitmonk/250228_from_homeless_to_mit_grad_how_i_started_from_0_an.md",
+        "quiz_path": PROJECT_ROOT / "data/quiz/themitmonk/250228_from_homeless_to_mit_grad_how_i_started_from_0_an.json",
+        "section_separator": r"\n---\n",
+    },
+    {
+        "book_id": "learning_phrases_with_chris_friends",
+        "book_title": "Learning Phrases with Chris & Friends",
+        "lesson_index": 20211118,
+        "lesson_title": "Useful English Cartoons: My Room - Basic English Vocabulary with Subtitles",
+        "lesson_path": PROJECT_ROOT / "data/lesson/learning_phrases_with_chris_friends/211118_useful_english_cartoons_my_room_basic_english_vocab.md",
+        "quiz_path": PROJECT_ROOT / "data/quiz/learning_phrases_with_chris_friends/211118_useful_english_cartoons_my_room_basic_english_vocab.json",
         "section_separator": r"\n---\n",
     },
 ]
@@ -131,7 +149,15 @@ def main():
             else:
                 print(f"Book: '{seed['book_title']}' (already exists)")
 
-            # 2. Insert lesson
+            # 2. Insert lesson (skip if already exists)
+            cur.execute(
+                "SELECT id FROM lessons WHERE book_id = %s AND lesson_index = %s",
+                (seed["book_id"], seed["lesson_index"]),
+            )
+            existing = cur.fetchone()
+            if existing:
+                print(f"Lesson: '{seed['lesson_title']}' (already exists, skipping)")
+                continue
             cur.execute(
                 "INSERT INTO lessons (book_id, lesson_index, title) VALUES (%s, %s, %s) RETURNING id",
                 (seed["book_id"], seed["lesson_index"], seed["lesson_title"]),

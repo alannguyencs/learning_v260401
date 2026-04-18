@@ -104,6 +104,11 @@ const apiService = {
     const response = await api.get("/api/slides/likes");
     return response.data;
   },
+
+  listLikedQuizzesFull: async () => {
+    const response = await api.get("/api/slides/liked-quizzes");
+    return response.data;
+  },
 };
 
 export default apiService;

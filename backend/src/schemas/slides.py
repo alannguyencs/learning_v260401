@@ -120,3 +120,32 @@ class LikeListResponse(BaseModel):
     """Response from GET /api/slides/likes."""
 
     quiz_ids: List[int]
+
+
+class FavoriteQuiz(BaseModel):
+    """A liked quiz rendered in the Dashboard Favorite tab (read-only preview)."""
+
+    id: int
+    chapter_id: int
+    quiz_type: str
+    question: str
+    option_a: Optional[str] = None
+    option_b: Optional[str] = None
+    option_c: Optional[str] = None
+    option_d: Optional[str] = None
+    expected_answer: Optional[str] = None
+    lesson_id: int
+    lesson_title: str
+    book_id: str
+    book_title: str
+    section_name: Optional[str] = None
+    quiz_take_away: Optional[str] = None
+    quiz_metadata: Optional[dict] = None
+    correct_options: Optional[list] = None
+    liked_at: str
+
+
+class FavoriteListResponse(BaseModel):
+    """Response from GET /api/slides/liked-quizzes — newest like first."""
+
+    quizzes: List[FavoriteQuiz]

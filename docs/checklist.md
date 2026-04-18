@@ -20,6 +20,7 @@
 - [x] docs/plan/260416_slide_nav_arrows.md
 - [ ] docs/plan/260416_srs_algorithm_fixes.md
 - [ ] docs/plan/260418_liked_slide_frequency_boost.md
+- [ ] docs/plan/260418_group_b_above_tier_2.md
 
 ## DB Cloud Migration
 

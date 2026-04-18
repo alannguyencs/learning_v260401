@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.crud import crud_learning_progress
-from src.crud.crud_content import get_chapter, get_chapter_quiz
+from src.crud.crud_content import get_chapter, get_chapter_quiz, get_lesson
 from src.crud.crud_slide_position import (
     clear_forward,
     get_history_depth,
@@ -62,8 +62,23 @@ def _extract_position_fields(result: SlideResult):
     return None, None, None
 
 
+def _saved_position_book_id(db: Session, pos) -> Optional[str]:
+    """Return the book_id of the saved-position slide, or None if it can't be resolved."""
+    if pos.slide_type == "quiz" and pos.lesson_id is not None:
+        lesson = get_lesson(db, pos.lesson_id)
+        return lesson.book_id if lesson is not None else None
+    if pos.slide_type == "chapter":
+        chapter = get_chapter(db, pos.slide_id)
+        if chapter is None:
+            return None
+        lesson = get_lesson(db, chapter.lesson_id)
+        return lesson.book_id if lesson is not None else None
+    return None
+
+
 def get_current_slide(db: Session, username: str, book_id: Optional[str] = None) -> SlideResult:
-    """Return the saved current slide, or compute fresh if none exists."""
+    """Return the saved current slide, or compute fresh if none exists or if the
+    saved slide's book doesn't match the requested book_id."""
     pos = get_position(db, username)
     if not pos:
         result = SlideSelector.get_next_slide(db, username, book_id)
@@ -74,12 +89,15 @@ def get_current_slide(db: Session, username: str, book_id: Optional[str] = None)
         return result
 
     rebuilt = _rebuild_slide(db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num)
-    if rebuilt is None:
+    book_mismatch = (
+        book_id is not None and _saved_position_book_id(db, pos) != book_id
+    )
+    if rebuilt is None or book_mismatch:
         result = SlideSelector.get_next_slide(db, username, book_id)
         if result.slide_type != "none":
             slide_id, lesson_id, round_num = _extract_position_fields(result)
             save_position(db, username, result.slide_type, slide_id, lesson_id, round_num)
-        result.has_previous = False
+        result.has_previous = get_history_depth(db, username) > 0
         return result
 
     rebuilt.has_previous = get_history_depth(db, username) > 0

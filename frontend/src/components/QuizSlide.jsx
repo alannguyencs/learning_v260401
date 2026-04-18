@@ -140,16 +140,9 @@ const QuizSlide = ({ quiz, feedback, submitting, onSubmit }) => {
 
   return (
     <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-gray-400">
-          Revision R{quiz.round_num} &middot; {quiz.lesson_title} &middot;{" "}
-          {quiz.book_title}
-        </div>
-        {quiz.section_name && (
-          <span className="text-xs px-2 py-0.5 bg-gray-600 text-gray-300 rounded-full">
-            {quiz.section_name}
-          </span>
-        )}
+      <div className="text-sm text-gray-400 mb-2">
+        Revision R{quiz.round_num} &middot; {quiz.lesson_title} &middot;{" "}
+        {quiz.book_title}
       </div>
 
       {isCloze ? (

@@ -148,15 +148,7 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-800 text-gray-200">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <Link
-            to="/slides"
-            className="text-sm text-gray-400 hover:text-gray-200 underline"
-          >
-            &larr; Back to Slides
-          </Link>
-        </div>
+        <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
 
         <div className="flex gap-2 border-b border-gray-700 mb-6">
           <TabButton

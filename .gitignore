@@ -14,7 +14,7 @@ __pycache__/
 *$py.class
 
 # Data and large files
-data/raw/
+data/
 *.pdf
 
 # Large files and notebooks

@@ -73,7 +73,7 @@ def _build_quiz_dict(db: Session, quiz_id: int, round_num: int, lesson_id: int) 
 
 
 class SlideSelector:
-    """Implements the 2-tier slide priority algorithm."""
+    """Implements the slide priority algorithm: Group A → Group B → Tier 2."""
 
     @staticmethod
     def get_next_slide(db: Session, username: str, book_id: Optional[str] = None) -> SlideResult:
@@ -81,8 +81,9 @@ class SlideSelector:
         Return the next slide for the user.
 
         Priority:
-        1. Due revision quizzes (weakest recall first)
-        2. Next unlearnt chapter
+        1. Due revision quizzes — Group A (non-skipped, weakest recall first)
+        2. Due revision quizzes — Group B (skipped, oldest skip first)
+        3. Next unlearnt chapter
         """
         lesson_count = crud_learning_progress.get_lesson_count(db, username)
 
@@ -94,6 +95,18 @@ class SlideSelector:
         group_b = []
 
         for round_row in due_rounds:
+            # Activation gate: skip this lesson's quizzes until ALL its chapters are learnt
+            if not crud_learning_progress.all_lesson_chapters_learnt(
+                db, username, round_row.lesson_id
+            ):
+                continue
+            # Book-priority rank: 0 for lessons whose book matches the filter, 1 otherwise.
+            # When no book_id is provided, every round ranks 0 (no re-ordering).
+            lesson = get_lesson(db, round_row.lesson_id)
+            if book_id and lesson is not None and lesson.book_id != book_id:
+                book_rank = 1
+            else:
+                book_rank = 0
             non_skipped, skipped = get_eligible_quiz_ids_for_round(
                 db, username, round_row.lesson_id, round_row.round_num
             )
@@ -105,22 +118,29 @@ class SlideSelector:
                     m_t = RevisionService.compute_recall(recall.forgetting_rate, elapsed)
                 else:
                     m_t = 1.0
-                group_a.append((m_t, qid, round_row.round_num, round_row.lesson_id))
+                group_a.append(
+                    (book_rank, m_t, qid, round_row.round_num, round_row.lesson_id)
+                )
             for qid in skipped:
-                group_b.append((qid, round_row.round_num, round_row.lesson_id))
+                group_b.append((book_rank, qid, round_row.round_num, round_row.lesson_id))
 
+        # Group A blocks Tier 2 — serve weakest recall first, within selected book first
         if group_a:
-            group_a.sort(key=lambda x: x[0])
-            _, best_quiz_id, best_round_num, best_lesson_id = group_a[0]
+            group_a.sort(key=lambda x: (x[0], x[1]))
+            _, _, best_quiz_id, best_round_num, best_lesson_id = group_a[0]
             quiz_dict = _build_quiz_dict(db, best_quiz_id, best_round_num, best_lesson_id)
             return SlideResult(slide_type="quiz", chapter=None, quiz=quiz_dict)
 
+        # Group B also blocks Tier 2 — oldest skip first, within selected book first
         if group_b:
-            best_quiz_id, best_round_num, best_lesson_id = group_b[0]
+            # Stable sort by book_rank preserves the existing oldest-skip-first order
+            # inside each partition.
+            group_b.sort(key=lambda x: x[0])
+            _, best_quiz_id, best_round_num, best_lesson_id = group_b[0]
             quiz_dict = _build_quiz_dict(db, best_quiz_id, best_round_num, best_lesson_id)
             return SlideResult(slide_type="quiz", chapter=None, quiz=quiz_dict)
 
-        # Tier 2: next unlearnt chapter
+        # Tier 2: next unlearnt chapter (only when both Group A and Group B are empty)
         if book_id:
             chapter = get_next_chapter_in_book(db, username, book_id)
         else:
