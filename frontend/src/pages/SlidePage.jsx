@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import useSlide from "../hooks/useSlide";
+import useLikedQuizzes from "../hooks/useLikedQuizzes";
 import BookSelector from "../components/BookSelector";
 import ChatButton from "../components/ChatButton";
+import LikeButton from "../components/LikeButton";
 import ChapterSlide from "../components/ChapterSlide";
 import QuizSlide from "../components/QuizSlide";
 import AllCaughtUp from "../components/AllCaughtUp";
@@ -60,6 +61,8 @@ const SlidePage = () => {
     goPrevious,
   } = useSlide();
 
+  const { isLiked, toggleLike } = useLikedQuizzes();
+
   const isActive = !loading && !error && slide && slide.slide_type !== "none";
 
   const handleDownArrow = () => {
@@ -80,16 +83,7 @@ const SlidePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-800">
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="flex justify-end mb-2">
-          <Link
-            to="/dashboard"
-            className="text-sm text-gray-400 hover:text-gray-200 underline"
-          >
-            Dashboard
-          </Link>
-        </div>
-
+      <div className="relative max-w-3xl mx-auto px-4 py-8">
         {isActive && hasPrevious && <ArrowUp onClick={goPrevious} />}
 
         <BookSelector bookId={bookId} onSelect={selectBook} />
@@ -128,20 +122,28 @@ const SlidePage = () => {
         )}
 
         {!loading && !error && slide?.slide_type === "none" && <AllCaughtUp />}
+
+        {!loading && !error && slide && slide.slide_type !== "none" && (
+          <ChatButton
+            slideType={slide.slide_type}
+            chapterId={slide.chapter?.id || null}
+            quizId={slide.quiz?.id || null}
+          />
+        )}
+
+        {!loading && !error && slide?.slide_type === "quiz" && slide.quiz && (
+          <LikeButton
+            quizId={slide.quiz.id}
+            isLiked={isLiked(slide.quiz.id)}
+            onToggle={toggleLike}
+          />
+        )}
       </div>
 
       {isActive && (
         <div className="fixed bottom-[76px] left-1/2 -translate-x-1/2 z-40">
           <ArrowDown onClick={handleDownArrow} />
         </div>
-      )}
-
-      {!loading && !error && slide && slide.slide_type !== "none" && (
-        <ChatButton
-          slideType={slide.slide_type}
-          chapterId={slide.chapter?.id || null}
-          quizId={slide.quiz?.id || null}
-        />
       )}
     </div>
   );

@@ -13,6 +13,7 @@ from src.crud.crud_content import (
     get_lesson,
     get_lesson_by_chapter_id,
 )
+from src.crud import crud_slide_like
 from src.crud.crud_slide_chat import get_chat_messages, get_recent_chat_messages, save_chat_message
 from src.crud.crud_slide_position import save_feedback
 from src.crud.crud_slides import log_quiz_skip, remove_quiz_skip
@@ -20,6 +21,8 @@ from src.database import get_db
 from src.schemas.slides import (
     ChatMessageResponse,
     ChapterLearntResponse,
+    LikeListResponse,
+    LikeResponse,
     QuizRespondRequest,
     QuizRespondResponse,
     SlideChatRequest,
@@ -232,6 +235,42 @@ def slide_chat(
     save_chat_message(db, user.username, slide_id, "assistant", response_text)
 
     return SlideChatResponse(response=response_text)
+
+
+@router.post("/slides/quizzes/{quiz_id}/like", response_model=LikeResponse)
+def like_quiz(
+    quiz_id: int,
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Like a quiz: record the like and boost its forgetting rate."""
+    if get_chapter_quiz(db, quiz_id) is None:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    crud_slide_like.add_like(db, user.username, quiz_id)
+    lesson_count = crud_learning_progress.get_lesson_count(db, user.username)
+    RevisionService.apply_like_boost(db, user.username, quiz_id, lesson_count)
+    return LikeResponse(liked=True)
+
+
+@router.delete("/slides/quizzes/{quiz_id}/like", response_model=LikeResponse)
+def unlike_quiz(
+    quiz_id: int,
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Unlike a quiz; forgetting_rate is not restored."""
+    crud_slide_like.remove_like(db, user.username, quiz_id)
+    return LikeResponse(liked=False)
+
+
+@router.get("/slides/likes", response_model=LikeListResponse)
+def list_likes(
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Return the user's liked quiz IDs, newest first."""
+    ids = crud_slide_like.get_liked_quiz_ids(db, user.username)
+    return LikeListResponse(quiz_ids=ids)
 
 
 @router.get("/slides/chat", response_model=List[ChatMessageResponse])

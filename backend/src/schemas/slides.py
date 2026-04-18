@@ -108,3 +108,15 @@ class ChatMessageResponse(BaseModel):
     role: str
     content: str
     created_at: str
+
+
+class LikeResponse(BaseModel):
+    """Response from POST/DELETE /api/slides/quizzes/{id}/like."""
+
+    liked: bool
+
+
+class LikeListResponse(BaseModel):
+    """Response from GET /api/slides/likes."""
+
+    quiz_ids: List[int]

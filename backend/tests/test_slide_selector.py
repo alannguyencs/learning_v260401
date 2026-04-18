@@ -276,3 +276,42 @@ class TestRichMetadataInQuizDict:
         assert quiz_dict["quiz_take_away"] is None
         assert quiz_dict["quiz_metadata"] is None
         _ = lesson1
+
+
+class TestLikeBoostSurfacesFirst:
+    """A like-boosted quiz has a lower m(t) and surfaces before a well-recalled one."""
+
+    def test_liked_quiz_surfaces_first(self, setup):  # pylint: disable=redefined-outer-name
+        """After liking q2, q2 surfaces before q1 despite prior correct answers."""
+        db = setup["db"]
+        chapter1 = setup["chapter1"]
+        chapter2 = setup["chapter2"]
+        lesson1 = setup["lesson1"]
+        q1 = setup["q1"]
+        q2 = setup["q2"]
+
+        # Learn both chapters in lesson1; R0 ends up with 2 quizzes.
+        lp1 = LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
+        RevisionService.on_chapter_learnt(
+            db, "testuser", lp1.lesson_id, lp1.chapter_quiz_ids, lp1.lesson_count
+        )
+        lp2 = LearningProgressService.mark_chapter_learnt(db, "testuser", chapter2.id)
+        RevisionService.on_chapter_learnt(
+            db, "testuser", lp2.lesson_id, lp2.chapter_quiz_ids, lp2.lesson_count
+        )
+
+        # Both answered correctly → both rates decay to 0.7.
+        RevisionService.record_quiz_response(db, "testuser", q1.id, lesson1.id, 0, True, 1)
+        RevisionService.record_quiz_response(db, "testuser", q2.id, lesson1.id, 0, True, 1)
+
+        # Advance lesson_count so R1 becomes due (R1 due_at was set to 1 + 2 = 3).
+        for _ in range(4):
+            increment_lesson_count(db, "testuser")
+
+        # Like q2 → its rate jumps from 0.7 back up to 1.0; q1 stays at 0.7.
+        # Same elapsed_lessons → q2 has lower m(t) → served first.
+        RevisionService.apply_like_boost(db, "testuser", q2.id, lesson_count=5)
+
+        result = SlideSelector.get_next_slide(db, "testuser")
+        assert result.slide_type == "quiz"
+        assert result.quiz["id"] == q2.id

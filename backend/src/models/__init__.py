@@ -4,6 +4,7 @@ from .learning_progress import UserChapterProgress, UserLessonCount
 from .revision_scheduling import LessonRevisionRound, UserQuizRecall
 from .slide_management import QuizSkipLog
 from .slide_position import UserSlidePosition, SlideHistory
+from .slide_like import UserSlideLike
 
 __all__ = [
     "Users",
@@ -18,4 +19,5 @@ __all__ = [
     "QuizSkipLog",
     "UserSlidePosition",
     "SlideHistory",
+    "UserSlideLike",
 ]

@@ -279,3 +279,72 @@ class TestMemorize:
         elapsed = 5
         expected = math.exp(-rate * elapsed / 10)
         assert abs(RevisionService.compute_recall(rate, elapsed) - expected) < 1e-9
+
+
+class TestApplyLikeBoost:
+    """Tests for RevisionService.apply_like_boost."""
+
+    def test_creates_recall_row_for_never_reviewed_quiz(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """Liking a never-reviewed quiz creates a recall row at rate 1.0."""
+        db = setup["db"]
+        quiz_id = setup["q1"].id
+
+        RevisionService.apply_like_boost(db, "testuser", quiz_id, lesson_count=5)
+
+        recall = get_quiz_recall(db, "testuser", quiz_id)
+        assert recall is not None
+        assert recall.forgetting_rate == 1.0
+        assert recall.last_reviewed_lesson_count == 5
+
+    def test_boosts_rate_below_one_back_up(self, setup):  # pylint: disable=redefined-outer-name
+        """When current rate < 1.0, a like resets it to 1.0."""
+        db = setup["db"]
+        quiz_id = setup["q1"].id
+
+        RevisionService.on_chapter_learnt(db, "testuser", setup["lesson"].id, [quiz_id], 1)
+        RevisionService.record_quiz_response(
+            db, "testuser", quiz_id, setup["lesson"].id, 0, True, 1
+        )
+        assert get_quiz_recall(db, "testuser", quiz_id).forgetting_rate == pytest.approx(0.7)
+
+        RevisionService.apply_like_boost(db, "testuser", quiz_id, lesson_count=2)
+
+        recall = get_quiz_recall(db, "testuser", quiz_id)
+        assert recall.forgetting_rate == 1.0
+
+    def test_does_not_lower_rate_above_one(self, setup):  # pylint: disable=redefined-outer-name
+        """When current rate > 1.0 (from wrong answer), like leaves it alone."""
+        db = setup["db"]
+        quiz_id = setup["q1"].id
+
+        RevisionService.on_chapter_learnt(db, "testuser", setup["lesson"].id, [quiz_id], 1)
+        RevisionService.record_quiz_response(
+            db, "testuser", quiz_id, setup["lesson"].id, 0, False, 1
+        )
+        rate_before = get_quiz_recall(db, "testuser", quiz_id).forgetting_rate
+        assert rate_before == pytest.approx(1.2)
+
+        RevisionService.apply_like_boost(db, "testuser", quiz_id, lesson_count=2)
+
+        recall = get_quiz_recall(db, "testuser", quiz_id)
+        assert recall.forgetting_rate == pytest.approx(1.2)
+
+    def test_preserves_last_reviewed_lesson_count(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """Liking does not touch last_reviewed_lesson_count when already set."""
+        db = setup["db"]
+        quiz_id = setup["q1"].id
+
+        RevisionService.on_chapter_learnt(db, "testuser", setup["lesson"].id, [quiz_id], 1)
+        RevisionService.record_quiz_response(
+            db, "testuser", quiz_id, setup["lesson"].id, 0, True, 3
+        )
+        assert get_quiz_recall(db, "testuser", quiz_id).last_reviewed_lesson_count == 3
+
+        RevisionService.apply_like_boost(db, "testuser", quiz_id, lesson_count=10)
+
+        recall = get_quiz_recall(db, "testuser", quiz_id)
+        assert recall.last_reviewed_lesson_count == 3

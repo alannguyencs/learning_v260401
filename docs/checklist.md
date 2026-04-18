@@ -18,6 +18,8 @@
 - [x] docs/plan/260406_learning_progress.md
 - [x] docs/plan/260416_slide_navigation.md
 - [x] docs/plan/260416_slide_nav_arrows.md
+- [ ] docs/plan/260416_srs_algorithm_fixes.md
+- [ ] docs/plan/260418_liked_slide_frequency_boost.md
 
 ## DB Cloud Migration
 

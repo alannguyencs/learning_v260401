@@ -101,6 +101,14 @@ Both conditions must be true simultaneously:
 
 where `lessons_elapsed = current_lesson_count - last_reviewed_lesson_count`
 
+### Like Boost
+
+- Triggered when the user likes a quiz (via `POST /api/slides/quizzes/{id}/like`).
+- Sets `forgetting_rate = max(current_rate, 1.0)` for `(username, quiz_id)`.
+- `last_reviewed_lesson_count` is preserved when already set (so a like is not mistaken for a real review); initialised to the current `lesson_count` for quizzes the user has never answered.
+- Unlike (`DELETE /api/slides/quizzes/{id}/like`) does **not** restore the prior rate — natural review cycles reduce the boost instead.
+- Consumed by `SlideSelector.get_next_slide` without modification: the boosted rate lowers `m(t)`, so the liked quiz ranks earlier in Tier-1 weakest-recall-first ordering.
+
 ## Pipeline
 
 ### on_chapter_learnt
@@ -152,6 +160,7 @@ RevisionService.record_quiz_response(db, username, quiz_id, lesson_id, round_num
 | `on_chapter_learnt(db, username, lesson_id, chapter_quiz_ids, lesson_count)` | Distribute quizzes into correct round |
 | `record_quiz_response(db, username, quiz_id, lesson_id, round_num, is_correct, lesson_count)` | Update recall and advance round |
 | `compute_recall(forgetting_rate, lessons_elapsed)` | Returns m(t) recall score |
+| `apply_like_boost(db, username, quiz_id, lesson_count)` | On like: sets `forgetting_rate = max(current, 1.0)`; preserves `last_reviewed_lesson_count` |
 
 **`QuizResponseResult`** dataclass:
 

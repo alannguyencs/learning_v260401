@@ -4,6 +4,7 @@ import pytest
 from passlib.context import CryptContext
 
 from src.configs import settings
+from src.crud.crud_revision import get_quiz_recall
 from src.crud.crud_user import create_user
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -193,3 +194,111 @@ class TestGetCurrentSlide:
         response = auth_client.get("/api/slides/current")
         assert response.status_code == 200
         assert response.json()["slide_type"] == "none"
+
+
+class TestLikeEndpoints:
+    """Tests for POST/DELETE /like and GET /likes."""
+
+    def _seed_quiz(self, auth_client):  # pylint: disable=redefined-outer-name
+        """Seed content and return a quiz_id."""
+        ids = _seed_content(auth_client)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
+        slide_resp = auth_client.get("/api/slides/current")
+        quiz = slide_resp.json().get("quiz")
+        return quiz["id"] if quiz else None
+
+    def test_post_like_returns_true(self, auth_client):  # pylint: disable=redefined-outer-name
+        """POST like returns {liked: true}."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        response = auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": True}
+
+    def test_post_like_is_idempotent(self, auth_client):  # pylint: disable=redefined-outer-name
+        """Two POST likes → still one row; GET /likes returns it once."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+        likes = auth_client.get("/api/slides/likes").json()
+        assert likes == {"quiz_ids": [quiz_id]}
+
+    def test_post_like_boosts_forgetting_rate(
+        self, auth_client, db_session
+    ):  # pylint: disable=redefined-outer-name
+        """After answering correctly (rate 0.7), liking resets rate to 1.0."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        auth_client.post(
+            f"/api/slides/quizzes/{quiz_id}/respond",
+            json={"round_num": 0, "lesson_id": 1, "user_answer": "A", "is_skip": False},
+        )
+        recall_before = get_quiz_recall(db_session, "testuser", quiz_id)
+        assert recall_before.forgetting_rate == pytest.approx(0.7)
+
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+
+        recall_after = get_quiz_recall(db_session, "testuser", quiz_id)
+        assert recall_after.forgetting_rate == 1.0
+
+    def test_post_like_unknown_quiz_404(self, auth_client):  # pylint: disable=redefined-outer-name
+        """POST like on a non-existent quiz returns 404."""
+        response = auth_client.post("/api/slides/quizzes/999999/like")
+        assert response.status_code == 404
+
+    def test_delete_like_returns_false(self, auth_client):  # pylint: disable=redefined-outer-name
+        """DELETE like returns {liked: false} and removes the row."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+        response = auth_client.delete(f"/api/slides/quizzes/{quiz_id}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": False}
+        likes = auth_client.get("/api/slides/likes").json()
+        assert likes == {"quiz_ids": []}
+
+    def test_delete_like_is_idempotent(self, auth_client):  # pylint: disable=redefined-outer-name
+        """DELETE on a not-liked quiz returns 200 and does not raise."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        response = auth_client.delete(f"/api/slides/quizzes/{quiz_id}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": False}
+
+    def test_delete_like_does_not_restore_rate(
+        self, auth_client, db_session
+    ):  # pylint: disable=redefined-outer-name
+        """Unliking leaves the boosted forgetting_rate untouched."""
+        quiz_id = self._seed_quiz(auth_client)
+        if quiz_id is None:
+            pytest.skip("No quiz available")
+        auth_client.post(
+            f"/api/slides/quizzes/{quiz_id}/respond",
+            json={"round_num": 0, "lesson_id": 1, "user_answer": "A", "is_skip": False},
+        )
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+        auth_client.delete(f"/api/slides/quizzes/{quiz_id}/like")
+
+        recall = get_quiz_recall(db_session, "testuser", quiz_id)
+        assert recall.forgetting_rate == 1.0
+
+    def test_get_likes_unauthenticated(self, client):
+        """GET /likes without session returns 401."""
+        response = client.get("/api/slides/likes")
+        assert response.status_code == 401
+
+    def test_post_like_unauthenticated(self, client):
+        """POST /like without session returns 401."""
+        response = client.post("/api/slides/quizzes/1/like")
+        assert response.status_code == 401
+
+    def test_delete_like_unauthenticated(self, client):
+        """DELETE /like without session returns 401."""
+        response = client.delete("/api/slides/quizzes/1/like")
+        assert response.status_code == 401

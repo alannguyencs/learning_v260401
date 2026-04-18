@@ -17,6 +17,12 @@ POST /api/slides/quizzes/{id}/respond
                                 → crud_slide_position.save_feedback (persists feedback for history replay)
 POST /api/slides/chat           → SlideChatService.answer (Gemini 2.5 Flash)
 GET  /api/slides/chat           → get_chat_messages(username, slide_identifier)
+POST   /api/slides/quizzes/{id}/like
+                                → crud_slide_like.add_like
+                                → RevisionService.apply_like_boost
+DELETE /api/slides/quizzes/{id}/like
+                                → crud_slide_like.remove_like
+GET    /api/slides/likes        → crud_slide_like.get_liked_quiz_ids
 ```
 
 ## Data Model
@@ -68,6 +74,18 @@ Index: `(username, slide_identifier, created_at)`
 | Column | Type | Constraints |
 |--------|------|-------------|
 | `raw_content` | Text | nullable — full paper text or YouTube transcript |
+
+**`UserSlideLike`** (`user_slide_like`) — per-user quiz likes; drives the filled/outline Like-button UI and is the signal that triggers the forgetting-rate boost
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | Integer | PK |
+| `username` | String | FK → users.username, NOT NULL |
+| `quiz_id` | Integer | FK → chapter_quizzes.id, NOT NULL |
+| `liked_at` | Timestamp | NOT NULL, DEFAULT NOW() |
+| — | — | UNIQUE(`username`, `quiz_id`) |
+
+Index: `idx_usl_user` on `(username)`.
 
 **`quiz_skip_log`** — tracks skipped quizzes for back-of-queue ordering within tier 1
 
@@ -232,6 +250,9 @@ Return { response }
 | POST | `/api/slides/quizzes/{quiz_id}/respond` | Session | `respond_to_quiz` |
 | POST | `/api/slides/chat` | Session | `slide_chat` |
 | GET | `/api/slides/chat` | Session | `get_slide_chat_history` |
+| POST | `/api/slides/quizzes/{quiz_id}/like` | Session | `like_quiz` — inserts like row + `RevisionService.apply_like_boost` |
+| DELETE | `/api/slides/quizzes/{quiz_id}/like` | Session | `unlike_quiz` — deletes like row; does not restore rate |
+| GET | `/api/slides/likes` | Session | `list_likes` — returns `{"quiz_ids": [...]}` newest-first |
 
 ## Service Layer
 
@@ -248,6 +269,12 @@ Return { response }
 | Method | Description |
 |--------|-------------|
 | `get_next_slide(db, username, book_id)` | Returns `SlideResult` using 2-tier algorithm |
+
+**`RevisionService`** (`backend/src/service/revision_service.py`) — see [technical/revision_scheduling.md](./revision_scheduling.md) for full details. New entry:
+
+| Method | Description |
+|--------|-------------|
+| `apply_like_boost(db, username, quiz_id, lesson_count)` | Sets `forgetting_rate = max(current, 1.0)` for a liked quiz; preserves `last_reviewed_lesson_count` |
 
 **`SlideResult`** dataclass:
 
@@ -364,6 +391,15 @@ class GradingOutput(BaseModel):
 | `get_recent_chat_messages(username, slide_identifier, limit)` | Last N messages for context |
 | `save_chat_message(username, slide_identifier, role, content)` | Insert one message row |
 
+**`crud_slide_like.py`:**
+
+| Function | Description |
+|----------|-------------|
+| `add_like(username, quiz_id)` | `INSERT ... ON CONFLICT DO NOTHING` — idempotent |
+| `remove_like(username, quiz_id)` | `DELETE` the row; no-op if absent |
+| `is_liked(username, quiz_id)` | Boolean lookup |
+| `get_liked_quiz_ids(username)` | List of liked `quiz_id`s, newest first |
+
 ## Frontend — Pages & Routes
 
 | Path | Component | Auth | Description |
@@ -381,6 +417,7 @@ class GradingOutput(BaseModel):
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 | `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
 | `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
+| `LikeButton` | `frontend/src/components/LikeButton.jsx` | Thumbs-up FAB above `ChatButton` on quiz slides; filled (blue) when liked, outline (gray) when not; calls `toggleLike` from `useLikedQuizzes` |
 
 ## Frontend — Services & Hooks
 
@@ -409,6 +446,9 @@ class GradingOutput(BaseModel):
 | `respondToQuiz(quizId, body)` | POST `/api/slides/quizzes/{id}/respond` |
 | `sendChatMessage(body)` | POST `/api/slides/chat` |
 | `getChatHistory(slideType, chapterId, quizId)` | GET `/api/slides/chat` |
+| `likeQuiz(quizId)` | POST `/api/slides/quizzes/{id}/like` |
+| `unlikeQuiz(quizId)` | DELETE `/api/slides/quizzes/{id}/like` |
+| `listLikedQuizzes()` | GET `/api/slides/likes` |
 
 **`useSlideChat`** (`frontend/src/hooks/useSlideChat.js`):
 
@@ -417,6 +457,15 @@ class GradingOutput(BaseModel):
 | `messages` | Array of `{ role, content, created_at }` |
 | `loading` | Boolean — true while waiting for AI response |
 | `sendMessage(text)` | POST chat, append user msg + AI response to state |
+
+**`useLikedQuizzes`** (`frontend/src/hooks/useLikedQuizzes.js`):
+
+| Method / State | Description |
+|----------------|-------------|
+| `likedIds` | `Set<number>` of quizzes the current user has liked |
+| `loading` | Boolean — true until initial `GET /api/slides/likes` resolves |
+| `isLiked(quizId)` | Returns whether the quiz is in `likedIds` |
+| `toggleLike(quizId)` | Optimistic flip of the like set; calls `likeQuiz`/`unlikeQuiz`; rolls back on error |
 
 ## Component Checklist
 
@@ -474,6 +523,22 @@ class GradingOutput(BaseModel):
 - [x] API methods — `frontend/src/services/api.js` (chat methods)
 - [x] Tests — `frontend/src/__tests__/components/SlideChat.test.js`
 - [x] Tests — `frontend/src/__tests__/hooks/useSlideChat.test.js`
+- [x] Migration — `scripts/sql/010_user_slide_like.sql`
+- [x] Model — `backend/src/models/slide_like.py` (`UserSlideLike`)
+- [x] CRUD — `backend/src/crud/crud_slide_like.py`
+- [x] Service — `backend/src/service/revision_service.py` (`apply_like_boost`)
+- [x] API — `backend/src/api/slides.py` (POST/DELETE `/like`, GET `/likes`)
+- [x] Schemas — `backend/src/schemas/slides.py` (`LikeResponse`, `LikeListResponse`)
+- [x] Tests — `backend/tests/test_crud_slide_like.py`
+- [x] Tests — `backend/tests/test_revision_service.py` (`apply_like_boost`)
+- [x] Tests — `backend/tests/test_slide_selector.py` (liked quiz surfaces first)
+- [x] Tests — `backend/tests/test_slides_api.py` (like endpoints)
+- [x] Hook — `frontend/src/hooks/useLikedQuizzes.js`
+- [x] Component — `frontend/src/components/LikeButton.jsx`
+- [x] Page update — `frontend/src/pages/SlidePage.jsx` (`LikeButton` on quiz slides)
+- [x] API methods — `frontend/src/services/api.js` (`likeQuiz` / `unlikeQuiz` / `listLikedQuizzes`)
+- [x] Tests — `frontend/src/__tests__/components/LikeButton.test.js`
+- [x] Tests — `frontend/src/__tests__/hooks/useLikedQuizzes.test.js`
 
 ---
 

@@ -89,6 +89,21 @@ const apiService = {
     const response = await api.get("/api/slides/chat", { params });
     return response.data;
   },
+
+  likeQuiz: async (quizId) => {
+    const response = await api.post(`/api/slides/quizzes/${quizId}/like`);
+    return response.data;
+  },
+
+  unlikeQuiz: async (quizId) => {
+    const response = await api.delete(`/api/slides/quizzes/${quizId}/like`);
+    return response.data;
+  },
+
+  listLikedQuizzes: async () => {
+    const response = await api.get("/api/slides/likes");
+    return response.data;
+  },
 };
 
 export default apiService;

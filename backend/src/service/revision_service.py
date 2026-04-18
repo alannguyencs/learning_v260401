@@ -158,3 +158,25 @@ class RevisionService:
     def compute_recall(forgetting_rate: float, lessons_elapsed: int) -> float:
         """m(t) = exp(-forgetting_rate * lessons_elapsed / MEMORIZE_DIVISOR)."""
         return math.exp(-forgetting_rate * max(lessons_elapsed, 0) / MEMORIZE_DIVISOR)
+
+    @staticmethod
+    def apply_like_boost(
+        db: Session,
+        username: str,
+        quiz_id: int,
+        lesson_count: int,
+    ) -> None:
+        """Bump forgetting_rate to max(current, 1.0) when the user likes a quiz.
+
+        Preserves last_reviewed_lesson_count when already set so a like is not
+        mistaken for a real review. For a never-reviewed quiz, initialises
+        last_reviewed_lesson_count to the current lesson_count.
+        """
+        existing = crud_revision.get_quiz_recall(db, username, quiz_id)
+        current_rate = existing.forgetting_rate if existing else 1.0
+        new_rate = max(current_rate, 1.0)
+        if existing is not None and existing.last_reviewed_lesson_count is not None:
+            last_reviewed = existing.last_reviewed_lesson_count
+        else:
+            last_reviewed = lesson_count
+        crud_revision.upsert_quiz_recall(db, username, quiz_id, new_rate, last_reviewed)
