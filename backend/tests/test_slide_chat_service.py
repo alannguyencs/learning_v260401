@@ -76,3 +76,38 @@ class TestSlideChatService:
         prompt = call_args[1]["contents"][0] if "contents" in call_args[1] else call_args[0][1][0]
         assert "Previous question" in prompt
         assert "Previous answer" in prompt
+
+    @patch("src.service.slide_chat_service.genai.Client")
+    def test_answer_injects_slide_type_quiz(self, mock_cls):
+        """Prompt carries an explicit '## Slide Type\\nquiz' marker so the tutor-mode rules apply."""
+        mock_client = MagicMock()
+        mock_cls.return_value = mock_client
+        mock_client.models.generate_content.return_value = _mock_gemini_response("OK")
+
+        SlideChatService.answer(
+            "Quiz question and options",
+            None,
+            [],
+            "suggest me",
+            slide_type="quiz",
+        )
+
+        call_args = mock_client.models.generate_content.call_args
+        prompt = call_args[1]["contents"][0] if "contents" in call_args[1] else call_args[0][1][0]
+        assert "## Slide Type\nquiz" in prompt
+        # System prompt must include the tutor-mode rules so the model knows what quiz means.
+        assert "TUTOR MODE" in prompt
+        assert "NEVER state" in prompt
+
+    @patch("src.service.slide_chat_service.genai.Client")
+    def test_answer_slide_type_defaults_to_chapter(self, mock_cls):
+        """When not supplied, slide_type defaults to 'chapter' (backwards-compatible callers)."""
+        mock_client = MagicMock()
+        mock_cls.return_value = mock_client
+        mock_client.models.generate_content.return_value = _mock_gemini_response("OK")
+
+        SlideChatService.answer("Chapter text", None, [], "What is this?")
+
+        call_args = mock_client.models.generate_content.call_args
+        prompt = call_args[1]["contents"][0] if "contents" in call_args[1] else call_args[0][1][0]
+        assert "## Slide Type\nchapter" in prompt

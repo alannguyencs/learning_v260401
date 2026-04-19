@@ -20,11 +20,12 @@ class SlideChatService:
         raw_content: str | None,
         recent_messages: list,
         user_message: str,
+        slide_type: str = "chapter",
     ) -> str:
         """Build prompt with context and call Gemini for a free-text answer."""
         system_prompt = PROMPT_PATH.read_text(encoding="utf-8")
 
-        parts = []
+        parts = [f"## Slide Type\n{slide_type}"]
 
         if raw_content:
             parts.append(f"## Lesson Source Material\n{raw_content}")

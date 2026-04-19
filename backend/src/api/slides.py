@@ -252,7 +252,9 @@ def slide_chat(
     raw_content = lesson.raw_content if lesson else None
     recent = get_recent_chat_messages(db, user.username, slide_id, limit=10)
 
-    response_text = SlideChatService.answer(slide_context, raw_content, recent, body.message)
+    response_text = SlideChatService.answer(
+        slide_context, raw_content, recent, body.message, slide_type=body.slide_type
+    )
 
     save_chat_message(db, user.username, slide_id, "user", body.message)
     save_chat_message(db, user.username, slide_id, "assistant", response_text)
