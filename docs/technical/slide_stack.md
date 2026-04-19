@@ -23,6 +23,12 @@ POST   /api/slides/quizzes/{id}/like
 DELETE /api/slides/quizzes/{id}/like
                                 → crud_slide_like.remove_like
 GET    /api/slides/likes        → crud_slide_like.get_liked_quiz_ids
+                                 + crud_slide_like.get_liked_chapter_ids
+POST   /api/slides/chapters/{id}/like
+                                → crud_slide_like.add_chapter_like
+DELETE /api/slides/chapters/{id}/like
+                                → crud_slide_like.remove_chapter_like
+GET    /api/slides/liked-items  → crud_slide_like.get_liked_items_with_context
 ```
 
 ## Data Model
@@ -75,17 +81,19 @@ Index: `(username, slide_identifier, created_at)`
 |--------|------|-------------|
 | `raw_content` | Text | nullable — full paper text or YouTube transcript |
 
-**`UserSlideLike`** (`user_slide_like`) — per-user quiz likes; drives the filled/outline Like-button UI and is the signal that triggers the forgetting-rate boost
+**`UserSlideLike`** (`user_slide_like`) — polymorphic per-user like of either a quiz or a chapter; drives the filled/outline Like-button UI. Quiz likes also trigger a forgetting-rate boost. Chapter likes are pure bookmarks and do not affect the slide selector.
 
 | Column | Type | Constraints |
 |--------|------|-------------|
 | `id` | Integer | PK |
 | `username` | String | FK → users.username, NOT NULL |
-| `quiz_id` | Integer | FK → chapter_quizzes.id, NOT NULL |
+| `quiz_id` | Integer | nullable, FK → chapter_quizzes.id |
+| `chapter_id` | Integer | nullable, FK → chapters.id |
 | `liked_at` | Timestamp | NOT NULL, DEFAULT NOW() |
-| — | — | UNIQUE(`username`, `quiz_id`) |
+| — | — | CHECK (`(quiz_id IS NOT NULL) <> (chapter_id IS NOT NULL)`) — exactly one target |
+| — | — | UNIQUE(`username`, `quiz_id`), UNIQUE(`username`, `chapter_id`) |
 
-Index: `idx_usl_user` on `(username)`.
+Indexes: `idx_usl_user` on `(username)`, `idx_usl_chapter` on `(chapter_id)`, unique `idx_usl_user_chapter_unique` on `(username, chapter_id)`.
 
 **`quiz_skip_log`** — tracks skipped quizzes for back-of-queue ordering within tier 1
 
@@ -252,7 +260,10 @@ Return { response }
 | GET | `/api/slides/chat` | Session | `get_slide_chat_history` |
 | POST | `/api/slides/quizzes/{quiz_id}/like` | Session | `like_quiz` — inserts like row + `RevisionService.apply_like_boost` |
 | DELETE | `/api/slides/quizzes/{quiz_id}/like` | Session | `unlike_quiz` — deletes like row; does not restore rate |
-| GET | `/api/slides/likes` | Session | `list_likes` — returns `{"quiz_ids": [...]}` newest-first |
+| GET | `/api/slides/likes` | Session | `list_likes` — returns `{"quiz_ids": [...], "chapter_ids": [...]}` newest-first per leg |
+| POST | `/api/slides/chapters/{chapter_id}/like` | Session | `like_chapter` — inserts chapter-like row (bookmark only; no recall effect) |
+| DELETE | `/api/slides/chapters/{chapter_id}/like` | Session | `unlike_chapter` — deletes chapter-like row |
+| GET | `/api/slides/liked-items` | Session | `list_liked_items` — returns interleaved `{"items": [...]}` newest-liked first |
 
 ## Service Layer
 
@@ -395,10 +406,16 @@ class GradingOutput(BaseModel):
 
 | Function | Description |
 |----------|-------------|
-| `add_like(username, quiz_id)` | `INSERT ... ON CONFLICT DO NOTHING` — idempotent |
-| `remove_like(username, quiz_id)` | `DELETE` the row; no-op if absent |
-| `is_liked(username, quiz_id)` | Boolean lookup |
-| `get_liked_quiz_ids(username)` | List of liked `quiz_id`s, newest first |
+| `add_like(username, quiz_id)` | `INSERT ... ON CONFLICT DO NOTHING` — idempotent quiz like |
+| `remove_like(username, quiz_id)` | `DELETE` the quiz-like row; no-op if absent |
+| `is_liked(username, quiz_id)` | Boolean lookup for a quiz like |
+| `get_liked_quiz_ids(username)` | List of liked `quiz_id`s, newest first (excludes NULLs) |
+| `get_liked_quizzes_with_context(username)` | (quiz, lesson, book, like) tuples for liked quizzes |
+| `add_chapter_like(username, chapter_id)` | Idempotent insert of a chapter-like row |
+| `remove_chapter_like(username, chapter_id)` | Delete chapter-like row; no-op if absent |
+| `is_chapter_liked(username, chapter_id)` | Boolean lookup for a chapter like |
+| `get_liked_chapter_ids(username)` | List of liked `chapter_id`s, newest first |
+| `get_liked_items_with_context(username)` | Type-tagged interleaved list of liked quizzes and chapters with book/lesson context, newest first |
 
 ## Frontend — Pages & Routes
 
@@ -417,7 +434,9 @@ class GradingOutput(BaseModel):
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 | `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
 | `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
-| `LikeButton` | `frontend/src/components/LikeButton.jsx` | Thumbs-up FAB above `ChatButton` on quiz slides; filled (blue) when liked, outline (gray) when not; calls `toggleLike` from `useLikedQuizzes` |
+| `LikeButton` | `frontend/src/components/LikeButton.jsx` | Thumbs-up FAB above `ChatButton` on both chapter and quiz slides; filled (blue) when liked, outline (gray) when not; accepts `kind` ∈ `{"quiz","chapter"}` and an `id`; wires through `useLikedSlides.toggleLike(kind, id)` |
+| `FavoriteQuizCard` | `frontend/src/components/FavoriteQuizCard.jsx` | Read-only card used by the Favorite tab for liked quizzes (MC options + expected answer + key takeaway) |
+| `FavoriteChapterCard` | `frontend/src/components/FavoriteChapterCard.jsx` | Read-only card used by the Favorite tab for liked chapters (breadcrumb + title + markdown body rendered with react-markdown) |
 
 ## Frontend — Services & Hooks
 
@@ -448,7 +467,11 @@ class GradingOutput(BaseModel):
 | `getChatHistory(slideType, chapterId, quizId)` | GET `/api/slides/chat` |
 | `likeQuiz(quizId)` | POST `/api/slides/quizzes/{id}/like` |
 | `unlikeQuiz(quizId)` | DELETE `/api/slides/quizzes/{id}/like` |
-| `listLikedQuizzes()` | GET `/api/slides/likes` |
+| `listLikedQuizzes()` | GET `/api/slides/likes` — returns `{ quiz_ids, chapter_ids }` |
+| `listLikedQuizzesFull()` | GET `/api/slides/liked-quizzes` — quiz-only favorites (legacy) |
+| `likeChapter(chapterId)` | POST `/api/slides/chapters/{id}/like` |
+| `unlikeChapter(chapterId)` | DELETE `/api/slides/chapters/{id}/like` |
+| `listLikedItems()` | GET `/api/slides/liked-items` — interleaved `{ items: [...] }`, newest first |
 
 **`useSlideChat`** (`frontend/src/hooks/useSlideChat.js`):
 
@@ -458,14 +481,15 @@ class GradingOutput(BaseModel):
 | `loading` | Boolean — true while waiting for AI response |
 | `sendMessage(text)` | POST chat, append user msg + AI response to state |
 
-**`useLikedQuizzes`** (`frontend/src/hooks/useLikedQuizzes.js`):
+**`useLikedSlides`** (`frontend/src/hooks/useLikedSlides.js`):
 
 | Method / State | Description |
 |----------------|-------------|
-| `likedIds` | `Set<number>` of quizzes the current user has liked |
+| `quizIds` | `Set<number>` of quizzes the current user has liked |
+| `chapterIds` | `Set<number>` of chapters the current user has liked |
 | `loading` | Boolean — true until initial `GET /api/slides/likes` resolves |
-| `isLiked(quizId)` | Returns whether the quiz is in `likedIds` |
-| `toggleLike(quizId)` | Optimistic flip of the like set; calls `likeQuiz`/`unlikeQuiz`; rolls back on error |
+| `isLiked(kind, id)` | `kind ∈ {"quiz","chapter"}`; membership test against the matching set |
+| `toggleLike(kind, id)` | Optimistic flip of the matching set; calls `likeQuiz`/`unlikeQuiz` or `likeChapter`/`unlikeChapter`; rolls back on error |
 
 ## Component Checklist
 
@@ -524,6 +548,24 @@ class GradingOutput(BaseModel):
 - [x] Tests — `frontend/src/__tests__/components/SlideChat.test.js`
 - [x] Tests — `frontend/src/__tests__/hooks/useSlideChat.test.js`
 - [x] Migration — `scripts/sql/010_user_slide_like.sql`
+- [x] Migration — `scripts/sql/011_polymorphic_slide_like.sql`
+- [x] Model update — `backend/src/models/slide_like.py` (nullable `quiz_id`, new `chapter_id`, CHECK)
+- [x] CRUD — `backend/src/crud/crud_slide_like.py` (chapter helpers + `get_liked_items_with_context`)
+- [x] Schemas — `backend/src/schemas/slides.py` (`FavoriteChapter`, `LikedQuizItem`, `LikedChapterItem`, `LikedItemsResponse`; `LikeListResponse.chapter_ids`)
+- [x] API — `backend/src/api/slides.py` (POST/DELETE `/chapters/{id}/like`, GET `/liked-items`; `/likes` extended)
+- [x] Tests — `backend/tests/test_crud_slide_like.py` (chapter helpers + CHECK constraint + interleaving)
+- [x] Tests — `backend/tests/test_slides_api.py` (chapter-like endpoints + `/liked-items`)
+- [x] Tests — `backend/tests/test_slide_selector.py` (regression: chapter like never resurfaces)
+- [x] Hook — `frontend/src/hooks/useLikedSlides.js` (renamed from `useLikedQuizzes`)
+- [x] Component — `frontend/src/components/LikeButton.jsx` (`kind` / `id` prop)
+- [x] Component — `frontend/src/components/FavoriteQuizCard.jsx` (extracted)
+- [x] Component — `frontend/src/components/FavoriteChapterCard.jsx`
+- [x] Page update — `frontend/src/pages/SlidePage.jsx` (LikeButton on chapter slides)
+- [x] Page update — `frontend/src/components/FavoriteView.jsx` (interleaved dispatcher)
+- [x] API methods — `frontend/src/services/api.js` (`likeChapter`, `unlikeChapter`, `listLikedItems`)
+- [x] Tests — `frontend/src/__tests__/hooks/useLikedSlides.test.js`
+- [x] Tests — `frontend/src/__tests__/components/LikeButton.test.js` (kind-aware)
+- [x] Tests — `frontend/src/__tests__/components/FavoriteView.test.js` (interleaved rendering)
 - [x] Model — `backend/src/models/slide_like.py` (`UserSlideLike`)
 - [x] CRUD — `backend/src/crud/crud_slide_like.py`
 - [x] Service — `backend/src/service/revision_service.py` (`apply_like_boost`)

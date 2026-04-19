@@ -15,7 +15,7 @@ After authentication, users land on a blank page. There is no learning interface
 
 A continuous slide stream combining chapter study and spaced-repetition quizzes. The user sees one slide at a time: either a chapter to read or a quiz to answer. The system selects the next slide using a 2-tier priority algorithm (due revisions → new chapters). Within revision quizzes, unskipped quizzes are served first (weakest recall); skipped quizzes form a back-of-queue and resurface only after all unskipped quizzes are exhausted. Open-ended quiz answers are graded by AI. A floating chat icon on each slide lets the user ask contextual questions, answered by AI using the lesson source material, slide content, and conversation history.
 
-Users can mark quizzes they want to see more often by tapping a thumbs-up Like button on the quiz slide; liked quizzes have their recall weakened so they resurface sooner in the revision queue.
+Users can mark quizzes they want to see more often by tapping a thumbs-up Like button on the quiz slide; liked quizzes have their recall weakened so they resurface sooner in the revision queue. Chapters can also be liked from their slide; liked chapters appear in the Favorite tab alongside liked quizzes in a single newest-first list. Chapter likes are bookmarks only and do not affect the slide selection algorithm.
 
 Navigation arrows allow the user to move backward through their slide history (up arrow) or forward again (down arrow). Each user's current position and full history are stored server-side so the state survives page refreshes. Quiz answers viewed while replaying history show the original feedback.
 
@@ -50,10 +50,15 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
   │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
   │     MC feedback: all options shown (wrong pick red, correct green, others gray)
   │
-  ├── Like (on quiz slides only):
+  ├── Like (on quiz slides):
   │     [Like button (thumbs-up) above chat icon] → toggles like/unlike
   │     Liked quizzes have their recall weakened so they appear
   │     more frequently in the spaced-repetition ordering
+  │
+  ├── Like (on chapter slides):
+  │     [Like button (thumbs-up) above chat icon] → toggles like/unlike
+  │     Liked chapters are bookmarked and visible in the Favorite tab;
+  │     they do NOT resurface on the slide stream
   │
   ├── Chat (on any chapter or quiz slide):
   │     [Chat icon] → opens chat panel
@@ -76,12 +81,14 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
 - Contextual AI Q&A chat on chapter and quiz slides
 - Back/forward navigation through slide history (up/down arrows)
 - Per-quiz like/unlike via a thumbs-up Like button; liked quizzes resurface sooner in the revision queue
+- Per-chapter like/unlike via the same thumbs-up Like button; liked chapters appear in the Favorite tab
+- Favorite tab showing liked quizzes and liked chapters interleaved, newest-liked first, filterable by book
 
 **Not included:**
 - User progress dashboard (separate feature)
 - Lesson structure browsing
 - Manual content creation (agent upload only)
-- Liking chapters (a future bookmark feature) or showing social like counts
+- Showing social like counts
 
 ## Acceptance Criteria
 
@@ -104,9 +111,13 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
 - [ ] Clicking chat icon opens a chat panel
 - [ ] User can type a question and receive a contextual AI response
 - [ ] Chat history persists per slide across page refreshes
-- [ ] Like button (thumbs-up) is visible on every quiz slide and hidden on chapter slides and the All-Caught-Up state
+- [ ] Like button (thumbs-up) is visible on every quiz slide and chapter slide and hidden on the All-Caught-Up state
 - [ ] Clicking the Like button toggles filled/outline and persists across page refresh
 - [ ] Liking a quiz causes it to appear sooner in subsequent Tier-1 ordering
+- [ ] Liking a chapter does NOT resurface it on the slide stream (bookmark only)
+- [ ] The Favorite tab shows liked quizzes and liked chapters interleaved, newest-liked first
+- [ ] A liked chapter renders as a chapter card (breadcrumb + title + markdown body) distinct from the quiz card layout
+- [ ] BookSelector on the Favorite tab filters both quiz and chapter items by book
 
 ---
 

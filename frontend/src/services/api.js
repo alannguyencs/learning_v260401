@@ -109,6 +109,21 @@ const apiService = {
     const response = await api.get("/api/slides/liked-quizzes");
     return response.data;
   },
+
+  likeChapter: async (chapterId) => {
+    const response = await api.post(`/api/slides/chapters/${chapterId}/like`);
+    return response.data;
+  },
+
+  unlikeChapter: async (chapterId) => {
+    const response = await api.delete(`/api/slides/chapters/${chapterId}/like`);
+    return response.data;
+  },
+
+  listLikedItems: async () => {
+    const response = await api.get("/api/slides/liked-items");
+    return response.data;
+  },
 };
 
 export default apiService;

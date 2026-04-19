@@ -11,6 +11,7 @@ from src.crud.crud_content import (
 )
 from src.crud.crud_learning_progress import increment_lesson_count
 from src.crud.crud_revision import complete_round, create_round, get_open_round
+from src.crud.crud_slide_like import add_chapter_like
 from src.crud.crud_slides import log_quiz_skip
 from src.crud.crud_user import create_user
 from src.service.learning_progress_service import LearningProgressService
@@ -315,3 +316,42 @@ class TestLikeBoostSurfacesFirst:
         result = SlideSelector.get_next_slide(db, "testuser")
         assert result.slide_type == "quiz"
         assert result.quiz["id"] == q2.id
+
+
+class TestChapterLikeNoSelectorEffect:
+    """Regression: chapter likes are bookmarks only — they do not affect selection."""
+
+    def test_chapter_like_does_not_change_tier2_order(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """Liking a chapter does not resurface it or reorder Tier 2."""
+        db = setup["db"]
+        chapter1 = setup["chapter1"]
+
+        # Pin to book "ml" so Tier 2 is deterministic (first unlearnt chapter of book1).
+        baseline = SlideSelector.get_next_slide(db, "testuser", book_id="ml")
+        assert baseline.slide_type == "chapter"
+        baseline_id = baseline.chapter["id"]
+        assert baseline_id == chapter1.id
+
+        # Liking chapter1 must not change the result.
+        add_chapter_like(db, "testuser", chapter1.id)
+        after_like = SlideSelector.get_next_slide(db, "testuser", book_id="ml")
+        assert after_like.slide_type == "chapter"
+        assert after_like.chapter["id"] == baseline_id
+
+    def test_liked_learnt_chapter_does_not_resurface(
+        self, setup
+    ):  # pylint: disable=redefined-outer-name
+        """A learnt chapter that was liked never reappears on /slides."""
+        db = setup["db"]
+        chapter1 = setup["chapter1"]
+
+        add_chapter_like(db, "testuser", chapter1.id)
+        LearningProgressService.mark_chapter_learnt(db, "testuser", chapter1.id)
+
+        # Pin to book1 so chapter2 (the only other unlearnt in book1) is returned.
+        result = SlideSelector.get_next_slide(db, "testuser", book_id="ml")
+        # chapter1 is learnt → should NOT be returned even though it was liked.
+        if result.slide_type == "chapter":
+            assert result.chapter["id"] != chapter1.id

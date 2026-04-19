@@ -1,20 +1,25 @@
 import React from "react";
 
-const LikeButton = ({ quizId, isLiked, onToggle }) => {
+const LikeButton = ({ kind = "quiz", id, quizId, isLiked, onToggle }) => {
+  const targetId = id ?? quizId;
+  const targetKind = kind === "chapter" ? "chapter" : "quiz";
+
   const handleClick = () => {
-    onToggle(quizId);
+    onToggle(targetId);
   };
 
   const colorClass = isLiked
     ? "text-blue-500 hover:text-blue-400"
     : "text-gray-400 hover:text-blue-400";
 
+  const labelNoun = targetKind === "chapter" ? "chapter" : "quiz";
+
   return (
     <button
       onClick={handleClick}
       className={`fixed bottom-40 left-[calc(50%+240px)] flex items-center justify-center
         z-50 drop-shadow-lg transition-colors duration-150 ${colorClass}`}
-      aria-label={isLiked ? "Unlike quiz" : "Like quiz"}
+      aria-label={isLiked ? `Unlike ${labelNoun}` : `Like ${labelNoun}`}
       aria-pressed={isLiked}
       data-testid="like-button"
     >

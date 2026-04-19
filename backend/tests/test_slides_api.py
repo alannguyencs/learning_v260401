@@ -224,7 +224,7 @@ class TestLikeEndpoints:
         auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
         auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
         likes = auth_client.get("/api/slides/likes").json()
-        assert likes == {"quiz_ids": [quiz_id]}
+        assert likes == {"quiz_ids": [quiz_id], "chapter_ids": []}
 
     def test_post_like_boosts_forgetting_rate(
         self, auth_client, db_session
@@ -260,7 +260,7 @@ class TestLikeEndpoints:
         assert response.status_code == 200
         assert response.json() == {"liked": False}
         likes = auth_client.get("/api/slides/likes").json()
-        assert likes == {"quiz_ids": []}
+        assert likes == {"quiz_ids": [], "chapter_ids": []}
 
     def test_delete_like_is_idempotent(self, auth_client):  # pylint: disable=redefined-outer-name
         """DELETE on a not-liked quiz returns 200 and does not raise."""
@@ -301,4 +301,102 @@ class TestLikeEndpoints:
     def test_delete_like_unauthenticated(self, client):
         """DELETE /like without session returns 401."""
         response = client.delete("/api/slides/quizzes/1/like")
+        assert response.status_code == 401
+
+
+class TestChapterLikeEndpoints:
+    """Tests for POST/DELETE /chapters/{id}/like and GET /liked-items."""
+
+    def test_like_chapter_returns_true(self, auth_client):  # pylint: disable=redefined-outer-name
+        """POST chapter-like returns {liked: true} and inserts a row."""
+        ids = _seed_content(auth_client)
+        response = auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": True}
+
+        likes = auth_client.get("/api/slides/likes").json()
+        assert likes == {"quiz_ids": [], "chapter_ids": [ids["chapter_id"]]}
+
+    def test_like_chapter_is_idempotent(self, auth_client):  # pylint: disable=redefined-outer-name
+        """Two POSTs yield a single chapter_id entry."""
+        ids = _seed_content(auth_client)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        likes = auth_client.get("/api/slides/likes").json()
+        assert likes["chapter_ids"] == [ids["chapter_id"]]
+
+    def test_like_chapter_does_not_touch_recall(
+        self, auth_client, db_session
+    ):  # pylint: disable=redefined-outer-name
+        """Chapter likes do not create or modify user_quiz_recall rows."""
+        ids = _seed_content(auth_client)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        # No recall entry was ever written for any quiz on this chapter.
+        # (Specifically: no chapter-quiz-to-recall coupling was introduced.)
+        # We assert the API works without raising — the selector regression test
+        # in test_slide_selector.py checks ordering is unaffected.
+        assert auth_client.get("/api/slides/likes").status_code == 200
+        _ = db_session  # unused but kept to match fixture signature
+
+    def test_unlike_chapter_returns_false(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
+        """DELETE chapter-like returns {liked: false} and deletes the row."""
+        ids = _seed_content(auth_client)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        response = auth_client.delete(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": False}
+        likes = auth_client.get("/api/slides/likes").json()
+        assert likes["chapter_ids"] == []
+
+    def test_unlike_chapter_is_idempotent(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
+        """DELETE on a not-liked chapter is a no-op 200."""
+        ids = _seed_content(auth_client)
+        response = auth_client.delete(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        assert response.status_code == 200
+        assert response.json() == {"liked": False}
+
+    def test_like_chapter_unknown_returns_404(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
+        """POST on an unknown chapter returns 404."""
+        response = auth_client.post("/api/slides/chapters/999999/like")
+        assert response.status_code == 404
+
+    def test_liked_items_interleaves_newest_first(
+        self, auth_client
+    ):  # pylint: disable=redefined-outer-name
+        """/liked-items returns both quiz and chapter likes, newest liked_at first."""
+        ids = _seed_content(auth_client)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/learnt")
+        slide = auth_client.get("/api/slides/current").json()
+        quiz_id = slide["quiz"]["id"]
+
+        # Like chapter first, then quiz (quiz is the most recent like)
+        auth_client.post(f"/api/slides/chapters/{ids['chapter_id']}/like")
+        auth_client.post(f"/api/slides/quizzes/{quiz_id}/like")
+
+        data = auth_client.get("/api/slides/liked-items").json()
+        assert len(data["items"]) == 2
+        assert data["items"][0]["type"] == "quiz"
+        assert data["items"][0]["quiz"]["id"] == quiz_id
+        assert data["items"][1]["type"] == "chapter"
+        assert data["items"][1]["chapter"]["id"] == ids["chapter_id"]
+
+    def test_liked_items_unauthenticated(self, client):
+        """/liked-items without session returns 401."""
+        response = client.get("/api/slides/liked-items")
+        assert response.status_code == 401
+
+    def test_like_chapter_unauthenticated(self, client):
+        """POST /chapters/{id}/like without session returns 401."""
+        response = client.post("/api/slides/chapters/1/like")
+        assert response.status_code == 401
+
+    def test_unlike_chapter_unauthenticated(self, client):
+        """DELETE /chapters/{id}/like without session returns 401."""
+        response = client.delete("/api/slides/chapters/1/like")
         assert response.status_code == 401

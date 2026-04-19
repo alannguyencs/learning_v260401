@@ -1,8 +1,8 @@
 """Pydantic schemas for slide API requests and responses."""
 
-from typing import List, Optional
+from typing import List, Literal, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ChapterSlide(BaseModel):
@@ -120,6 +120,7 @@ class LikeListResponse(BaseModel):
     """Response from GET /api/slides/likes."""
 
     quiz_ids: List[int]
+    chapter_ids: List[int] = []
 
 
 class FavoriteQuiz(BaseModel):
@@ -149,3 +150,41 @@ class FavoriteListResponse(BaseModel):
     """Response from GET /api/slides/liked-quizzes — newest like first."""
 
     quizzes: List[FavoriteQuiz]
+
+
+class FavoriteChapter(BaseModel):
+    """A liked chapter rendered in the Favorite tab (read-only preview)."""
+
+    id: int
+    lesson_id: int
+    lesson_title: str
+    lesson_index: int
+    chapter_index: int
+    book_id: str
+    book_title: str
+    title: str
+    content: str
+
+
+class LikedQuizItem(BaseModel):
+    """Interleaved Favorite entry for a liked quiz."""
+
+    type: Literal["quiz"] = "quiz"
+    id: int
+    liked_at: str
+    quiz: FavoriteQuiz
+
+
+class LikedChapterItem(BaseModel):
+    """Interleaved Favorite entry for a liked chapter."""
+
+    type: Literal["chapter"] = "chapter"
+    id: int
+    liked_at: str
+    chapter: FavoriteChapter
+
+
+class LikedItemsResponse(BaseModel):
+    """Response from GET /api/slides/liked-items — newest like first, interleaved."""
+
+    items: List[Union[LikedQuizItem, LikedChapterItem]] = Field(default_factory=list)

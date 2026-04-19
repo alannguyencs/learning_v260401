@@ -89,9 +89,7 @@ def get_current_slide(db: Session, username: str, book_id: Optional[str] = None)
         return result
 
     rebuilt = _rebuild_slide(db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num)
-    book_mismatch = (
-        book_id is not None and _saved_position_book_id(db, pos) != book_id
-    )
+    book_mismatch = book_id is not None and _saved_position_book_id(db, pos) != book_id
     if rebuilt is None or book_mismatch:
         result = SlideSelector.get_next_slide(db, username, book_id)
         if result.slide_type != "none":

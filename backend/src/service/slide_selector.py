@@ -118,9 +118,7 @@ class SlideSelector:
                     m_t = RevisionService.compute_recall(recall.forgetting_rate, elapsed)
                 else:
                     m_t = 1.0
-                group_a.append(
-                    (book_rank, m_t, qid, round_row.round_num, round_row.lesson_id)
-                )
+                group_a.append((book_rank, m_t, qid, round_row.round_num, round_row.lesson_id))
             for qid in skipped:
                 group_b.append((book_rank, qid, round_row.round_num, round_row.lesson_id))
 

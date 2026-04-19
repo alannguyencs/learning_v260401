@@ -1,6 +1,6 @@
 import React from "react";
 import useSlide from "../hooks/useSlide";
-import useLikedQuizzes from "../hooks/useLikedQuizzes";
+import useLikedSlides from "../hooks/useLikedSlides";
 import BookSelector from "../components/BookSelector";
 import ChatButton from "../components/ChatButton";
 import LikeButton from "../components/LikeButton";
@@ -61,7 +61,7 @@ const SlidePage = () => {
     goPrevious,
   } = useSlide();
 
-  const { isLiked, toggleLike } = useLikedQuizzes();
+  const { isLiked, toggleLike } = useLikedSlides();
 
   const isActive = !loading && !error && slide && slide.slide_type !== "none";
 
@@ -133,11 +133,24 @@ const SlidePage = () => {
 
         {!loading && !error && slide?.slide_type === "quiz" && slide.quiz && (
           <LikeButton
-            quizId={slide.quiz.id}
-            isLiked={isLiked(slide.quiz.id)}
-            onToggle={toggleLike}
+            kind="quiz"
+            id={slide.quiz.id}
+            isLiked={isLiked("quiz", slide.quiz.id)}
+            onToggle={() => toggleLike("quiz", slide.quiz.id)}
           />
         )}
+
+        {!loading &&
+          !error &&
+          slide?.slide_type === "chapter" &&
+          slide.chapter && (
+            <LikeButton
+              kind="chapter"
+              id={slide.chapter.id}
+              isLiked={isLiked("chapter", slide.chapter.id)}
+              onToggle={() => toggleLike("chapter", slide.chapter.id)}
+            />
+          )}
       </div>
 
       {isActive && (
