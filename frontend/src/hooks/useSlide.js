@@ -80,6 +80,19 @@ const useSlide = () => {
     }
   };
 
+  const jumpToChapter = async (chapterId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await apiService.jumpToChapter(chapterId);
+      _applySlideData(data);
+    } catch {
+      setError("Failed to open chapter.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitAnswer = async (quizId, body) => {
     setSubmitting(true);
     try {
@@ -120,6 +133,7 @@ const useSlide = () => {
     fetchNextSlide,
     markLearnt,
     goPrevious,
+    jumpToChapter,
     submitAnswer,
     skipItem,
     selectBook,

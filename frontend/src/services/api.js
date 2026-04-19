@@ -54,6 +54,13 @@ const apiService = {
     return response.data;
   },
 
+  jumpToChapter: async (chapterId) => {
+    const response = await api.post("/api/slides/jump-to-chapter", {
+      chapter_id: chapterId,
+    });
+    return response.data;
+  },
+
   markChapterLearnt: async (chapterId) => {
     const response = await api.post(`/api/slides/chapters/${chapterId}/learnt`);
     return response.data;

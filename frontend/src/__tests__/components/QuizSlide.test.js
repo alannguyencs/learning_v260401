@@ -4,6 +4,8 @@ import QuizSlide from "../../components/QuizSlide";
 
 const mcQuiz = {
   id: 1,
+  chapter_id: 9,
+  chapter_title: "What is ML",
   quiz_type: "multiple_choice",
   question: "What is ML?",
   option_a: "Machine Learning",
@@ -141,5 +143,51 @@ describe("QuizSlide", () => {
       />,
     );
     expect(screen.getAllByTestId("feedback-panel").length).toBeGreaterThan(0);
+  });
+
+  it("renders View chapter link when chapter_title is set and handler provided", () => {
+    const onJumpToChapter = jest.fn();
+    render(
+      <QuizSlide
+        quiz={mcQuiz}
+        feedback={null}
+        onSubmit={jest.fn()}
+        onJumpToChapter={onJumpToChapter}
+      />,
+    );
+    const link = screen.getByTestId("view-chapter-link");
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveTextContent("View chapter: What is ML");
+  });
+
+  it("calls onJumpToChapter with chapter_id when link is clicked", () => {
+    const onJumpToChapter = jest.fn();
+    render(
+      <QuizSlide
+        quiz={mcQuiz}
+        feedback={null}
+        onSubmit={jest.fn()}
+        onJumpToChapter={onJumpToChapter}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("view-chapter-link"));
+    expect(onJumpToChapter).toHaveBeenCalledWith(9);
+  });
+
+  it("renders View chapter link even in feedback state", () => {
+    render(
+      <QuizSlide
+        quiz={mcQuiz}
+        feedback={{ is_correct: true, round_done: false }}
+        onSubmit={jest.fn()}
+        onJumpToChapter={jest.fn()}
+      />,
+    );
+    expect(screen.getByTestId("view-chapter-link")).toBeInTheDocument();
+  });
+
+  it("does not render link when onJumpToChapter handler is missing", () => {
+    render(<QuizSlide quiz={mcQuiz} feedback={null} onSubmit={jest.fn()} />);
+    expect(screen.queryByTestId("view-chapter-link")).not.toBeInTheDocument();
   });
 });

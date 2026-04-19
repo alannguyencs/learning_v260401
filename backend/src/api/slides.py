@@ -20,6 +20,7 @@ from src.database import get_db
 from src.schemas.slides import (
     ChatMessageResponse,
     ChapterLearntResponse,
+    JumpToChapterRequest,
     QuizRespondRequest,
     QuizRespondResponse,
     SlideChatRequest,
@@ -31,7 +32,12 @@ from src.service.learning_progress_service import LearningProgressService
 from src.service.quiz_grader import QuizGrader
 from src.service.revision_service import RevisionService
 from src.service.slide_chat_service import SlideChatService
-from src.service.slide_navigation import get_current_slide, go_next, go_previous
+from src.service.slide_navigation import (
+    get_current_slide,
+    go_next,
+    go_previous,
+    jump_to_chapter,
+)
 
 router = APIRouter()
 
@@ -85,6 +91,26 @@ def slide_back(
 ):
     """Go to the previous slide."""
     result = go_previous(db, user.username)
+    return SlideResponse(
+        slide_type=result.slide_type,
+        chapter=result.chapter,
+        quiz=result.quiz,
+        has_previous=result.has_previous,
+        feedback=result.feedback,
+    )
+
+
+@router.post("/slides/jump-to-chapter", response_model=SlideResponse)
+def slide_jump_to_chapter(
+    body: JumpToChapterRequest,
+    user=Depends(require_session_user),
+    db: Session = Depends(get_db),
+):
+    """Insert a chapter as the next slide and push current position to back-history."""
+    try:
+        result = jump_to_chapter(db, user.username, body.chapter_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     return SlideResponse(
         slide_type=result.slide_type,
         chapter=result.chapter,

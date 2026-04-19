@@ -15,6 +15,9 @@ POST /api/slides/quizzes/{id}/respond
                                 → auto-grade (MC) or QuizGrader.grade (open-ended)
                                 → RevisionService.record_quiz_response
                                 → crud_slide_position.save_feedback (persists feedback for history replay)
+POST /api/slides/jump-to-chapter
+                                → slide_navigation.jump_to_chapter
+                                → clear_forward + save_position (pushes quiz + feedback to back-history)
 POST /api/slides/chat           → SlideChatService.answer (Gemini 2.5 Flash)
 GET  /api/slides/chat           → get_chat_messages(username, slide_identifier)
 POST   /api/slides/quizzes/{id}/like
@@ -254,6 +257,7 @@ Return { response }
 | GET | `/api/slides/current` | Session | `slide_current` |
 | POST | `/api/slides/forward` | Session | `slide_forward` — body: `{ book_id, mark_chapter_id? }` |
 | POST | `/api/slides/back` | Session | `slide_back` |
+| POST | `/api/slides/jump-to-chapter` | Session | `slide_jump_to_chapter` — body `{ chapter_id }`; clears forward, saves chapter as current (pushes quiz+feedback to back) |
 | POST | `/api/slides/chapters/{chapter_id}/learnt` | Session | `mark_chapter_learnt` |
 | POST | `/api/slides/quizzes/{quiz_id}/respond` | Session | `respond_to_quiz` |
 | POST | `/api/slides/chat` | Session | `slide_chat` |
@@ -274,6 +278,7 @@ Return { response }
 | `get_current_slide(db, username, book_id)` | Returns saved position or computes fresh; never recomputes if saved |
 | `go_next(db, username, book_id, mark_chapter_id)` | Clears forward on new action; replays forward stack or computes fresh |
 | `go_previous(db, username)` | Pops back-history, pushes current to forward, rebuilds slide with saved feedback |
+| `jump_to_chapter(db, username, chapter_id)` | Clears forward; calls `save_position("chapter", chapter_id, …)` which pushes the prior quiz + its `feedback_json` to back-history; returns a `SlideResult` whose chapter dict has `is_learnt` populated. Raises `ValueError` on unknown chapter (API layer maps to 404). |
 
 **`SlideSelector`** (`backend/src/service/slide_selector.py`):
 
@@ -429,8 +434,8 @@ class GradingOutput(BaseModel):
 |-----------|------|----------------|
 | `SlidePage` | `frontend/src/pages/SlidePage.jsx` | Orchestrates `useSlide`, renders correct sub-component |
 | `BookSelector` | `frontend/src/components/BookSelector.jsx` | Fetches book list, dropdown to filter slides by book |
-| `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt button |
-| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC single-correct (radio buttons) / MC multi-correct (checkboxes + "Select all that apply"); feedback shows all options: wrong pick = red, correct = green; shows section_name badge and quiz_take_away in feedback; no Skip or Next Slide buttons (navigation handled by down arrow) |
+| `ChapterSlide` | `frontend/src/components/ChapterSlide.jsx` | Renders markdown chapter + Mark as Learnt button. Button is hidden when `chapter.is_learnt === true` (e.g. chapters inserted via the quiz→chapter jump link). |
+| `QuizSlide` | `frontend/src/components/QuizSlide.jsx` | Renders quiz by format: cloze (fill-in-blank), free_recall/teach_back (text area + key-points checklist), MC single-correct (radio buttons) / MC multi-correct (checkboxes + "Select all that apply"); feedback shows all options: wrong pick = red, correct = green; shows section_name badge and quiz_take_away in feedback; no Skip or Next Slide buttons (navigation handled by down arrow); renders a `View chapter: {chapter_title}` link under the breadcrumb that calls `onJumpToChapter(chapter_id)` in both pre-answer and feedback states |
 | `AllCaughtUp` | `frontend/src/components/AllCaughtUp.jsx` | Empty-state message when no slides remain |
 | `ChatButton` | `frontend/src/components/ChatButton.jsx` | Floating FAB at bottom-right, toggles ChatPanel |
 | `ChatPanel` | `frontend/src/components/ChatPanel.jsx` | Chat drawer with message bubbles, input, markdown rendering |
@@ -449,6 +454,7 @@ class GradingOutput(BaseModel):
 | `fetchNextSlide(markChapterId?)` | POST `/api/slides/forward`; uses internal `bookId` state; optional `mark_chapter_id` when chapter id passed |
 | `markLearnt(chapterId)` | POST `/api/slides/forward` with `mark_chapter_id`; records progress and advances |
 | `goPrevious()` | POST `/api/slides/back`; restores previous slide with saved feedback |
+| `jumpToChapter(chapterId)` | POST `/api/slides/jump-to-chapter`; inserts the chapter as current slide and rehydrates via `_applySlideData` |
 | `submitAnswer(quizId, body)` | POST respond; sets `submitting=true` during request, stores `feedback` state (no advance) |
 | `skipItem(quizId, body)` | POST respond with `is_skip=true`; calls `fetchNextSlide` after |
 | `selectBook(bookId)` | Sets `bookId`; calls `loadCurrent` |
@@ -461,6 +467,7 @@ class GradingOutput(BaseModel):
 | `getCurrentSlide(bookId)` | GET `/api/slides/current?book_id=bookId` |
 | `slideForward(body)` | POST `/api/slides/forward` — body: `{ book_id, mark_chapter_id? }` |
 | `slideBack()` | POST `/api/slides/back` |
+| `jumpToChapter(chapterId)` | POST `/api/slides/jump-to-chapter` — body `{ chapter_id }` |
 | `markChapterLearnt(chapterId)` | POST `/api/slides/chapters/{id}/learnt` |
 | `respondToQuiz(quizId, body)` | POST `/api/slides/quizzes/{id}/respond` |
 | `sendChatMessage(body)` | POST `/api/slides/chat` |
@@ -566,6 +573,19 @@ class GradingOutput(BaseModel):
 - [x] Tests — `frontend/src/__tests__/hooks/useLikedSlides.test.js`
 - [x] Tests — `frontend/src/__tests__/components/LikeButton.test.js` (kind-aware)
 - [x] Tests — `frontend/src/__tests__/components/FavoriteView.test.js` (interleaved rendering)
+- [x] API — `backend/src/api/slides.py` (POST `/jump-to-chapter`)
+- [x] Schemas — `backend/src/schemas/slides.py` (`JumpToChapterRequest`; `QuizSlide.chapter_title`; `ChapterSlide.is_learnt`)
+- [x] Service — `backend/src/service/slide_navigation.py` (`jump_to_chapter`)
+- [x] Service update — `backend/src/service/slide_selector.py` (`_build_quiz_dict` adds `chapter_title`; `_build_chapter_dict` adds `is_learnt`, accepts `username`)
+- [x] Tests — `backend/tests/test_slide_navigation.py` (`jump_to_chapter` unit + integration cases)
+- [x] API client — `frontend/src/services/api.js` (`jumpToChapter`)
+- [x] Hook — `frontend/src/hooks/useSlide.js` (`jumpToChapter`)
+- [x] Component — `frontend/src/components/QuizSlide.jsx` (View-chapter link)
+- [x] Component — `frontend/src/components/ChapterSlide.jsx` (conditional Mark-as-Learnt)
+- [x] Page — `frontend/src/pages/SlidePage.jsx` (wire `onJumpToChapter`)
+- [x] Tests — `frontend/src/__tests__/components/QuizSlide.test.js` (link rendering + click)
+- [x] Tests — `frontend/src/__tests__/components/ChapterSlide.test.js` (`is_learnt` hides button)
+- [x] Tests — `frontend/src/__tests__/hooks/useSlide.test.js` (`jumpToChapter`)
 - [x] Model — `backend/src/models/slide_like.py` (`UserSlideLike`)
 - [x] CRUD — `backend/src/crud/crud_slide_like.py`
 - [x] Service — `backend/src/service/revision_service.py` (`apply_like_boost`)

@@ -228,4 +228,35 @@ describe("useSlide", () => {
     expect(result.current.feedback).toEqual(mockFeedback);
     expect(result.current.slide.slide_type).toBe("quiz");
   });
+
+  it("jumpToChapter calls apiService.jumpToChapter and applies result", async () => {
+    const initial = {
+      slide_type: "quiz",
+      chapter: null,
+      quiz: { id: 5, chapter_id: 9, chapter_title: "Intro" },
+      has_previous: false,
+      feedback: { is_correct: true },
+    };
+    const jumped = {
+      slide_type: "chapter",
+      chapter: { id: 9, title: "Intro", is_learnt: true },
+      quiz: null,
+      has_previous: true,
+      feedback: null,
+    };
+    apiService.getCurrentSlide.mockResolvedValue(initial);
+    apiService.jumpToChapter.mockResolvedValue(jumped);
+
+    const { result } = renderHook(() => useSlide());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.jumpToChapter(9);
+    });
+
+    expect(apiService.jumpToChapter).toHaveBeenCalledWith(9);
+    expect(result.current.slide).toEqual(jumped);
+    expect(result.current.hasPrevious).toBe(true);
+    expect(result.current.feedback).toBeNull();
+  });
 });

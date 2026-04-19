@@ -59,6 +59,7 @@ const SlidePage = () => {
     selectBook,
     fetchNextSlide,
     goPrevious,
+    jumpToChapter,
   } = useSlide();
 
   const { isLiked, toggleLike } = useLikedSlides();
@@ -118,6 +119,7 @@ const SlidePage = () => {
                 is_skip: false,
               })
             }
+            onJumpToChapter={jumpToChapter}
           />
         )}
 

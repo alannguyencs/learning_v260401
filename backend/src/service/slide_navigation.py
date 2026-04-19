@@ -26,6 +26,7 @@ from src.service.slide_selector import (  # pylint: disable=protected-access
 
 def _rebuild_slide(
     db: Session,
+    username: str,
     slide_type: str,
     slide_id: int,
     lesson_id: Optional[int],
@@ -38,7 +39,7 @@ def _rebuild_slide(
             return None
         return SlideResult(
             slide_type="chapter",
-            chapter=_build_chapter_dict(db, chapter),
+            chapter=_build_chapter_dict(db, chapter, username=username),
             quiz=None,
         )
     if slide_type == "quiz":
@@ -88,7 +89,9 @@ def get_current_slide(db: Session, username: str, book_id: Optional[str] = None)
         result.has_previous = False
         return result
 
-    rebuilt = _rebuild_slide(db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num)
+    rebuilt = _rebuild_slide(
+        db, username, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num
+    )
     book_mismatch = book_id is not None and _saved_position_book_id(db, pos) != book_id
     if rebuilt is None or book_mismatch:
         result = SlideSelector.get_next_slide(db, username, book_id)
@@ -129,7 +132,7 @@ def go_next(
         fwd = pop_from_forward(db, username)
         if fwd:
             rebuilt = _rebuild_slide(
-                db, fwd.slide_type, fwd.slide_id, fwd.lesson_id, fwd.round_num
+                db, username, fwd.slide_type, fwd.slide_id, fwd.lesson_id, fwd.round_num
             )
             if rebuilt is not None:
                 slide_id, lesson_id, round_num = _extract_position_fields(rebuilt)
@@ -156,6 +159,27 @@ def go_next(
     return result
 
 
+def jump_to_chapter(db: Session, username: str, chapter_id: int) -> SlideResult:
+    """Insert a chapter as the new current slide.
+
+    Pushes the prior position (typically a quiz + feedback) onto back-history
+    and clears the forward stack. Raises ValueError if the chapter is unknown.
+    """
+    chapter = get_chapter(db, chapter_id)
+    if chapter is None:
+        raise ValueError("Chapter not found")
+
+    clear_forward(db, username)
+    save_position(db, username, "chapter", chapter_id, None, None)
+
+    rebuilt = _rebuild_slide(db, username, "chapter", chapter_id, None, None)
+    if rebuilt is None:
+        return SlideResult(slide_type="none", chapter=None, quiz=None, has_previous=False)
+    rebuilt.has_previous = get_history_depth(db, username) > 0
+    rebuilt.feedback = None
+    return rebuilt
+
+
 def go_previous(db: Session, username: str) -> SlideResult:
     """Go to the previous slide using the back-history stack."""
     prev_row = go_back(db, username)
@@ -163,7 +187,7 @@ def go_previous(db: Session, username: str) -> SlideResult:
         pos = get_position(db, username)
         if pos:
             rebuilt = _rebuild_slide(
-                db, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num
+                db, username, pos.slide_type, pos.slide_id, pos.lesson_id, pos.round_num
             )
             if rebuilt:
                 rebuilt.has_previous = False
@@ -172,7 +196,12 @@ def go_previous(db: Session, username: str) -> SlideResult:
         return SlideResult(slide_type="none", chapter=None, quiz=None, has_previous=False)
 
     rebuilt = _rebuild_slide(
-        db, prev_row.slide_type, prev_row.slide_id, prev_row.lesson_id, prev_row.round_num
+        db,
+        username,
+        prev_row.slide_type,
+        prev_row.slide_id,
+        prev_row.lesson_id,
+        prev_row.round_num,
     )
     if rebuilt is None:
         return SlideResult(slide_type="none", chapter=None, quiz=None, has_previous=False)

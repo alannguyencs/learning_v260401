@@ -116,7 +116,13 @@ const FeedbackPanel = ({ feedback, quiz, userAnswer }) => {
   );
 };
 
-const QuizSlide = ({ quiz, feedback, submitting, onSubmit }) => {
+const QuizSlide = ({
+  quiz,
+  feedback,
+  submitting,
+  onSubmit,
+  onJumpToChapter,
+}) => {
   const [answer, setAnswer] = useState("");
   const isMC = quiz.quiz_type === "multiple_choice";
   const isCloze = quiz.quiz_type === "cloze";
@@ -144,6 +150,17 @@ const QuizSlide = ({ quiz, feedback, submitting, onSubmit }) => {
         Revision R{quiz.round_num} &middot; {quiz.lesson_title} &middot;{" "}
         {quiz.book_title}
       </div>
+
+      {quiz.chapter_id && quiz.chapter_title && onJumpToChapter && (
+        <button
+          type="button"
+          onClick={() => onJumpToChapter(quiz.chapter_id)}
+          data-testid="view-chapter-link"
+          className="text-sm text-blue-400 hover:text-blue-300 underline underline-offset-2 mb-4 inline-block text-left py-1"
+        >
+          View chapter: {quiz.chapter_title}
+        </button>
+      )}
 
       {isCloze ? (
         <p className="text-lg text-white font-medium mb-4 leading-relaxed">

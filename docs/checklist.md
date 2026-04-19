@@ -22,6 +22,7 @@
 - [ ] docs/plan/260418_liked_slide_frequency_boost.md
 - [ ] docs/plan/260418_group_b_above_tier_2.md
 - [x] docs/plan/260419_likeable_lesson_slides.md
+- [x] docs/plan/260419_jump_to_chapter_from_quiz.md
 
 ## DB Cloud Migration
 

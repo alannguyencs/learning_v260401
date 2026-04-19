@@ -14,14 +14,17 @@ const ChapterSlide = ({ chapter, onMarkLearnt }) => (
         {chapter.content}
       </ReactMarkdown>
     </div>
-    <div className="flex gap-3 justify-end">
-      <button
-        onClick={onMarkLearnt}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-      >
-        Mark as Learnt
-      </button>
-    </div>
+    {!chapter.is_learnt && (
+      <div className="flex gap-3 justify-end">
+        <button
+          onClick={onMarkLearnt}
+          data-testid="mark-learnt-button"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          Mark as Learnt
+        </button>
+      </div>
+    )}
   </div>
 );
 

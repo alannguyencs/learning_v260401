@@ -17,6 +17,7 @@ class ChapterSlide(BaseModel):
     chapter_index: int
     title: str
     content: str
+    is_learnt: bool = False
 
 
 class QuizSlide(BaseModel):
@@ -24,6 +25,7 @@ class QuizSlide(BaseModel):
 
     id: int
     chapter_id: int
+    chapter_title: Optional[str] = None
     quiz_type: str
     question: str
     option_a: Optional[str] = None
@@ -39,6 +41,12 @@ class QuizSlide(BaseModel):
     quiz_take_away: Optional[str] = None
     quiz_metadata: Optional[dict] = None
     correct_options: Optional[list] = None
+
+
+class JumpToChapterRequest(BaseModel):
+    """Request body for POST /api/slides/jump-to-chapter."""
+
+    chapter_id: int
 
 
 class SlideResponse(BaseModel):

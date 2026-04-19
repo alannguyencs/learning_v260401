@@ -17,6 +17,8 @@ A continuous slide stream combining chapter study and spaced-repetition quizzes.
 
 Users can mark quizzes they want to see more often by tapping a thumbs-up Like button on the quiz slide; liked quizzes have their recall weakened so they resurface sooner in the revision queue. Chapters can also be liked from their slide; liked chapters appear in the Favorite tab alongside liked quizzes in a single newest-first list. Chapter likes are bookmarks only and do not affect the slide selection algorithm.
 
+On any quiz slide, a "View chapter" link lets the user jump to the quiz's parent chapter. The chapter is inserted as the current slide and the quiz (with its feedback) is pushed onto the back-history stack, so the up arrow returns to the quiz in its original state. "Mark as Learnt" is hidden on any chapter slide that has already been learnt.
+
 Navigation arrows allow the user to move backward through their slide history (up arrow) or forward again (down arrow). Each user's current position and full history are stored server-side so the state survives page refreshes. Quiz answers viewed while replaying history show the original feedback.
 
 ## User Flow
@@ -49,6 +51,14 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
   │     Multi-correct MC  → checkboxes ("Select all that apply")
   │     [Submit Answer] → PASSED/FAILED badge + good/bad points shown
   │     MC feedback: all options shown (wrong pick red, correct green, others gray)
+  │
+  ├── View chapter link (on every quiz slide, pre-answer and feedback states):
+  │     [View chapter: {chapter_title}] → POST /api/slides/jump-to-chapter
+  │         → parent chapter becomes current slide
+  │         → quiz + feedback pushed to back-history
+  │     Up arrow from inserted chapter → restores quiz with feedback
+  │     Down arrow from inserted chapter → fresh next slide (forward stack cleared)
+  │     "Mark as Learnt" is hidden on chapters whose is_learnt is true
   │
   ├── Like (on quiz slides):
   │     [Like button (thumbs-up) above chat icon] → toggles like/unlike
@@ -83,6 +93,7 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
 - Per-quiz like/unlike via a thumbs-up Like button; liked quizzes resurface sooner in the revision queue
 - Per-chapter like/unlike via the same thumbs-up Like button; liked chapters appear in the Favorite tab
 - Favorite tab showing liked quizzes and liked chapters interleaved, newest-liked first, filterable by book
+- Jump-to-chapter link on every quiz slide; back arrow restores the quiz with its feedback; Mark-as-Learnt is hidden on already-learnt chapters
 
 **Not included:**
 - User progress dashboard (separate feature)
@@ -118,6 +129,11 @@ SlidePage loads GET /api/slides/current (saved position or fresh pick)
 - [ ] The Favorite tab shows liked quizzes and liked chapters interleaved, newest-liked first
 - [ ] A liked chapter renders as a chapter card (breadcrumb + title + markdown body) distinct from the quiz card layout
 - [ ] BookSelector on the Favorite tab filters both quiz and chapter items by book
+- [ ] Quiz slides render a "View chapter: {chapter_title}" link immediately under the breadcrumb, visible in both pre-answer and feedback states
+- [ ] Clicking the link inserts the parent chapter as the current slide; quiz position + feedback are pushed to back-history
+- [ ] From the inserted chapter, clicking the up arrow restores the original quiz with its feedback panel
+- [ ] From the inserted chapter, clicking the down arrow advances to a fresh next slide (not the original quiz)
+- [ ] "Mark as Learnt" is hidden on any chapter slide where `chapter.is_learnt` is true
 
 ---
 

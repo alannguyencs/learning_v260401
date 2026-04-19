@@ -32,4 +32,24 @@ describe("ChapterSlide", () => {
     expect(screen.getByText("Mark as Learnt")).toBeInTheDocument();
     expect(screen.queryByText("Skip Chapter")).not.toBeInTheDocument();
   });
+
+  it("hides Mark as Learnt when chapter.is_learnt is true", () => {
+    render(
+      <ChapterSlide
+        chapter={{ ...mockChapter, is_learnt: true }}
+        onMarkLearnt={jest.fn()}
+      />,
+    );
+    expect(screen.queryByText("Mark as Learnt")).not.toBeInTheDocument();
+  });
+
+  it("renders Mark as Learnt when chapter.is_learnt is false", () => {
+    render(
+      <ChapterSlide
+        chapter={{ ...mockChapter, is_learnt: false }}
+        onMarkLearnt={jest.fn()}
+      />,
+    );
+    expect(screen.getByText("Mark as Learnt")).toBeInTheDocument();
+  });
 });

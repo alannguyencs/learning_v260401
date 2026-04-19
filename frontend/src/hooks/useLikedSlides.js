@@ -41,8 +41,7 @@ const useLikedSlides = () => {
   const toggleLike = useCallback(
     async (kind, id) => {
       const setter = kind === "quiz" ? setQuizIds : setChapterIds;
-      const was =
-        kind === "quiz" ? quizIds.has(id) : chapterIds.has(id);
+      const was = kind === "quiz" ? quizIds.has(id) : chapterIds.has(id);
       setter((prev) => {
         const next = new Set(prev);
         if (was) next.delete(id);

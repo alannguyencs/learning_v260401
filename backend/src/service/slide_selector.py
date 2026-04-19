@@ -7,7 +7,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from src.crud import crud_learning_progress
-from src.crud.crud_content import get_chapter_quiz, get_lesson
+from src.crud.crud_content import get_chapter, get_chapter_quiz, get_lesson
 from src.crud.crud_revision import get_due_rounds, get_quiz_recall
 from src.crud.crud_slides import (
     get_eligible_quiz_ids_for_round,
@@ -29,10 +29,19 @@ class SlideResult:
     feedback: Optional[dict] = None
 
 
-def _build_chapter_dict(db: Session, chapter: Chapter) -> dict:
-    """Build a chapter dict enriched with lesson and book info."""
+def _build_chapter_dict(db: Session, chapter: Chapter, username: Optional[str] = None) -> dict:
+    """Build a chapter dict enriched with lesson and book info.
+
+    When `username` is provided, `is_learnt` reflects the user's learnt state;
+    otherwise it defaults to False.
+    """
     lesson = db.query(Lesson).filter(Lesson.id == chapter.lesson_id).first()
     book = db.query(Book).filter(Book.book_id == lesson.book_id).first()
+    is_learnt = (
+        crud_learning_progress.is_chapter_learnt(db, username, chapter.id)
+        if username is not None
+        else False
+    )
     return {
         "id": chapter.id,
         "lesson_id": chapter.lesson_id,
@@ -43,17 +52,20 @@ def _build_chapter_dict(db: Session, chapter: Chapter) -> dict:
         "chapter_index": chapter.chapter_index,
         "title": chapter.title,
         "content": chapter.content,
+        "is_learnt": is_learnt,
     }
 
 
 def _build_quiz_dict(db: Session, quiz_id: int, round_num: int, lesson_id: int) -> dict:
-    """Build a quiz dict enriched with lesson and book info."""
+    """Build a quiz dict enriched with lesson, book, and parent-chapter info."""
     quiz = get_chapter_quiz(db, quiz_id)
     lesson = get_lesson(db, lesson_id)
     book = db.query(Book).filter(Book.book_id == lesson.book_id).first()
+    chapter = get_chapter(db, quiz.chapter_id) if quiz is not None else None
     return {
         "id": quiz.id,
         "chapter_id": quiz.chapter_id,
+        "chapter_title": chapter.title if chapter is not None else None,
         "quiz_type": quiz.quiz_type,
         "question": quiz.question,
         "option_a": quiz.option_a,
@@ -146,7 +158,7 @@ class SlideSelector:
             chapter = random.choice(chapters) if chapters else None
 
         if chapter:
-            chapter_dict = _build_chapter_dict(db, chapter)
+            chapter_dict = _build_chapter_dict(db, chapter, username=username)
             return SlideResult(slide_type="chapter", chapter=chapter_dict, quiz=None)
 
         return SlideResult(slide_type="none", chapter=None, quiz=None)
