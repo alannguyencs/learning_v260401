@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field
 from src.configs import settings
 
 PROMPT_PATH = Path(__file__).parent.parent.parent / "resources" / "prompts" / "quiz_grader.md"
-MODEL = "gemini-2.0-flash"
 PASS_THRESHOLD = 0.66
 
 
@@ -58,7 +57,7 @@ class QuizGrader:
             temperature=0.1,
         )
         response = client.models.generate_content(
-            model=MODEL,
+            model=settings.gemini_model,
             contents=[full_prompt],
             config=config,
         )

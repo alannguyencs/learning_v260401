@@ -120,31 +120,3 @@ Read the full transcript carefully, identify all key points, then group them int
        EXPLOSIVE GROWTH
 \```
 ```
-
----
-
-## Section 4: ## Story
-
-Write a simple, engaging story that a high school student can read to understand the main content of the article. Guidelines:
-
-- **Use a concrete analogy** — translate technical concepts into an everyday scenario (e.g., a pizza shop, a school club, a sports team)
-- **Map each key concept** to a character or element in the story
-- **Cover the full arc** — the problem, the trigger, the strategy, and the outcome
-- **Keep it conversational** — short paragraphs, simple vocabulary, no jargon
-- **End with a bold one-liner** summarizing the lesson: `**The lesson:** ...`
-
-### Example
-
-```markdown
-## Story
-
-There's a criminal gang that runs an illegal pizza delivery business. The boss bakes poisoned pizzas (that's the ransomware), and he recruits delivery drivers all over town (the affiliates) to drop them at people's doors. When someone eats a slice and gets sick, the only cure costs $600 — and the boss keeps 30% while the driver pockets 70%. Business is booming because 70% of victims just pay up.
-
-One day, a delivery driver drops a poisoned pizza at the apartment of a girl named Elena. What the driver doesn't know is that Elena's boyfriend, Mihai, is the best hacker at a secret cybersecurity team. Mihai is furious.
-
-Mihai and his team start reverse-engineering the poison. They figure out the antidote and publish the recipe online for free. The boss changes the recipe. They crack that too. Five times over two and a half years.
-
-The delivery drivers start quitting — why deliver poisoned pizzas if every victim can just Google the free cure? Without drivers, the boss has no customers. He announces he's "retiring."
-
-**The lesson:** Ransomware works like a franchise — break the trust between the boss and the delivery drivers, and the whole business collapses.
-```

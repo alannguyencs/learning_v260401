@@ -8,7 +8,6 @@ from google.genai import types
 from src.configs import settings
 
 PROMPT_PATH = Path(__file__).parent.parent.parent / "resources" / "prompts" / "slide_chat.md"
-MODEL = "gemini-2.5-flash"
 
 
 class SlideChatService:
@@ -44,7 +43,7 @@ class SlideChatService:
         client = genai.Client(api_key=settings.gemini_api_key)
         config = types.GenerateContentConfig(temperature=0.3)
         response = client.models.generate_content(
-            model=MODEL,
+            model=settings.gemini_model,
             contents=[full_prompt],
             config=config,
         )

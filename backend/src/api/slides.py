@@ -230,6 +230,19 @@ def _build_slide_context(db: Session, slide_type: str, chapter_id, quiz_id):
         chapter = get_chapter(db, quiz.chapter_id)
         lesson = get_lesson_by_chapter_id(db, quiz.chapter_id)
         context_parts = [f"Quiz question: {quiz.question}"]
+        option_lines = []
+        for label, text in (
+            ("A", quiz.option_a),
+            ("B", quiz.option_b),
+            ("C", quiz.option_c),
+            ("D", quiz.option_d),
+        ):
+            if text:
+                option_lines.append(f"{label}. {text}")
+        if option_lines:
+            context_parts.append("Options:\n" + "\n".join(option_lines))
+        if quiz.correct_options:
+            context_parts.append(f"Correct options: {quiz.correct_options}")
         if quiz.expected_answer:
             context_parts.append(f"Expected answer: {quiz.expected_answer}")
         if chapter:

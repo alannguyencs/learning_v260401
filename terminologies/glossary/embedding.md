@@ -1,0 +1,3 @@
+# Embedding
+
+The float vector a token is first turned into (e.g. 512 or 4096 numbers). The token ID becomes this vector by **indexing the embedding matrix** `E` (shape `vocab_size × d_model`): the ID is just a row number, so `embedding = E[id]` (e.g. `E[8472]`) simply *retrieves* row 8472 — array indexing, no arithmetic on the text. It's the model's numeric representation of that token's meaning; everything downstream, including keys and values, is computed from it. *Embeddings are learned parameters (the rows of `E`) updated by gradient descent during training — unlike keys/values, which are recomputed activations, not stored weights.*

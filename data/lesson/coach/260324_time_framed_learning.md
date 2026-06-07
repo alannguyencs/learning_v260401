@@ -1,5 +1,7 @@
 # Frequent Time-Framed Learning & Coaching: Science-Backed Strategies for Efficient Knowledge Acquisition and Long-Term Retention
 
+---
+
 ## The Spacing Effect: Distributed Practice Over Time
 
 The spacing effect is one of the most replicated findings in memory research: when repetitions of material are spaced over time rather than massed together, long-term memory is significantly improved. A 2025 neuroscience study using fMRI showed the behavioral benefits of spaced learning are predicted by increases in the similarity of representations in the ventromedial prefrontal cortex (vmPFC), revealing the neural basis of why spacing works.[[4](https://pmc.ncbi.nlm.nih.gov/articles/PMC12007619/)][[5](https://pmc.ncbi.nlm.nih.gov/articles/PMC54766/)]
@@ -18,6 +20,8 @@ Massed       ███████                              ◄── worst
 ─────────────────────────────────────────────────────────────────
              └──────────────────────────────────→ Retention
 ```
+
+---
 
 ## Cognitive Load Theory and Session Duration
 
@@ -40,6 +44,8 @@ Learning Efficiency per Session
                    (~30 min continuous)
 ─────────────────────────────────────────────────────────────────
 ```
+
+---
 
 ## Spaced Repetition Systems (SRS)
 
@@ -69,6 +75,8 @@ Key: ● = review triggered just before forgetting threshold
      Each review strengthens the trace → interval doubles each time
 ─────────────────────────────────────────────────────────────────
 ```
+
+---
 
 ## Retrieval Practice (The Testing Effect)
 
@@ -112,6 +120,8 @@ Retrieval Techniques Ranked by Desirable Difficulty
   Least effort
 ─────────────────────────────────────────────────────────────────
 ```
+
+---
 
 ## Interleaved Practice
 

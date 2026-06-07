@@ -1,0 +1,72 @@
+{
+  "260604_ab_testing.md": [
+    "Control vs. treatment (variant A vs. variant B)",
+    "Randomized assignment",
+    "Conversion / metric",
+    "Null hypothesis (H₀)",
+    "Alternative hypothesis (H₁)",
+    "p-value",
+    "Significance level (α) and confidence level",
+    "Sample size analysis",
+    "A/B testing"
+  ],
+  "260604_flashattention.md": [
+    "Token",
+    "Attention",
+    "Query / Key / Value (Q, K, V)",
+    "Attention matrix (the N×N matrix)",
+    "Quadratic complexity (O(N²))",
+    "GPU memory / VRAM",
+    "SRAM (on-chip memory)",
+    "Memory bandwidth bound (IO-bound)",
+    "IO-awareness",
+    "Tiling (blocking)",
+    "Online softmax",
+    "Recomputation",
+    "FlashAttention"
+  ],
+  "260604_key_value_vectors.md": [
+    "Token",
+    "Token ID (vocabulary lookup)",
+    "Embedding",
+    "Vector (of floats)",
+    "Projection matrix (W_Q, W_K, W_V)",
+    "Query (q)",
+    "Key (k)",
+    "Value (v)",
+    "Dot product",
+    "Softmax",
+    "Key / Value vectors"
+  ],
+  "260604_llm_benchmarks.md": [
+    "SWE-Bench Pro",
+    "Terminal-Bench 2.1",
+    "Humanity's Last Exam (HLE)",
+    "OSWorld-Verified",
+    "GDPval-AA",
+    "Finance Agent v2"
+  ],
+  "260604_rebac.md": [
+    "Authorization (access control)",
+    "RBAC (Role-Based Access Control)",
+    "ABAC (Attribute-Based Access Control)",
+    "Relationship graph",
+    "Path / graph traversal",
+    "Relationship tuple",
+    "Predicate",
+    "Table / column / row filtering",
+    "ReBAC (Relationship-Based Access Control)"
+  ],
+  "260604_vllm.md": [
+    "Large Language Model (LLM)",
+    "Token",
+    "Attention",
+    "Key / Value vectors",
+    "KV cache (Key–Value cache)",
+    "GPU memory / VRAM",
+    "Fragmentation",
+    "Virtual memory / paging (OS concept)",
+    "PagedAttention",
+    "vLLM"
+  ]
+}

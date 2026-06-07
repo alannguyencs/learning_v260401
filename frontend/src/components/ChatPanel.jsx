@@ -19,7 +19,7 @@ const ChatPanel = ({ messages, loading, onSend, onClose }) => {
   };
 
   return (
-    <div className="w-96 max-h-[70vh] bg-gray-800 border border-gray-600 rounded-lg shadow-xl flex flex-col">
+    <div className="w-[32rem] max-h-[70vh] bg-gray-800 border border-gray-600 rounded-lg shadow-xl flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-600">
         <h3 className="text-white font-semibold text-sm">Chat</h3>
         <button

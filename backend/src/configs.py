@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     jwt_algorithm: str = os.getenv("JWT_ALGORITHM", "HS256")
     webapp_access_token: str = os.getenv("WEBAPP_ACCESS_TOKEN", "")
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
+    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     class Config:
         """Pydantic configuration."""
