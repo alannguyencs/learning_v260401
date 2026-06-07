@@ -1,0 +1,3 @@
+# MCP Inspector
+
+A built-in, browser-based testing tool shipped with the Python MCP SDK that lets you exercise a server **without** wiring up a full host/client. Launch it with `mcp dev mcp_server.py`, which serves a local URL (e.g. `http://127.0.0.1:6274`); click **Connect** (status flips *Disconnected → Connected*), then browse the **Tools / Resources / Prompts** tabs to **List** and **Run** each one with live inputs and see the returned data. It keeps server state between calls — so an `edit` then a `read` confirms the change persisted — making it the fast iterate/debug loop for MCP server development.

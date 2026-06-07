@@ -68,5 +68,16 @@
     "Virtual memory / paging (OS concept)",
     "PagedAttention",
     "vLLM"
+  ],
+  "260607_mcp_core_flow.md": [
+    "Model Context Protocol (MCP)",
+    "API server (e.g., GitHub)",
+    "LLM (e.g., Claude)",
+    "MCP Server",
+    "Tools",
+    "MCP Client",
+    "Resources",
+    "Prompts",
+    "MCP Inspector"
   ]
 }
