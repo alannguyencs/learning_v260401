@@ -1,0 +1,3 @@
+# Shared-cookie SSO
+
+**S**ingle **S**ign-**O**n via a shared **cookie**: the user logs in once on a main site, the server hands the browser an `HttpOnly` session **cookie** scoped to a shared domain, and every sibling app on that domain trusts the same cookie — so the user is automatically logged in everywhere without logging in again. *Example:* Chloe signs in once on the company's main website; it drops a cookie in her browser. When she clicks over to the payslip app on the same domain, her browser quietly sends that same cookie along, the app sees it and says "ah, this is Chloe" — no second login screen.

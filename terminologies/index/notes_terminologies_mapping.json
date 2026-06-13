@@ -79,5 +79,42 @@
     "Resources",
     "Prompts",
     "MCP Inspector"
+  ],
+  "260609_fullstack_webapp.md": [
+    "Client–server model",
+    "HTTP vs HTTPS",
+    "REST API",
+    "WebSocket",
+    "FastAPI",
+    "Pydantic",
+    "Middleware",
+    "CORS (Cross-Origin Resource Sharing)",
+    "ORM (Object–Relational Mapping)",
+    "SQLAlchemy",
+    "PostgreSQL",
+    "SPA (Single-Page Application)",
+    "React 18",
+    "Vite",
+    "Dev proxy",
+    "Tailwind CSS",
+    "Monorepo",
+    "Shared-cookie SSO",
+    "JWT (JSON Web Token)",
+    "OAuth / OIDC",
+    "Docker",
+    "GitHub Actions CI/CD",
+    "Full-Stack Web Application"
+  ],
+  "260611_llm_token_saving_strategies.md": [
+    "Token",
+    "Input token",
+    "Output token",
+    "Premium vs cheap model",
+    "LLM proxy / middleware",
+    "Context management (context compression)",
+    "Model routing (model selection)",
+    "Semantic caching",
+    "Prompt (prefix) caching",
+    "LLM Token Saving Strategies"
   ]
 }

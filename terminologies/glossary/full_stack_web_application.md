@@ -1,0 +1,3 @@
+# Full-Stack Web Application
+
+The complete product: the **front** of the stack (what the user sees — React/Vite/Tailwind) plus the **back** of the stack (server + database — FastAPI/SQLAlchemy/PostgreSQL) plus the plumbing that connects and ships them (REST, monorepo, SSO, CI/CD). "Full-stack" means you own *every layer* from the pixel to the database row. *Example:* When Chloe clicks "save note," that one click travels the whole stack — React fires a REST call, FastAPI catches it, SQLAlchemy writes a row, Postgres stores it — and every tech in this list did its job for a single button press. That entire end-to-end thing is the full-stack web app.

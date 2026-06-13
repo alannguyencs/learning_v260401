@@ -1,0 +1,3 @@
+# WebSocket
+
+A protocol for a **persistent, two-way connection** between browser and server: it starts as a normal HTTP request that "upgrades" into a long-lived open pipe, after which *either* side can push messages at any time without a fresh request. It's the alternative to REST when you need **real-time** updates instead of request-and-wait. (Like HTTP, it has a secure `wss://` form over TLS.) *Example:* REST is Chloe *asking* "any new notes?" over and over; a WebSocket is Alan's server keeping a line open to her browser and *shouting* "new note!" the instant one arrives — so a live chat or notification badge updates immediately, with no polling. REST handles her normal save/load; the WebSocket handles the live stuff.

@@ -1,3 +1,3 @@
 # ABAC (Attribute-Based Access Control)
 
-Decide at **request time by evaluating a rule over the properties of *both* the user and the specific resource** (plus context). Because the rule sees the resource, it can *compare* them — the case RBAC can't express. Flexible, but it only compares **flat properties**; it stalls on *chained* relationships (e.g. "a post in a project you belong to"), which are paths through other entities rather than properties of the resource itself.
+Looks at **the thing being touched too**, not just the user. Decide by **comparing details of the user with details of the specific resource** — the case RBAC can't handle. ABAC's limit: ABAC can only compare **direct details** of the two, not relationships that run **through other things** (e.g. "a post in a project you belong to"). *Example:* the rule "you may edit a post only if you wrote it" lets Alan edit **his own** posts but not Chloe's.

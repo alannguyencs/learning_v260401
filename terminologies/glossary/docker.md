@@ -1,0 +1,3 @@
+# Docker
+
+A **containerization** tool that packages an app *with* its exact dependencies, runtime, and config into a portable **image** that runs identically anywhere — your laptop, a teammate's, or production — eliminating "works on my machine." A running image is a **container**: lightweight, isolated, but sharing the host OS kernel (unlike a full virtual machine). *Example:* Alan builds one Docker image for his FastAPI backend and another for the frontend; whoever runs them — Chloe's laptop or the production server — gets the exact same Python version, libraries, and settings, so the app behaves the same everywhere. The CI/CD pipeline builds these images and ships the containers.

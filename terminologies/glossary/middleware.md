@@ -1,0 +1,3 @@
+# Middleware
+
+Code that sits **between the request arriving and your route handler running**, wrapping *every* request so it can act on all of them in one place — checking auth, adding CORS headers, logging, timing. Each piece can run logic on the way **in** and again on the way **out**. *Example:* Before any of Alan's route functions run, a CORS middleware stamps the right headers so Chloe's browser is allowed to talk to the server, and an auth middleware peeks at her cookie to figure out who she is — written once, applied to every endpoint automatically, instead of repeating those checks in each handler.

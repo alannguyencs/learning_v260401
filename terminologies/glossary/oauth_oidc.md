@@ -1,0 +1,3 @@
+# OAuth / OIDC
+
+**OAuth 2.0** is the standard protocol for **delegated authorization**: a user lets one app act on their behalf at another service *without handing over their password*, by redirecting to that service and coming back with a **token**. **OpenID Connect (OIDC)** is a thin layer on top that adds *authentication* — proving *who* the user is (the "Log in with Google" flow). It's the machinery that issues the identity behind a **JWT** / SSO session. *Example:* Instead of Alan's app storing Chloe's password, it bounces her to Google; she approves, Google redirects back with a signed token saying "this is Chloe," and Alan's app trusts it. Chloe never typed a password into Alan's app at all — that delegation dance is OAuth, and the "who is she" part is OIDC.

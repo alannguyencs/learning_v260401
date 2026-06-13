@@ -1,0 +1,3 @@
+# SPA (Single-Page Application)
+
+A frontend model where the browser loads **one HTML page once**, and JavaScript then **rewrites the content in place** as the user navigates — fetching data over the API instead of asking the server for a whole new page each click. The result feels like a desktop app: no full-page reloads. It's *why* you need client-side routing and a dev proxy in the first place. *Example:* When Chloe clicks from her note feed to her profile, the page doesn't blank-and-reload — React just swaps the feed component for the profile component and fetches her profile JSON in the background. The URL still changes, but it's one continuous page the whole time. (The opposite is the old model where every click fetched a fresh HTML page from the server.)

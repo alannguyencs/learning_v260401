@@ -1,3 +1,3 @@
 # Table / column / row filtering
 
-The three granularities at which an access decision can act on tabular data: hide a whole **table** (you can't see it exists), **mask/strip a column** (e.g. salary → `***`), or **filter rows** (inject a `WHERE` so you only get your own / your team's rows).
+Once a predicate has decided what you're allowed to see, the answer can apply at three different "zoom levels" of a database table. Think of a table as a spreadsheet: the **whole sheet**, its **columns** (the vertical fields like *name*, *email*, *salary*), and its **rows** (one record per line, like one employee).

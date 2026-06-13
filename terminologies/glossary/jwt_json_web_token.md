@@ -1,0 +1,3 @@
+# JWT (JSON Web Token)
+
+A **signed, self-contained identity token**: a compact string (`header.payload.signature`) that encodes *who the user is* plus an expiry, signed with a secret so the server can verify it wasn't tampered with — **without** looking anything up in a database. It's often the contents that ride *inside* the SSO cookie. *Example:* When Chloe logs in, the server hands her a JWT that effectively says "this is Chloe, valid until 5pm," signed so nobody can forge it. On each later request her browser sends it back (tucked inside the cookie); the server just re-checks the signature and trusts it — no database hit to re-confirm she's still Chloe.

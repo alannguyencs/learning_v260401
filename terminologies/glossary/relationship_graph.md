@@ -1,3 +1,3 @@
 # Relationship graph
 
-A graph whose **nodes** are entities (users, teams, documents, tasks) and whose **edges** are relationships (`manages`, `member_of`, `owns`, `contains`). The org chart plus ownership links *is* this graph.
+Picture a big map of who's connected to what: people, teams, documents, and tasks are the **dots**, and the **lines** between them are relationships like *manages*, *is a member of*, *owns*, or *contains*. Your company's org chart plus all the "who owns what" links *is* this map. Each line is just one simple fact you write down, like "Bob can edit document X." To check whether someone's allowed, you start at the person and **follow the lines** to see if you can reach the thing they want — e.g. *Alan manages Chloe, Chloe is in ProjectAlpha, and ProjectAlpha contains Task#42*, so Alan can reach Task#42. It's just tracing a route from one dot to another.
