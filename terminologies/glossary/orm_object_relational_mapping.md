@@ -1,0 +1,3 @@
+# ORM (Object–Relational Mapping)
+
+The general *technique* (and the kind of library implementing it) for bridging the gap between **objects in code** and **rows in a relational database**: you work with classes and objects, and the ORM auto-generates the SQL to load/save them. SQLAlchemy is one specific ORM; the idea is language-agnostic. See [[260609_orm]]. *Example:* The two worlds don't match — in Alan's code `chloe.bestFriend` is a pointer to another object, but in the database it's just a number in a column. An ORM is the translator that reconciles that mismatch automatically, so Alan never has to hand-stuff columns into objects.

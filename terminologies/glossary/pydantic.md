@@ -1,0 +1,3 @@
+# Pydantic
+
+The Python **data-validation library FastAPI is built on**: you declare the *shape* of request and response bodies as typed classes (**schemas / DTOs**, e.g. `text: str`), and Pydantic automatically checks incoming JSON against that shape — rejecting malformed data with a clear error — and serializes outgoing objects back to JSON. It's what turns loose JSON into trustworthy typed objects (and powers FastAPI's auto-docs). *Example:* Alan declares a `NoteIn` schema with one field `text: str`; when Chloe POSTs a note, Pydantic confirms `text` really is a string and auto-rejects the request with a `422` if she somehow sends a number — so Alan's handler never has to hand-check the input, it just receives a clean `NoteIn` object.

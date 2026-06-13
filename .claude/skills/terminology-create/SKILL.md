@@ -96,16 +96,44 @@ then show how they chain together. The decomposition + the chain are the whole p
 the main term and the one idea that makes it tick.}
 
 ### Key terminologies
-{List EVERY sub-term a student must know to understand {Term} — usually 6–10 of them.
-Order them so each builds on the previous (foundational concepts first, the main term
-last). Each is one bolded name + a 1–2 sentence plain definition. Anchor to undergrad
-knowledge and define jargon inline.}
+{Open with an ASCII chart that connects ALL the terminologies below into one picture —
+a fenced ```code block``` showing how the sub-terms flow/branch into each other and
+culminate in {Term}. Use the SAME reading order as the bullet list (foundational first,
+{Term} last); show branches where two terms are alternatives and merges where they
+combine, and put a short parenthetical gloss under each node. The chart is a map of the
+whole section, not decoration — every bolded term in the list should appear as a node.}
 
-- **{sub-term 1}** — {definition.}
-- **{sub-term 2}** — {definition.}
-- **{sub-term 3}** — {definition.}
-- ... (continue through all the relevant sub-terms)
-- **{Term}** — {the main term, defined last, now that its parts are on the table.}
+```
+{node A}
+   │
+   ▼
+{node B} ── {node C}   (branch: alternatives / contrast)
+   │
+   ▼
+...
+   ▼
+{Term}   (the payoff — everything above leads here)
+```
+
+{Then list EVERY sub-term a student must know to understand {Term} — usually 6–10 of
+them. Order them so each builds on the previous (foundational concepts first, the main
+term last), matching the chart. Each bullet is one bolded name + a 1–2 sentence plain
+definition. Anchor to undergrad knowledge and define jargon inline.}
+
+{**After each definition, append a plain-language example** — start it with `*Example:*`
+and write it the way you'd explain it out loud to a friend. Keep technical terms to a
+minimum (swap jargon for everyday words — "dots and lines" not "nodes and edges", "a
+quick yes/no question" not "a boolean predicate"), and prefer a concrete little story
+over abstract phrasing. Reuse the SAME recurring characters/objects across every bullet
+(e.g. Alan, Chloe, a post, a salary row) so the examples build one continuous picture
+instead of restarting each time. The definition can be precise and technical; the
+example is the relaxed, spoken-style restatement that makes it click.}
+
+- **{sub-term 1}** — {definition.} *Example:* {everyday-language, spoken-style example using the recurring cast.}
+- **{sub-term 2}** — {definition.} *Example:* {...}
+- **{sub-term 3}** — {definition.} *Example:* {...}
+- ... (continue through all the relevant sub-terms, each with its own *Example:*)
+- **{Term}** — {the main term, defined last, now that its parts are on the table.} *Example:* {...}
 
 ### How these terms are related
 {The heart of the answer. Walk the terms as a CAUSAL CHAIN — a numbered list where
@@ -189,3 +217,5 @@ its job. If they are pure alternatives, show the SAME task done each way.}
 8. **Stay precise.** Simplify the framing, not the facts. No incorrect analogies for the sake of being approachable.
 9. **Always save the file** to `terminologies/notes/{yymmdd}_{filename}.md` and report the path, in addition to showing the explanation inline.
 10. **Always update the index (Phase 4)** after saving — run `bm25.py add/edit` and `mapping.py sync` on the new note so it's searchable and its terminologies are registered. Keep the **Key terminologies** bullets in `- **Term** — def` form so the mapping parser can read them.
+11. **Open Key terminologies with an ASCII chart (single-term mode).** Before the bullet list, include a fenced ASCII diagram that connects every terminology in the section into one flow ending at the main term — same order as the bullets, branches for alternatives, a one-line gloss per node. It's the visual map of the decomposition; the bullets then define each node.
+12. **Every Key-terminologies bullet ends with a plain-language `*Example:*`.** After the precise definition, restate it the way you'd say it out loud — minimal jargon (swap technical words for everyday ones), a concrete little story, and the SAME recurring characters/objects reused across all bullets so the examples form one continuous picture. The definition stays technically precise; the example is the relaxed, spoken-style version that makes it land.

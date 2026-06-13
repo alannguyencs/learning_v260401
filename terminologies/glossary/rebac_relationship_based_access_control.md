@@ -1,3 +1,3 @@
 # ReBAC (Relationship-Based Access Control)
 
-The model that grants access **iff a permitted relationship path exists** between user and resource. Permissions are *derived* from relationships, so they update automatically when the org graph changes — no per-case role to maintain.
+The model that ties everything above together: you're allowed to touch something **only if there's a chain of relationships connecting you to it**. RBAC asked "what role do you have?", ABAC asked "do your details match this thing's details?", and ReBAC asks "**is there a path from you to this thing?**" — following the lines on the relationship graph (or, in `/librarian`, chaining predicates) to find out. The big win is that permissions aren't written down case by case; they're **worked out from the relationships you already have**, so they fix themselves the moment those relationships change.
