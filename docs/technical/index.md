@@ -10,3 +10,4 @@
 | 6 | [Slide Stack](./slide_stack.md) | Slide selector, AI grader, REST endpoints |
 | 7 | [Dashboard](./dashboard.md) | Activity log page showing interaction history |
 | 8 | [Testing Context](./testing_context.md) | Base URLs, test users, sign-in procedure for Chrome E2E tests |
+| 9 | [Voice Chat](./voice_chat.md) | Press-to-talk Gemini Live voice tutor, BM25 notes + history tools |

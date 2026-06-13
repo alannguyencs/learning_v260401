@@ -144,6 +144,35 @@ Save user message + AI response to slide_chat_messages
 Return { response } → display in ChatPanel
 ```
 
+## Voice Over Mode Turn Pipeline — [details](./voice_chat.md)
+
+```
+User presses mic → ws.onopen sends {activity_start}
+  │
+  ▼
+WS /api/voice/v2v-over → JWT cookie gate (4401) + voice gate (4001)
+  │
+  ▼
+run_over_session → _await_turn_start (no Gemini session held idle)
+  │
+  ▼
+open fresh Gemini Live session → replay ActivityStart → {session_ready}
+  │
+  ▼
+browser arms mic → 16 kHz PCM frames
+  │
+  ├── tool_call search_notes(query)        → BM25 over terminology_notes
+  ├── tool_call get_conversation_history() → recent_turns(session_id)
+  │
+  ▼
+press again → {activity_end} → Gemini speaks (24 kHz PCM + transcripts)
+  │
+  ▼
+turn_complete → record VoiceConversationTurn → state "between" → loop
+  │
+  └── press during reply → {interrupt} → abort + recycle session
+```
+
 ---
 
 [Parent](./index.md) | [Next: Authentication >](./authentication.md)

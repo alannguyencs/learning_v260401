@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     webapp_access_token: str = os.getenv("WEBAPP_ACCESS_TOKEN", "")
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    voice_live_model: str = os.getenv(
+        "VOICE_LIVE_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"
+    )
+    voice_session_max_seconds: int = int(os.getenv("VOICE_SESSION_MAX_SECONDS", "900"))
+    voice_default_name: str = os.getenv("VOICE_DEFAULT_NAME", "Kore")
 
     class Config:
         """Pydantic configuration."""

@@ -5,6 +5,8 @@ from .revision_scheduling import LessonRevisionRound, UserQuizRecall
 from .slide_management import QuizSkipLog
 from .slide_position import UserSlidePosition, SlideHistory
 from .slide_like import UserSlideLike
+from .terminology_note import TerminologyNote
+from .voice_conversation import VoiceConversationTurn
 
 __all__ = [
     "Users",
@@ -20,4 +22,6 @@ __all__ = [
     "UserSlidePosition",
     "SlideHistory",
     "UserSlideLike",
+    "TerminologyNote",
+    "VoiceConversationTurn",
 ]

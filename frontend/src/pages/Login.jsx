@@ -18,7 +18,7 @@ const Login = () => {
     const result = await login(username, password);
 
     if (result.success) {
-      navigate("/slides");
+      navigate("/chat");
     } else {
       setError(result.message || "Invalid username or password");
     }

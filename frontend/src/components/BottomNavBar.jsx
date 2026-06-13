@@ -18,6 +18,25 @@ const tabs = [
     ),
   },
   {
+    label: "Voice",
+    to: "/chat",
+    match: (path) => path.startsWith("/chat"),
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm-3 4a1 1 0 012 0 4 4 0 008 0 1 1 0 112 0 6 6 0 01-5 5.917V16h2a1 1 0 110 2H8a1 1 0 110-2h2v-2.083A6 6 0 014 8z"
+          clipRule="evenodd"
+        />
+      </svg>
+    ),
+  },
+  {
     label: "Dashboard",
     to: "/dashboard",
     match: (path) => path.startsWith("/dashboard"),

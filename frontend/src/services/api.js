@@ -131,6 +131,21 @@ const apiService = {
     const response = await api.get("/api/slides/liked-items");
     return response.data;
   },
+
+  // Recent voice conversation turns for the user, as { role, text } bubbles
+  // (oldest-first). Used to restore the /chat transcript on refresh.
+  getVoiceHistory: async () => {
+    const response = await api.get("/api/voice/history");
+    return response.data;
+  },
+
+  // Build the V2V Over Mode WebSocket URL. Same-origin so the dev proxy
+  // (setupProxy.js, ws:true) and the HttpOnly auth cookie both apply.
+  voiceWsUrl: (voice = "Kore") => {
+    const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const base = `${proto}//${window.location.host}`;
+    return `${base}/api/voice/v2v-over?voice=${encodeURIComponent(voice)}`;
+  },
 };
 
 export default apiService;

@@ -1,6 +1,6 @@
 # Testing Context
 
-[< Prev: Dashboard](./dashboard.md) | [Parent](./index.md)
+[< Prev: Dashboard](./dashboard.md) | [Parent](./index.md) | [Next: Voice Chat >](./voice_chat.md)
 
 ## Base URLs
 
@@ -44,4 +44,4 @@
 
 ---
 
-[< Prev: Dashboard](./dashboard.md) | [Parent](./index.md)
+[< Prev: Dashboard](./dashboard.md) | [Parent](./index.md) | [Next: Voice Chat >](./voice_chat.md)

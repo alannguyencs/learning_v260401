@@ -1,6 +1,6 @@
 # Dashboard — Abstract
 
-[Parent](./index.md)
+[Parent](./index.md) | [Next: Voice Chat >](./voice_chat.md)
 
 ## Problem
 

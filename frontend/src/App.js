@@ -12,6 +12,7 @@ import DashboardPage from "./pages/DashboardPage";
 import FavoritePage from "./pages/FavoritePage";
 import Login from "./pages/Login";
 import SlidePage from "./pages/SlidePage";
+import VoiceChatPage from "./pages/VoiceChatPage";
 
 function App() {
   return (
@@ -27,9 +28,10 @@ function App() {
             }
           >
             <Route path="/slides" element={<SlidePage />} />
+            <Route path="/chat" element={<VoiceChatPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/favorite" element={<FavoritePage />} />
-            <Route path="/" element={<Navigate to="/slides" replace />} />
+            <Route path="/" element={<Navigate to="/chat" replace />} />
           </Route>
         </Routes>
       </AuthProvider>
