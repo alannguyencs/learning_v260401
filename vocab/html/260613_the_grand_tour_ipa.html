@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Grand Tour — IPA</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#1a1d24; --card2:#212530; --ink:#e8eaf0; --muted:#9aa3b2;
+    --accent:#7aa2f7; --ipa:#9ece6a; --line:#2b303b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; padding:0 0 80px;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:0 20px}
+  header{
+    position:sticky; top:0; z-index:5; backdrop-filter:blur(8px);
+    background:rgba(15,17,21,.85); border-bottom:1px solid var(--line); padding:18px 0 14px;
+  }
+  h1{font-size:24px; margin:0 0 6px}
+  .sub{color:var(--muted); font-size:13px; margin:0}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 20px; margin:16px 0;
+  }
+  .card.brk{margin-top:34px}
+  .en{font-size:19px; font-weight:500; margin:0}
+  .ipa{
+    font-size:18px; color:var(--ink); margin:10px 0 0;
+    font-family:"Charis SIL","Doulos SIL","Gentium Plus","Segoe UI",serif; letter-spacing:.3px;
+  }
+  details{margin-top:14px; border-top:1px dashed var(--line); padding-top:10px}
+  summary{cursor:pointer; font-weight:600; font-size:14px; color:var(--accent); outline:none}
+  .nuc-groups{margin-top:12px; display:flex; flex-direction:column; gap:8px}
+  .nuc-row{display:flex; flex-wrap:wrap; gap:8px}
+  .nuc-row .nuc{flex:1 1 140px; border-left:3px solid var(--g,var(--line))}
+  .nuc-row .nuc .sym{color:var(--g,var(--ipa))}
+  .nuc{background:var(--card2); border:1px solid var(--line); border-radius:10px; padding:9px 11px}
+  .nuc .sym{font-weight:700; color:var(--ipa); font-size:15px}
+  .nuc .lbl{color:var(--muted); font-size:12px; margin-left:4px}
+  .nuc .w{display:block; margin-top:4px; font-size:13px; color:#cdd3e0}
+  .ipa-in{color:var(--ipa); font-family:"Charis SIL","Doulos SIL","Gentium Plus","Segoe UI",serif}
+  footer{color:var(--muted); font-size:12px; text-align:center; margin-top:30px}
+  code{background:var(--card2); padding:1px 5px; border-radius:5px; font-size:.9em}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1 id="title">The Grand Tour — IPA</h1>
+    <p class="sub" id="subtitle"></p>
+  </div>
+</header>
+
+<main class="wrap" id="content"></main>
+<footer>Generated from <code>vocab/json/260613_the_grand_tour_ipa.json</code></footer>
+
+<script>
+/* ---- Embedded fallback so the file works by double-click (file://). ---- */
+/* When served over http(s) it re-fetches the JSON so edits there show live. */
+const EMBEDDED = {
+  "title": "The Grand Tour — IPA",
+  "subtitle": "Phonemic transcription (General American, rhotic). ˈ = primary stress · ˌ = secondary stress · ː = long vowel · ə = schwa. LOT vowel = /ɑː/, THOUGHT/CLOTH = /ɔː/ (cot–caught kept distinct).",
+  "sections": [
+    {
+      "en": "It was 8:55 on Minh's first morning, and I met him down in the lobby of our huge, twelve-floor building. My only job that day was to show him around so he wouldn't get lost — because this place is huge, and everyone gets lost in their first week.",
+      "ipa": "/ɪt wəz eɪt ˈfɪfti faɪv ɑːn mɪnz fɜːrst ˈmɔːrnɪŋ, ænd aɪ mɛt hɪm daʊn ɪn ðə ˈlɑːbi əv aʊər hjuːdʒ, twɛlv flɔːr ˈbɪldɪŋ. maɪ ˈoʊnli dʒɑːb ðæt deɪ wəz tuː ʃoʊ hɪm əˈraʊnd soʊ hi ˈwʊdnt ɡɛt lɔːst — bɪˈkɔːz ðɪs pleɪs ɪz hjuːdʒ, ænd ˈɛvriwʌn ɡɛts lɔːst ɪn ðɛr fɜːrst wiːk/",
+      "nuclei": [
+        {
+          "ipa": "/ɪ/",
+          "label": "\"ih\" · short, unrounded",
+          "words": "it /ɪt/ · fif·ty /fɪf-/ · Minh's /mɪnz/ · him /hɪm/ · in /ɪn/ · building /ˈbɪldɪŋ/ · be·cause /bɪ-/ · this /ðɪs/ · is /ɪz/"
+        },
+        {
+          "ipa": "/iː/",
+          "label": "\"ee\" · long, unrounded",
+          "words": "week /wiːk/"
+        },
+        {
+          "ipa": "/i/",
+          "label": "\"ee\" · short, unrounded, unstressed",
+          "words": "fif·ty /-ti/ · lobby /ˈlɑːbi/ · on·ly /-li/ · he /hi/ · ev·ery·one /-vri-/"
+        },
+        {
+          "ipa": "/ə/",
+          "label": "\"uh\" · short, unrounded, unstressed",
+          "words": "was /wəz/ · the /ðə/ · of /əv/ · a·round /ə-/"
+        },
+        {
+          "ipa": "/ɜːr/",
+          "label": "\"ur\" · long, r-colored",
+          "words": "first /fɜːrst/"
+        },
+        {
+          "ipa": "/ər/",
+          "label": "\"er\" · r-colored, unstressed",
+          "words": "our /aʊər/"
+        },
+        {
+          "ipa": "/æ/",
+          "label": "\"a\" · short, unrounded",
+          "words": "and /ænd/ · that /ðæt/"
+        },
+        {
+          "ipa": "/ɛ/",
+          "label": "\"eh\" · short, unrounded",
+          "words": "met /mɛt/ · twelve /twɛlv/ · get /ɡɛt/ · ev·ery·one /ˈɛvri-/ · gets /ɡɛts/"
+        },
+        {
+          "ipa": "/ɛr/",
+          "label": "\"air\" · r-colored",
+          "words": "their /ðɛr/"
+        },
+        {
+          "ipa": "/ɑː/",
+          "label": "\"ah\" · long, unrounded",
+          "words": "on /ɑːn/ · lobby /ˈlɑːbi/ · job /dʒɑːb/"
+        },
+        {
+          "ipa": "/ɔː/",
+          "label": "\"aw\" · long, rounded",
+          "words": "be·cause /-ˈkɔːz/ · lost /lɔːst/"
+        },
+        {
+          "ipa": "/ɔːr/",
+          "label": "\"or\" · long, rounded, r-colored",
+          "words": "morning /ˈmɔːr-/ · floor /flɔːr/"
+        },
+        {
+          "ipa": "/uː/",
+          "label": "\"oo\" · long, rounded",
+          "words": "huge /hjuːdʒ/ · to /tuː/"
+        },
+        {
+          "ipa": "/eɪ/",
+          "label": "\"ay\" · diphthong",
+          "words": "eight /eɪt/ · day /deɪ/ · place /pleɪs/"
+        },
+        {
+          "ipa": "/aɪ/",
+          "label": "\"eye\" · diphthong",
+          "words": "five /faɪv/ · I /aɪ/ · my /maɪ/"
+        },
+        {
+          "ipa": "/aʊ/",
+          "label": "\"ow\" · diphthong",
+          "words": "down /daʊn/ · our /aʊər/ · a·round /-ˈraʊnd/"
+        },
+        {
+          "ipa": "/oʊ/",
+          "label": "\"oh\" · diphthong",
+          "words": "on·ly /ˈoʊn-/ · show /ʃoʊ/ · so /soʊ/"
+        },
+        {
+          "ipa": "/ʊ/",
+          "label": "\"uu\" · short, rounded",
+          "words": "wouldn't /ˈwʊdnt/"
+        },
+        {
+          "ipa": "/ʌ/",
+          "label": "\"uh\" · short, unrounded, stressed",
+          "words": "ev·ery·one /-wʌn/"
+        }
+      ]
+    },
+    {
+      "en": "\"Morning, Minh — welcome aboard! You found us alright? Great. Before we dive into any actual work, let me walk you through the building so you can get your bearings.",
+      "ipa": "/ˈmɔːrnɪŋ, mɪn — ˈwɛlkəm əˈbɔːrd! juː faʊnd ʌs ɔːlˈraɪt? ɡreɪt. bɪˈfɔːr wi daɪv ˈɪntuː ˈɛni ˈæktʃuəl wɜːrk, lɛt mi wɑːk juː θruː ðə ˈbɪldɪŋ soʊ juː kæn ɡɛt jʊr ˈbɛrɪŋz/",
+      "nuclei": [
+        {
+          "ipa": "/ɪ/",
+          "label": "\"ih\" · short, unrounded",
+          "words": "morn·ing /ˈmɔːrnɪŋ/ · Minh /mɪn/ · be·fore /bɪ-/ · in·to /ˈɪn-/ · build·ing /ˈbɪldɪŋ/ · bear·ings /-rɪŋz/"
+        },
+        {
+          "ipa": "/i/",
+          "label": "\"ee\" · short, unrounded, unstressed",
+          "words": "we /wi/ · an·y /-ni/ · me /mi/"
+        },
+        {
+          "ipa": "/ə/",
+          "label": "\"uh\" · short, unrounded, unstressed",
+          "words": "wel·come /-kəm/ · a·board /ə-/ · ac·tu·al /-əl/ · the /ðə/"
+        },
+        {
+          "ipa": "/ɜːr/",
+          "label": "\"ur\" · long, r-colored",
+          "words": "work /wɜːrk/"
+        },
+        {
+          "ipa": "/ʊr/",
+          "label": "\"oor\" · r-colored",
+          "words": "your /jʊr/"
+        },
+        {
+          "ipa": "/æ/",
+          "label": "\"a\" · short, unrounded",
+          "words": "ac·tu·al /ˈæk-/ · can /kæn/"
+        },
+        {
+          "ipa": "/ɛ/",
+          "label": "\"eh\" · short, unrounded",
+          "words": "wel·come /ˈwɛl-/ · an·y /ˈɛn-/ · let /lɛt/ · get /ɡɛt/"
+        },
+        {
+          "ipa": "/ɛr/",
+          "label": "\"air\" · r-colored",
+          "words": "bear·ings /ˈbɛr-/"
+        },
+        {
+          "ipa": "/ɑː/",
+          "label": "\"ah\" · long, unrounded",
+          "words": "walk /wɑːk/"
+        },
+        {
+          "ipa": "/ɔː/",
+          "label": "\"aw\" · long, rounded",
+          "words": "al·right /ɔːl-/"
+        },
+        {
+          "ipa": "/ɔːr/",
+          "label": "\"or\" · long, rounded, r-colored",
+          "words": "morn·ing /ˈmɔːr-/ · a·board /-ˈbɔːrd/ · be·fore /-ˈfɔːr/"
+        },
+        {
+          "ipa": "/uː/",
+          "label": "\"oo\" · long, rounded",
+          "words": "you /juː/ · in·to /-tuː/ · through /θruː/"
+        },
+        {
+          "ipa": "/u/",
+          "label": "\"oo\" · short, rounded, unstressed",
+          "words": "ac·tu·al /-tʃu-/"
+        },
+        {
+          "ipa": "/eɪ/",
+          "label": "\"ay\" · diphthong",
+          "words": "great /ɡreɪt/"
+        },
+        {
+          "ipa": "/aɪ/",
+          "label": "\"eye\" · diphthong",
+          "words": "al·right /-ˈraɪt/ · dive /daɪv/"
+        },
+        {
+          "ipa": "/aʊ/",
+          "label": "\"ow\" · diphthong",
+          "words": "found /faʊnd/"
+        },
+        {
+          "ipa": "/oʊ/",
+          "label": "\"oh\" · diphthong",
+          "words": "so /soʊ/"
+        },
+        {
+          "ipa": "/ʌ/",
+          "label": "\"uh\" · short, unrounded, stressed",
+          "words": "us /ʌs/"
+        }
+      ]
+    },
+    {
+      "en": "Right now we're in the lobby, on the ground floor. Over there, to your left, is the reception desk — if a courier or a visitor ever turns up for you, that's where they'll check in. Straight ahead, past those glass doors, are the turnstiles; you'll badge in with the access card I'll hand you in a minute.",
+      "ipa": "/raɪt naʊ wɪr ɪn ðə ˈlɑːbi, ɑːn ðə ɡraʊnd flɔːr. ˈoʊvər ðɛr, tuː jʊr lɛft, ɪz ðə rɪˈsɛpʃən dɛsk — ɪf ə ˈkʊriər ɔːr ə ˈvɪzɪtər ˈɛvər tɜːrnz ʌp fɔːr juː, ðæts wɛr ðeɪl tʃɛk ɪn. streɪt əˈhɛd, pæst ðoʊz ɡlæs dɔːrz, ɑːr ðə ˈtɜːrnstaɪlz; juːl bædʒ ɪn wɪð ði ˈæksɛs kɑːrd aɪl hænd juː ɪn ə ˈmɪnɪt/",
+      "nuclei": [
+        {
+          "ipa": "/ɪ/",
+          "label": "\"ih\" · short, unrounded",
+          "words": "in /ɪn/ · is /ɪz/ · re·cep·tion /rɪ-/ · if /ɪf/ · vis·i·tor /ˈvɪzɪ-/ · with /wɪð/ · min·ute /ˈmɪnɪt/"
+        },
+        {
+          "ipa": "/i/",
+          "label": "\"ee\" · short, unrounded, unstressed",
+          "words": "lob·by /-bi/ · cour·i·er /-ri-/ · the /ði/"
+        },
+        {
+          "ipa": "/ə/",
+          "label": "\"uh\" · short, unrounded, unstressed",
+          "words": "the /ðə/ · re·cep·tion /-ʃən/ · a /ə/ · a·head /ə-/"
+        },
+        {
+          "ipa": "/ɜːr/",
+          "label": "\"ur\" · long, r-colored",
+          "words": "turns /tɜːrnz/ · turn·stiles /ˈtɜːrn-/"
+        },
+        {
+          "ipa": "/ər/",
+          "label": "\"er\" · r-colored, unstressed",
+          "words": "o·ver /-vər/ · vis·i·tor /-tər/ · ev·er /-vər/ · cour·i·er /-ər/"
+        },
+        {
+          "ipa": "/ɪr/",
+          "label": "\"ear\" · r-colored",
+          "words": "we're /wɪr/"
+        },
+        {
+          "ipa": "/ʊr/",
+          "label": "\"oor\" · r-colored",
+          "words": "your /jʊr/ · cour·i·er /ˈkʊr-/"
+        },
+        {
+          "ipa": "/æ/",
+          "label": "\"a\" · short, unrounded",
+          "words": "that's /ðæts/ · past /pæst/ · glass /ɡlæs/ · badge /bædʒ/ · ac·cess /ˈæk-/ · hand /hænd/"
+        },
+        {
+          "ipa": "/ɛ/",
+          "label": "\"eh\" · short, unrounded",
+          "words": "left /lɛft/ · re·cep·tion /-ˈsɛp-/ · desk /dɛsk/ · ev·er /ˈɛv-/ · check /tʃɛk/ · a·head /-ˈhɛd/ · ac·cess /-sɛs/"
+        },
+        {
+          "ipa": "/ɛr/",
+          "label": "\"air\" · r-colored",
+          "words": "there /ðɛr/ · where /wɛr/"
+        },
+        {
+          "ipa": "/ɑː/",
+          "label": "\"ah\" · long, unrounded",
+          "words": "lob·by /ˈlɑː-/ · on /ɑːn/"
+        },
+        {
+          "ipa": "/ɑːr/",
+          "label": "\"ar\" · long, r-colored",
+          "words": "are /ɑːr/ · card /kɑːrd/"
+        },
+        {
+          "ipa": "/ɔːr/",
+          "label": "\"or\" · long, rounded, r-colored",
+          "words": "floor /flɔːr/ · or /ɔːr/ · for /fɔːr/ · doors /dɔːrz/"
+        },
+        {
+          "ipa": "/uː/",
+          "label": "\"oo\" · long, rounded",
+          "words": "to /tuː/ · you /juː/ · you'll /juːl/"
+        },
+        {
+          "ipa": "/eɪ/",
+          "label": "\"ay\" · diphthong",
+          "words": "they'll /ðeɪl/ · straight /streɪt/"
+        },
+        {
+          "ipa": "/aɪ/",
+          "label": "\"eye\" · diphthong",
+          "words": "right /raɪt/ · turn·stiles /-staɪlz/ · I'll /aɪl/"
+        },
+        {
+          "ipa": "/aʊ/",
+          "label": "\"ow\" · diphthong",
+          "words": "now /naʊ/ · ground /ɡraʊnd/"
+        },
+        {
+          "ipa": "/oʊ/",
+          "label": "\"oh\" · diphthong",
+          "words": "o·ver /ˈoʊ-/ · those /ðoʊz/"
+        },
+        {
+          "ipa": "/ʌ/",
+          "label": "\"uh\" · short, unrounded, stressed",
+          "words": "up /ʌp/"
+        }
+      ]
+    },
+    {
+      "en": "Let's head up to our floor. We'll take the lift — sorry, the elevator, I keep switching — it's just around the corner, next to the stairwell. Our team sits on the seventh floor, so I'll hit the button for seven.",
+      "ipa": "/lɛts hɛd ʌp tuː aʊr flɔːr. wiːl teɪk ðə lɪft — ˈsɑːri, ði ˈɛləveɪtər, aɪ kiːp ˈswɪtʃɪŋ — ɪts dʒʌst əˈraʊnd ðə ˈkɔːrnər, nɛkst tuː ðə ˈstɛrwɛl. aʊr tiːm sɪts ɑːn ðə ˈsɛvənθ flɔːr, soʊ aɪl hɪt ðə ˈbʌtən fɔːr ˈsɛvən/",
+      "nuclei": [
+        {
+          "ipa": "/ɪ/",
+          "label": "\"ih\" · short, unrounded",
+          "words": "lift /lɪft/ · switch·ing /ˈswɪtʃ-/ · it's /ɪts/ · sits /sɪts/ · hit /hɪt/"
+        },
+        {
+          "ipa": "/iː/",
+          "label": "\"ee\" · long, unrounded",
+          "words": "we'll /wiːl/ · keep /kiːp/ · team /tiːm/"
+        },
+        {
+          "ipa": "/i/",
+          "label": "\"ee\" · short, unrounded, unstressed",
+          "words": "the /ði/ · sor·ry /-ri/"
+        },
+        {
+          "ipa": "/ə/",
+          "label": "\"uh\" · short, unrounded, unstressed",
+          "words": "the /ðə/ · el·e·va·tor /-lə-/ · a·round /ə-/ · sev·enth /-vənθ/ · but·ton /-tən/ · sev·en /-vən/"
+        },
+        {
+          "ipa": "/ər/",
+          "label": "\"er\" · r-colored, unstressed",
+          "words": "el·e·va·tor /-tər/ · cor·ner /-nər/"
+        },
+        {
+          "ipa": "/ɛ/",
+          "label": "\"eh\" · short, unrounded",
+          "words": "let's /lɛts/ · head /hɛd/ · el·e·va·tor /ˈɛl-/ · next /nɛkst/ · stair·well /-wɛl/ · sev·enth /ˈsɛv-/ · sev·en /ˈsɛv-/"
+        },
+        {
+          "ipa": "/ɛr/",
+          "label": "\"air\" · r-colored",
+          "words": "stair·well /ˈstɛr-/"
+        },
+        {
+          "ipa": "/ɑː/",
+          "label": "\"ah\" · long, unrounded",
+          "words": "sor·ry /ˈsɑː-/ · on /ɑːn/"
+        },
+        {
+          "ipa": "/ɔːr/",
+          "label": "\"or\" · long, rounded, r-colored",
+          "words": "floor /flɔːr/ · cor·ner /ˈkɔːr-/ · for /fɔːr/"
+        },
+        {
+          "ipa": "/uː/",
+          "label": "\"oo\" · long, rounded",
+          "words": "to /tuː/"
+        },
+        {
+          "ipa": "/eɪ/",
+          "label": "\"ay\" · diphthong",
+          "words": "take /teɪk/ · el·e·va·tor /-veɪ-/"
+        },
+        {
+          "ipa": "/aɪ/",
+          "label": "\"eye\" · diphthong",
+          "words": "I /aɪ/ · I'll /aɪl/"
+        },
+        {
+          "ipa": "/aʊ/",
+          "label": "\"ow\" · diphthong",
+          "words": "our /aʊr/ · a·round /-ˈraʊnd/"
+        },
+        {
+          "ipa": "/oʊ/",
+          "label": "\"oh\" · diphthong",
+          "words": "so /soʊ/"
+        },
+        {
+          "ipa": "/ʌ/",
+          "label": "\"uh\" · short, unrounded, stressed",
+          "words": "up /ʌp/ · just /dʒʌst/ · but·ton /ˈbʌt-/"
+        }
+      ]
+    },
+    {
+      "en": "Once we're up there, you'll see it's an open-plan office. Our pod is at the far end, by the window. Your desk is the second one on the right, directly across from mine — so if you ever get stuck, just lean over and ask. Diagonally opposite us is the design team; don't worry about mixing them up, their corner is the one covered in sticky notes.",
+      "ipa": "/wʌns wɪr ʌp ðɛr, juːl siː ɪts æn ˈoʊpən plæn ˈɔːfɪs. aʊr pɑːd ɪz æt ðə fɑːr ɛnd, baɪ ðə ˈwɪndoʊ. jʊr dɛsk ɪz ðə ˈsɛkənd wʌn ɑːn ðə raɪt, dəˈrɛktli əˈkrɔːs frʌm maɪn — soʊ ɪf juː ˈɛvər ɡɛt stʌk, dʒʌst liːn ˈoʊvər ænd æsk. daɪˈæɡənəli ˈɑːpəzɪt ʌs ɪz ðə dɪˈzaɪn tiːm; doʊnt ˈwɜːri əˈbaʊt ˈmɪksɪŋ ðɛm ʌp, ðɛr ˈkɔːrnər ɪz ðə wʌn ˈkʌvərd ɪn ˈstɪki noʊts/",
+      "nuclei": [
+        {
+          "ipa": "/ɪ/",
+          "label": "\"ih\" · short, unrounded",
+          "words": "it's /ɪts/ · of·fice /-fɪs/ · is /ɪz/ · win·dow /ˈwɪn-/ · if /ɪf/ · op·po·site /-zɪt/ · de·sign /dɪ-/ · mix·ing /ˈmɪks-/ · in /ɪn/ · stick·y /ˈstɪk-/"
+        },
+        {
+          "ipa": "/iː/",
+          "label": "\"ee\" · long, unrounded",
+          "words": "see /siː/ · lean /liːn/ · team /tiːm/"
+        },
+        {
+          "ipa": "/i/",
+          "label": "\"ee\" · short, unrounded, unstressed",
+          "words": "di·rect·ly /-li/ · di·ag·o·nal·ly /-li/ · wor·ry /-ri/ · stick·y /-ki/"
+        },
+        {
+          "ipa": "/ə/",
+          "label": "\"uh\" · short, unrounded, unstressed",
+          "words": "o·pen /-pən/ · the /ðə/ · sec·ond /-kənd/ · di·rect·ly /də-/ · a·cross /ə-/ · di·ag·o·nal·ly /-ɡə-/ · op·po·site /-pə-/ · a·bout /ə-/"
+        },
+        {
+          "ipa": "/ɜːr/",
+          "label": "\"ur\" · long, r-colored",
+          "words": "wor·ry /ˈwɜː-/"
+        },
+        {
+          "ipa": "/ər/",
+          "label": "\"er\" · r-colored, unstressed",
+          "words": "ev·er /-vər/ · o·ver /-vər/ · cor·ner /-nər/ · cov·ered /-vərd/"
+        },
+        {
+          "ipa": "/ɪr/",
+          "label": "\"ear\" · r-colored",
+          "words": "we're /wɪr/"
+        },
+        {
+          "ipa": "/ʊr/",
+          "label": "\"oor\" · r-colored",
+          "words": "your /jʊr/"
+        },
+        {
+          "ipa": "/æ/",
+          "label": "\"a\" · short, unrounded",
+          "words": "an /æn/ · plan /plæn/ · at /æt/ · and /ænd/ · ask /æsk/ · di·ag·o·nal·ly /-ˈæɡ-/"
+        },
+        {
+          "ipa": "/ɛ/",
+          "label": "\"eh\" · short, unrounded",
+          "words": "end /ɛnd/ · desk /dɛsk/ · sec·ond /ˈsɛk-/ · di·rect·ly /-ˈrɛkt-/ · ev·er /ˈɛv-/ · get /ɡɛt/ · them /ðɛm/"
+        },
+        {
+          "ipa": "/ɛr/",
+          "label": "\"air\" · r-colored",
+          "words": "there /ðɛr/ · their /ðɛr/"
+        },
+        {
+          "ipa": "/ɑː/",
+          "label": "\"ah\" · long, unrounded",
+          "words": "pod /pɑːd/ · on /ɑːn/ · op·po·site /ˈɑː-/"
+        },
+        {
+          "ipa": "/ɑːr/",
+          "label": "\"ar\" · long, r-colored",
+          "words": "far /fɑːr/"
+        },
+        {
+          "ipa": "/ɔː/",
+          "label": "\"aw\" · long, rounded",
+          "words": "of·fice /ˈɔː-/ · a·cross /-ˈkrɔːs/"
+        },
+        {
+          "ipa": "/ɔːr/",
+          "label": "\"or\" · long, rounded, r-colored",
+          "words": "cor·ner /ˈkɔːr-/"
+        },
+        {
+          "ipa": "/uː/",
+          "label": "\"oo\" · long, rounded",
+          "words": "you'll /juːl/ · you /juː/"
+        },
+        {
+          "ipa": "/aɪ/",
+          "label": "\"eye\" · diphthong",
+          "words": "by /baɪ/ · right /raɪt/ · mine /maɪn/ · di·ag·o·nal·ly /daɪ-/ · de·sign /-ˈzaɪn/"
+        },
+        {
+          "ipa": "/aʊ/",
+          "label": "\"ow\" · diphthong",
+          "words": "our /aʊr/ · a·bout /-ˈbaʊt/"
+        },
+        {
+          "ipa": "/oʊ/",
+          "label": "\"oh\" · diphthong",
+          "words": "o·pen /ˈoʊ-/ · win·dow /-doʊ/ · so /soʊ/ · o·ver /ˈoʊ-/ · don't /doʊnt/ · notes /noʊts/"
+        },
+        {
+          "ipa": "/ʌ/",
+          "label": "\"uh\" · short, unrounded, stressed",
+          "words": "once /wʌns/ · up /ʌp/ · one /wʌn/ · from /frʌm/ · stuck /stʌk/ · just /dʒʌst/ · us /ʌs/ · cov·ered /ˈkʌv-/"
+        }
+      ]
+    },
+    {
+      "en": "Now, a few landmarks you'll need day to day. The kitchenette — where the coffee lives — is down the hall, the first door on your left. Keep going past it and you'll reach the breakout area where we hold our stand-ups. The restrooms are opposite the kitchenette, hidden behind the printer.",
+      "ipa": ""
+    },
+    {
+      "en": "If you ever need me and I'm not at my desk, I'm probably upstairs on the ninth floor — that's where the meeting rooms are. They're named after rivers, oddly. The big one, 'Mekong', is at the end of the corridor, on the corner. Bear in mind you have to book them in advance.",
+      "ipa": ""
+    },
+    {
+      "en": "One more thing: the IT help desk — for laptop problems, badge problems, anything — is two floors down, on the fifth. Take the stairs if the lift is busy; they come out right next to the help desk anyway.",
+      "ipa": ""
+    },
+    {
+      "en": "I think that covers the essentials. Take a moment to settle in, and whenever you're ready, swing by my desk and we'll get you set up on the systems. Don't hesitate to ask if anything's unclear — better to ask than to wander around lost. Sound good?\"",
+      "ipa": ""
+    }
+  ]
+};
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+/* Color the English word (default) and the /IPA/ syllable differently. */
+function fmtWords(s){
+  return esc(s).replace(/\/[^\/]*\//g, m=>`<span class="ipa-in">${m}</span>`);
+}
+
+/* Display only the binary marked attributes (long, rounded, stressed, r-colored).
+   Drop the quoted keyword hint, the unmarked defaults (short, unrounded,
+   unstressed, plain non-r) and the category tag (diphthong) — the IPA symbol +
+   example words already carry those. */
+const HIDE_ATTRS = new Set(["short","unrounded","unstressed","diphthong"]);
+function fmtLabel(label){
+  const parts = String(label).split(" · ");
+  const kept = parts.slice(1).join(", ").split(",")
+    .map(s=>s.trim()).filter(a=> a && !HIDE_ATTRS.has(a));
+  return kept.join(", ");
+}
+
+/* Vowel families — each inner array is rendered as one row (line). A nucleus is
+   placed by its bare IPA symbol (slashes stripped). Anything not listed here is
+   collected into a trailing "other" row so nothing is dropped. */
+const VOWEL_GROUPS = [
+  ["eɪ","aɪ","aʊ"],         // diphthongs
+  ["ɛ","ɛr","ɪr","æ"],      // front mid-low: eh / air / eer / a
+  ["ɪ","iː","i"],           // front high: ih / ee
+  ["ə","ər","ɜːr","ʌ"],     // central: uh / er / ur
+  ["ɑː","ɑːr","ɔː","ɔːr","oʊ"], // back: ah / ar / aw / or / oh
+  ["uː","ʊ","ʊr"],          // back high rounded: oo / uu / oor
+];
+/* One accent per group row (cycled if there are more rows than colors). */
+const GROUP_COLORS = ["#7aa2f7","#f7768e","#9ece6a","#e0af68","#bb9af7","#2ac3de"];
+function symOf(ipa){ return String(ipa).replace(/\//g,"").trim(); }
+function groupNuclei(nuclei){
+  const bySym = new Map(nuclei.map(n=>[symOf(n.ipa), n]));
+  const used = new Set(), rows = [];
+  VOWEL_GROUPS.forEach(syms=>{
+    const row = [];
+    syms.forEach(s=>{ if(bySym.has(s)){ row.push(bySym.get(s)); used.add(s); } });
+    if(row.length) rows.push(row);
+  });
+  const leftover = nuclei.filter(n=> !used.has(symOf(n.ipa)));
+  if(leftover.length) rows.push(leftover);
+  return rows;
+}
+
+/* Map each vowel symbol -> its group color, and build a longest-match-first
+   regex so the same colors can tint vowels inside the running IPA line. */
+const VOWEL_COLOR = {};
+VOWEL_GROUPS.forEach((syms,i)=>{
+  const c = GROUP_COLORS[i % GROUP_COLORS.length];
+  syms.forEach(s=>{ VOWEL_COLOR[s] = c; });
+});
+const VOWEL_RE = new RegExp(
+  Object.keys(VOWEL_COLOR).sort((a,b)=> b.length - a.length)
+    .map(s=> s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),
+  "g"
+);
+function colorIpa(s){
+  return esc(s).replace(VOWEL_RE, m=>`<span style="color:${VOWEL_COLOR[m]}">${m}</span>`);
+}
+
+function render(data){
+  document.getElementById("title").textContent = data.title;
+  document.getElementById("subtitle").textContent = data.subtitle || "";
+  document.title = data.title;
+  const root = document.getElementById("content");
+  root.innerHTML = "";
+
+  data.sections.forEach(sec=>{
+    const card = document.createElement("section");
+    card.className = "card" + (sec.break ? " brk" : "");
+    card.innerHTML =
+      `<p class="en">${esc(sec.en)}</p>` +
+      `<p class="ipa">${colorIpa(sec.ipa)}</p>`;
+
+    if(sec.nuclei && sec.nuclei.length){
+      const d = document.createElement("details"); d.open = true;
+      let g = `<summary>&#128068; Nuclei (vowels) in this sentence &mdash; ${sec.nuclei.length}</summary><div class="nuc-groups">`;
+      groupNuclei(sec.nuclei).forEach((row,i)=>{
+        g += `<div class="nuc-row" style="--g:${GROUP_COLORS[i % GROUP_COLORS.length]}">`;
+        row.forEach(n=>{
+          g += `<div class="nuc"><span class="sym">${esc(n.ipa)}</span>` +
+               `<span class="lbl">${esc(fmtLabel(n.label))}</span><span class="w">${fmtWords(n.words)}</span></div>`;
+        });
+        g += `</div>`;
+      });
+      g += `</div>`; d.innerHTML = g; card.appendChild(d);
+    }
+    root.appendChild(card);
+  });
+}
+
+/* Prefer the live JSON when served; fall back to embedded for file:// */
+fetch("../json/260613_the_grand_tour_ipa.json")
+  .then(r=> r.ok ? r.json() : Promise.reject())
+  .then(render)
+  .catch(()=> render(EMBEDDED));
+</script>
+</body>
+</html>

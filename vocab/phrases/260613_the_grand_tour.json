@@ -1,0 +1,223 @@
+{
+  "story": "260613_the_grand_tour",
+  "title": "The Grand Tour",
+  "theme": "Directions and locations inside a large company",
+  "phrases": [
+    {
+      "phrase": "walk (someone) through",
+      "meaning": "guide someone step by step",
+      "example": "Let me walk you through the building so you can get your bearings.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "get your bearings",
+      "meaning": "figure out where you are; orient yourself",
+      "example": "Let me walk you through the building so you can get your bearings.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "over there",
+      "meaning": "at that place (while pointing)",
+      "example": "Over there, to your left, is the reception desk.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "to your left / to your right",
+      "meaning": "on the left or right side of you",
+      "example": "Over there, to your left, is the reception desk.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "straight ahead",
+      "meaning": "directly in front of you",
+      "example": "Straight ahead, past those glass doors, are the turnstiles.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "just around the corner",
+      "meaning": "very close, around a bend",
+      "example": "It's just around the corner, next to the stairwell.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "next to",
+      "meaning": "beside; adjacent to",
+      "example": "It's just around the corner, next to the stairwell.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "at the far end",
+      "meaning": "at the most distant point of a space",
+      "example": "Our pod is at the far end, by the window.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "by the window",
+      "meaning": "right beside the window",
+      "example": "Our pod is at the far end, by the window.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "directly across from",
+      "meaning": "exactly opposite",
+      "example": "Your desk is the second one on the right, directly across from mine.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "diagonally opposite",
+      "meaning": "across the space and to one side",
+      "example": "Diagonally opposite us is the design team.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "down the hall",
+      "meaning": "further along the corridor",
+      "example": "The kitchenette is down the hall, the first door on your left.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "the first door on your left",
+      "meaning": "the nearest door on the left side",
+      "example": "The kitchenette is down the hall, the first door on your left.",
+      "category": "giving directions"
+    },
+    {
+      "phrase": "opposite",
+      "meaning": "facing; on the other side from",
+      "example": "The restrooms are opposite the kitchenette.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "hidden behind",
+      "meaning": "out of sight behind something",
+      "example": "The restrooms are opposite the kitchenette, hidden behind the printer.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "at the end of the corridor",
+      "meaning": "at the far end of the hallway",
+      "example": "'Mekong' is at the end of the corridor, on the corner.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "on the corner",
+      "meaning": "at a corner position",
+      "example": "'Mekong' is at the end of the corridor, on the corner.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "two floors down",
+      "meaning": "two levels below where you are",
+      "example": "The IT help desk is two floors down, on the fifth.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "upstairs",
+      "meaning": "on a higher floor",
+      "example": "I'm probably upstairs on the ninth floor.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "right next to",
+      "meaning": "immediately beside",
+      "example": "They come out right next to the help desk.",
+      "category": "describing location"
+    },
+    {
+      "phrase": "head up",
+      "meaning": "go up (in a direction)",
+      "example": "Let's head up to our floor.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "take the lift / take the stairs",
+      "meaning": "use the elevator / use the stairs",
+      "example": "Take the stairs if the lift is busy.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "hit the button",
+      "meaning": "press the button",
+      "example": "I'll hit the button for seven.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "badge in",
+      "meaning": "enter using an access card",
+      "example": "You'll badge in with the access card I'll hand you in a minute.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "check in",
+      "meaning": "register your arrival",
+      "example": "That's where they'll check in.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "come out (somewhere)",
+      "meaning": "exit or emerge at a place",
+      "example": "Take the stairs; they come out right next to the help desk.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "swing by",
+      "meaning": "drop in or visit briefly",
+      "example": "Whenever you're ready, swing by my desk.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "wander around",
+      "meaning": "move with no clear path, often lost",
+      "example": "Better to ask than to wander around lost.",
+      "category": "moving around"
+    },
+    {
+      "phrase": "welcome aboard",
+      "meaning": "welcome to the team",
+      "example": "Morning, Minh — welcome aboard!",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "settle in",
+      "meaning": "get comfortable in a new place",
+      "example": "Take a moment to settle in.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "get you set up",
+      "meaning": "prepare your accounts and tools",
+      "example": "We'll get you set up on the systems.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "day to day",
+      "meaning": "routine; everyday",
+      "example": "A few landmarks you'll need day to day.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "bear in mind",
+      "meaning": "remember; keep in consideration",
+      "example": "Bear in mind you have to book them in advance.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "don't hesitate to",
+      "meaning": "feel free to",
+      "example": "Don't hesitate to ask if anything's unclear.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "cover the essentials",
+      "meaning": "go over the most important parts",
+      "example": "I think that covers the essentials.",
+      "category": "onboarding small talk"
+    },
+    {
+      "phrase": "whenever you're ready",
+      "meaning": "at your own pace, no rush",
+      "example": "Whenever you're ready, swing by my desk.",
+      "category": "onboarding small talk"
+    }
+  ]
+}
